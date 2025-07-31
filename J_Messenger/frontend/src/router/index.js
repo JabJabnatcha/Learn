@@ -1,15 +1,16 @@
+// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import MessagesView from '../views/MessagesView.vue'
 
 const routes = [
   {
-    path: '/',          // URL path เวลาเปิดเว็บ
+    path: '/',
     name: 'home',
     component: HomeView
   },
   {
-    path: '/messages',  // URL path เวลาเปิดเว็บ /messages
+    path: '/messages',
     name: 'messages',
     component: MessagesView
   }

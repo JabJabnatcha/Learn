@@ -5,9 +5,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-// เพิ่มบรรทัดนี้ เพื่อบอกโปรเจกต์ว่ามี DbContext และจะเชื่อมกับฐานข้อมูลยังไง
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// เพิ่ม CORS policy ที่อนุญาตให้ frontend ที่ localhost:5173 เรียกได้
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")  // URL frontend ของคุณ
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -21,6 +31,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// ใช้งาน CORS policy นี้ก่อน Authorization
+app.UseCors("AllowFrontend");
 
 app.UseAuthorization();
 

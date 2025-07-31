@@ -1,12 +1,25 @@
 <template>
-  <div>
-    <h1>Messages</h1>
-    <!-- ใส่ UI แสดงข้อความที่นี่ -->
+  <div class="messenger-layout">
+    <Sidebar :selectedUser="selectedUser" @select="handleSelectUser" />
+    <ChatWindow :user="selectedUser" />
   </div>
 </template>
 
-<script>
-export default {
-  name: 'MessagesView'
+<script setup>
+import { ref } from 'vue'
+import Sidebar from '@/components/Sidebar.vue'
+import ChatWindow from '@/components/ChatWindow.vue'
+
+const selectedUser = ref(null)
+
+function handleSelectUser(user) {
+  selectedUser.value = user
 }
 </script>
+
+<style scoped>
+.messenger-layout {
+  display: flex;
+  height: 100vh;
+}
+</style>
