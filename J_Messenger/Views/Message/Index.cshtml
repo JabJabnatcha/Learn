@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Messages";
+}
+
+<h2>Messages</h2>
+
+<div id="app">
+  <table border="1" cellpadding="5">
+    <thead>
+      <tr>
+        <th>Sender</th>
+        <th>Content</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead> 
+    <tbody>
+      <tr v-for="message in messages" :key="message.id">
+        <td>{{ message.sender }}</td>
+        <td>{{ message.content }}</td>
+        <td>{{ new Date(message.timestamp).toLocaleString() }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Vue.js CDN -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      messages: []
+    }
+  },
+  mounted() {
+    fetch('/api/message?conversationId=1')  // เรียก API ของ backend
+      .then(response => response.json())
+      .then(data => {
+        this.messages = data;
+      });
+  }
+}).mount('#app');
+</script>

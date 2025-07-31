@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using J_Messenger.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace J_Messenger.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class MessageController : ControllerBase
+    public class MessageController : Controller
     {
         // Mock data จำลองฐานข้อมูล
         private static List<Message> messages = new List<Message>
@@ -54,6 +57,14 @@ namespace J_Messenger.Controllers
 
             messages.Remove(message);
             return NoContent();
+        }
+
+        // Action สำหรับเรียก View ที่ /Message/Index
+        [HttpGet]
+        [Route("/Message")] // หรือจะไม่ใส่ก็ได้ ถ้าใช้ Default Routing
+        public IActionResult Index()
+        {
+            return View();
         }
     }
 }
