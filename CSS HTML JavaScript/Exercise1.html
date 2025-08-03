@@ -1,0 +1,125 @@
+<!-- Exercise 1 CSS HTML JavaScript-->>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EX1 Jab Web Page</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 2rem auto;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .profile {
+      text-align: center;
+    }
+
+    .profile img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .form-section {
+      margin-top: 2rem;
+    }
+
+    input[type="text"] {
+      padding: 0.5rem;
+      width: 100%;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #output {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 1rem;
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ยินดีต้อนรับสู่เว็บของจ๊าบ</h1>
+  </header>
+
+  <div class="container">
+    <section class="profile">
+      <img src="src/Profile.jpg" alt="รูปภาพ" />
+      <h2>ณัฐชรปพนต์ แก้วหน่อ</h2>
+      <p>Natcharapaphon Kaewno</p>
+    </section>
+
+    <section class="form-section">
+      <h3>กรอกชื่อ:</h3>
+      <input type="text" id="nameInput" placeholder="พิมพ์ชื่อของคุณที่นี่" />
+      <button onclick="showName()">แสดงชื่อ</button>
+      <div id="output"></div>
+    </section>
+
+
+      <h3>ทำนายสภาพอากาศวันนี้:</h3>
+      <button onclick="showWeather()">แสดงสภาพอากาศ</button>
+      <div id="output2"></div>
+  </div>
+
+  <script>
+    function showName() {
+      const name = document.getElementById("nameInput").value.trim();
+      const output = document.getElementById("output");
+      if (name) {
+        output.textContent = `สวัสดีคุณ ${name} `;
+      } else {
+        output.textContent = "! กรอกชื่อก่อน";
+      }
+    }
+    function showWeather() {
+      const output2 = document.getElementById("output2");
+
+        output2.textContent = "ออกไปดูสภาพอากาศข้างนอกเองสิ";
+
+    }
+  </script>
+</body>
+</html>
