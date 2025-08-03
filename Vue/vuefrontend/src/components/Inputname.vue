@@ -81,6 +81,6 @@ button:first-child {
 }
 
 button:last-child {
-  background-color: #ccc;
+  background-color: #f36c6c;
 }
 </style>

@@ -15,7 +15,7 @@
 <style scoped>
 .sidebar {
   width: 200px;
-  background-color: #f4f4f4;
+  background-color: #8e8f8e;
   height: 100vh;
   padding: 1rem;
   box-shadow: 2px 0 5px rgba(0,0,0,0.1);
