@@ -30,6 +30,19 @@
     </section>
 
     <!-- Row 3: Recently Played -->
+     <section class="recommend-section">
+      <h2>Recommend For You</h2>
+      <ul class="recommend-list">
+        <li v-for="(item, idx) in recommended" :key="idx" class="recommend-item">
+          <img :src="item.cover" alt="Cover" />
+          <div class="song-info">
+            <strong>{{ item.title }}</strong>
+            <p class="artist">{{ item.artist }}</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+    <!-- Row 4: Recommend For You -->
     <section class="recently-played">
       <h2>Recently Played</h2>
       <ul class="recent-list">
@@ -38,20 +51,6 @@
           <div class="song-info">
             <strong>{{ song.title }}</strong>
             <p class="artist">{{ song.artist }}</p>
-          </div>
-        </li>
-      </ul>
-    </section>
-
-    <!-- Row 4: Recommend For You -->
-    <section class="recommend-section">
-      <h2>Recommend For You</h2>
-      <ul class="recommend-list">
-        <li v-for="(item, idx) in recommended" :key="idx" class="recommend-item">
-          <img :src="item.cover" alt="Cover" />
-          <div class="song-info">
-            <strong>{{ item.title }}</strong>
-            <p class="artist">{{ item.artist }}</p>
           </div>
         </li>
       </ul>
@@ -85,6 +84,14 @@ export default {
         { name: "Summer Dreams", artist: "Pop Hits", cover: summerDreamsCover },
         { name: "Late Night", artist: "Chillhop", cover: lateNightCover },
       ],
+      recommended: [
+        { title: "Summer Dreams", artist: "Pop Hits", cover: summerDreamsCover },
+        { title: "Jazz Classics", artist: "Miles Davis", cover: jazzClassicsCover },
+        { title: "Late Night", artist: "Chillhop", cover: lateNightCover },
+        { title: "My Rock Hits", artist: "AC/DC", cover: rockCover },
+        { title: "Chill Vibes", artist: "Lofi Beats", cover: chillCover },
+        { title: "Pop Favorites", artist: "Taylor Swift", cover: popCover },
+      ],
       recentlyPlayed: [
         { title: "Night Sky", artist: "Lofi Beats", cover: nightSkyCover },
         { title: "Ocean Breeze", artist: "Smooth Jazz", cover: oceanBreezeCover },
@@ -96,20 +103,13 @@ export default {
         { title: "Summer Dreams", artist: "Pop Hits", cover: summerDreamsCover },
         { title: "Late Night", artist: "Chillhop", cover: lateNightCover },
       ],
-      recommended: [
-        { title: "Summer Dreams", artist: "Pop Hits", cover: summerDreamsCover },
-        { title: "Jazz Classics", artist: "Miles Davis", cover: jazzClassicsCover },
-        { title: "Late Night", artist: "Chillhop", cover: lateNightCover },
-        { title: "My Rock Hits", artist: "AC/DC", cover: rockCover },
-        { title: "Chill Vibes", artist: "Lofi Beats", cover: chillCover },
-        { title: "Pop Favorites", artist: "Taylor Swift", cover: popCover },
-      ],
     };
   },
 };
 </script>
 
 <style scoped>
+/* Container หลัก แสดงผลเป็น column มีช่องว่างระหว่าง section */
 .mid-content {
   background-color: #202020;
   flex: 2; /* ขยาย 2 เท่าของ sidebar ที่ flex:1 */
@@ -146,25 +146,27 @@ export default {
   color: white;
 }
 
-/* Sections */
+/* Section title */
 section h2 {
   margin-bottom: 0.5rem;
   font-weight: 700;
 }
 
 /* Your Playlist */
+/* แสดงรายการแบบ flex-wrap แสดงเป็น 2 แถว */
 .playlist-list {
   display: flex;
-  flex-wrap: wrap; /* แสดง 2 แถว */
+  flex-wrap: wrap;
   gap: 1rem;
   overflow-x: hidden;
 }
 
+/* รายการแต่ละอันใน Playlist */
 .playlist-item {
   background-color: #303030;
   border-radius: 8px;
   padding: 0.5rem;
-  width: 200px; /*calc(50% - 0.5rem)= กว้างประมาณครึ่งบรรทัด ลบช่องว่าง */
+  width: 200px; /* กว้างประมาณครึ่งบรรทัด */
   height: 60px;
   display: flex;
   gap: 1rem;
@@ -177,6 +179,7 @@ section h2 {
   background-color: #3a3a3a;
 }
 
+/* รูปปก Playlist */
 .playlist-item img {
   width: 70px;
   height: 70px;
@@ -184,6 +187,7 @@ section h2 {
   object-fit: cover;
 }
 
+/* ข้อมูล Playlist: ชื่อเพลงและศิลปิน */
 .playlist-info {
   display: flex;
   flex-direction: column;
@@ -202,6 +206,7 @@ section h2 {
 }
 
 /* Recently Played & Recommend For You */
+/* แสดงรายการแนวนอน เลื่อนซ้ายขวาได้ */
 .recent-list,
 .recommend-list {
   display: flex;
@@ -210,6 +215,8 @@ section h2 {
   padding-bottom: 0.5rem;
 }
 
+/* รายการปกติ (item ลำดับ 2 เป็นต้นไป) */
+/* แสดงเป็น column, รูปใหญ่ 120x120, ข้อความใต้รูป */
 .recent-item,
 .recommend-item {
   background-color: #303030;
@@ -217,7 +224,7 @@ section h2 {
   padding: 0.5rem;
   min-width: 150px;
   display: flex;
-  flex-direction: column; /* ให้อยู่แนวตั้ง */
+  flex-direction: column;
   align-items: center;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -229,15 +236,17 @@ section h2 {
   background-color: #3a3a3a;
 }
 
+/* รูปปกในรายการปกติ */
 .recent-item img,
 .recommend-item img {
-  width: 120px; /* รูปใหญ่ขึ้น */
+  width: 120px;
   height: 120px;
   border-radius: 8px;
   object-fit: cover;
-  margin-bottom: 0.5rem; /* ช่องว่างระหว่างรูปกับข้อความ */
+  margin-bottom: 0.5rem;
 }
 
+/* ข้อความในรายการปกติ */
 .song-info strong {
   font-size: 1rem;
   line-height: 1.2;
@@ -247,5 +256,65 @@ section h2 {
   font-size: 0.85rem;
   color: #aaa;
   margin-top: 0.25rem;
+}
+
+/* รายการแรกใน Recommend List ให้ layout เป็นแถวแนวนอน */
+/* กว้างและสูงกว่า item ปกติ */
+.recommend-list li:first-child {
+  background-color: #303030;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  min-width: 250px;
+  display: flex;
+  flex-direction: row;       /* วางแนวนอน */
+  align-items: center;       /* จัดชิดกลางแนวตั้ง */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-align: left;          /* ข้อความชิดซ้าย */
+}
+
+.recommend-list li:first-child:hover {
+  background-color: #3a3a3a;
+}
+
+/* รูปปกในรายการแรก กว้าง 200 สูง 60 พร้อม margin ขวา */
+.recommend-list li:first-child img {
+  width: 200px;
+  height: 60px;
+  border-radius: 6px;
+  margin-right: 1rem;
+  object-fit: cover;
+  margin-bottom: 0;
+}
+
+/* ข้อมูลเพลงในรายการแรก แยก 2 แถว (ชื่อเพลง / ศิลปิน-อัลบั้ม) */
+.recommend-list li:first-child .song-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 60px;
+  min-width: 200px;
+  gap: 0.2rem;
+}
+
+/* ชื่อเพลงในแถวบน */
+.recommend-list li:first-child .song-info strong {
+  font-size: 1.2rem;
+  line-height: 30px;
+  width: 100px;
+  white-space: nowrap;      /* ห้ามขึ้นบรรทัดใหม่ */
+  overflow: hidden;         /* ซ่อนข้อความที่ล้น */
+  text-overflow: ellipsis;  /* แสดง ... เมื่อข้อความล้น */
+}
+
+/* ชื่อศิลปิน/อัลบั้มในแถวล่าง */
+.recommend-list li:first-child .song-info .artist {
+  font-size: 0.9rem;
+  color: #aaa;
+  line-height: 30px;
+  width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

@@ -7,20 +7,23 @@
         <SpotifyMid />
         <RightSidebar />
     </div>
+    <spotify_bottombar />
   </div>
 </template>
 
 <script>
-import RightSidebar from '../components/spotify/spotify_sidebar_right.vue'
+import RightSidebar from '../components/spotify/spotify_sidebar_right.vue';
 import Sidebar from '../components/spotify/spotify_sidebar_left.vue';
-import SpotifyMid from '../components/spotify/spotify_mid.vue'
-import Topbar from '../components/Topbar.vue'
-import Music_topbar from '../components/spotify/Music_topbar.vue';
+import SpotifyMid from '../components/spotify/spotify_mid.vue';
+import Topbar from '../components/Topbar.vue';
+import MusicTopbar from '../components/spotify/Music_topbar.vue';
+import spotify_bottombar from '../components/spotify/spotify_bottombar.vue';
 
 export default {
-  components: { Topbar,Sidebar,RightSidebar,SpotifyMid,Music_topbar }
+  components: { Topbar, Sidebar, RightSidebar, SpotifyMid, MusicTopbar ,spotify_bottombar }
 }
 </script>
+
 
 <style>
 /* พื้นหลังเต็มจอ */
