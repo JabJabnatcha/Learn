@@ -8,6 +8,8 @@ import TwelveGrid from '../views/12Grid.vue'  // เปลี่ยนชื่�
 import TwelveGrid2 from '../views/12Grid2.vue' 
 import weather from '../views/weather.vue'
 import spotify from '../views/spotify.vue'
+import ImportIMG from '../views/ImportIMG.vue'
+import Music_app2 from '../views/Music_app2.vue'
 
 const routes = [
   {
@@ -33,6 +35,14 @@ const routes = [
   {
     path: '/spotify',   
     component: spotify
+  },
+  {
+    path: '/ImportIMG',
+    component: ImportIMG
+  },
+  {
+    path: '/Music_app2',
+    component: Music_app2
   }
 ]
 

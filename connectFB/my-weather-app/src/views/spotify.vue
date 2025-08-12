@@ -1,7 +1,7 @@
 <template>
   <div class="music-app">
     <Topbar />
-    <Music_topbar />
+    <MusicTopbar />
     <div class="layout">
         <Sidebar />
         <SpotifyMid />

@@ -16,6 +16,7 @@
             <button class="control-btn">⏮️</button>
             <button class="control-btn">▶️</button>
             <button class="control-btn">⏭️</button>
+            <button class="control-btn">🔂</button> <!-- ปุ่มวนซ้ำเพลงนี้ -->
         </div>
         <div class="progress-row">
             <span class="time current-time">0:00</span>
@@ -80,8 +81,8 @@ export default {
 }
 
 .cover-img {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     object-fit: cover;
     border-radius: 4px;
 }
@@ -113,7 +114,7 @@ export default {
     flex: 2 1 50%;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.1rem;
 }
 
 .controls-row {
