@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Units Comparison</title>
+<style>
+    body {
+        font-family: sans-serif;
+        line-height: 1.5;
+        padding: 20px;
+    }
+
+    h2 {
+        margin-top: 40px;
+        border-bottom: 2px solid #ccc;
+        padding-bottom: 5px;
+    }
+
+    .demo-box {
+        background: lightblue;
+        margin: 10px 0;
+        display: inline-block;
+        text-align: center;
+        padding: 10px;
+        color: #333;
+    }
+
+    /* Relative Units */
+    .em      { font-size: 2em; }
+    .ex      { font-size: 5ex; }
+    .ch      { font-size: 5ch; }
+    .rem     { font-size: 2rem; }
+    .vw      { font-size: 10vw; }
+    .vh      { font-size: 10vh; }
+    .vmin    { font-size: 10vmin; }
+    .vmax    { font-size: 10vmax; }
+    .percent { font-size: 150%; }
+
+    /* Absolute Units */
+    .cm  { font-size: 1cm; }
+    .mm  { font-size: 10mm; }
+    .in  { font-size: 0.5in; }
+    .px  { font-size: 32px; }
+    .pt  { font-size: 24pt; }
+    .pc  { font-size: 2pc; }
+
+    /* Container for percentage test */
+    .percent-container {
+        font-size: 20px;
+        border: 1px dashed gray;
+        padding: 10px;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+<h1>CSS Units Comparison</h1>
+
+<h2>📌 Relative Units</h2>
+<div class="demo-box em">2em</div>
+<div class="demo-box ex">5ex</div>
+<div class="demo-box ch">5ch</div>
+<div class="demo-box rem">2rem</div>
+<div class="demo-box vw">10vw</div>
+<div class="demo-box vh">10vh</div>
+<div class="demo-box vmin">10vmin</div>
+<div class="demo-box vmax">10vmax</div>
+
+<div class="percent-container">
+    <div class="demo-box percent">150%</div>
+    <small>Parent font-size = 20px</small>
+</div>
+
+<h2>📌 Absolute Units</h2>
+<div class="demo-box cm">1cm</div>
+<div class="demo-box mm">10mm</div>
+<div class="demo-box in">0.5in</div>
+<div class="demo-box px">32px</div>
+<div class="demo-box pt">24pt</div>
+<div class="demo-box pc">2pc</div>
+
+</body>
+</html>
