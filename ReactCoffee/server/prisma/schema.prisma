@@ -12,6 +12,7 @@ model Coffee {
   name      String
   price     Float
   image     String?
+  isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())
   orders    OrderItem[]
 }
