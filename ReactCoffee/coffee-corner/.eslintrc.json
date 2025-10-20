@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "eslint:recommended"
+  ],
+  "rules": {
+    "no-console": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["*.css"],
+      "rules": {
+        "no-unknown-at-rules": "off"
+      }
+    }
+  ]
+}

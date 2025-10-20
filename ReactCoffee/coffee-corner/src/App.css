@@ -40,3 +40,24 @@
 .read-the-docs {
   color: #888;
 }
+
+
+.coffee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.coffee-card {
+  background-color: #f7f7f7;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.coffee-card img {
+  max-width: 100%;
+  border-radius: 8px;
+}

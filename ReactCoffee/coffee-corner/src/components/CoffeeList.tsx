@@ -37,21 +37,18 @@ export default function CoffeeList() {
   }, []);
 
   return (
-    <div>
-      <h2>เมนูกาแฟ</h2>
-
-      {/* ฟอร์มเพิ่ม/แก้ไข */}
-      <CoffeeForm coffee={editingCoffee || undefined} onSuccess={handleFormSuccess} />
-
-      <ul>
-        {coffees.map((c) => (
-          <li key={c.id}>
-            {c.name} - {c.price} บาท
-            <button onClick={() => handleEdit(c)}>แก้ไข</button>
-            <button onClick={() => handleDelete(c.id)}>ลบ</button>
-          </li>
-        ))}
-      </ul>
+    // CoffeeList.tsx
+<div className="coffee-grid">
+  {coffees.map(c => (
+    <div key={c.id} className="coffee-card">
+      <img src={c.image} alt={c.name} />
+      <h3>{c.name}</h3>
+      <p>{c.price} บาท</p>
+      <button>แก้ไข</button>
+      <button>ลบ</button>
     </div>
+  ))}
+</div>
+
   );
 }
