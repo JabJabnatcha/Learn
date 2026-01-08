@@ -1,5 +1,5 @@
 // C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\CharacterStore.js
-const { validateLevel, validateStatus } = require("./CharacterValidate");
+const { validateLevel, validateStatus } = require("../../CharacterValidate");
 const { calculateMaxHP} = require("./CharacterHP");
 
 

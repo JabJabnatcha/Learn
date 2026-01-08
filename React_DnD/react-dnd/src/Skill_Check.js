@@ -1,4 +1,4 @@
-const { rollDice } = require('./dice');
+const { rollDice } = require('./Dice');
 // const { rollMultipleDice } = require('./dice');
 
 function skillCheck(skillName, modifier, difficultyClass) {
