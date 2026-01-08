@@ -1,26 +1,31 @@
-import { useState, useEffect } from "react";
+// CoffeeForm.tsx
+import { useState } from "react";
 import { createCoffee, updateCoffee } from "../api/coffeeApi";
+import type { Coffee } from "../App"; // 🚨 ถูกต้องแล้ว: ใช้ import type
 
 interface CoffeeFormProps {
-  coffee?: { id: number; name: string; price: number; image?: string };
+  // 🚨 แก้ไข: ให้ใช้ Type Coffee ที่ import มา
+  coffee: Coffee | null | undefined; 
   onSuccess: () => void;
 }
 
 export default function CoffeeForm({ coffee, onSuccess }: CoffeeFormProps) {
-  const [name, setName] = useState(coffee?.name || "");
-  const [price, setPrice] = useState(coffee?.price || 0);
-  const [image, setImage] = useState(coffee?.image || "");
+  // 🚨 แก้ไข: ใช้ ?? "" แทน || "" เพื่อจัดการกับ null/undefined ได้ดีขึ้น
+  const [name, setName] = useState(coffee?.name ?? "");
+  const [price, setPrice] = useState(coffee?.price ?? 0);
+  const [image, setImage] = useState(coffee?.image ?? "");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (coffee) {
       // ถ้าแก้ไข
-      await updateCoffee(coffee.id, { name, price, image });
+      // 🚨 ส่งข้อมูลที่ไม่มี id กลับไปให้ updateCoffee
+      await updateCoffee(coffee.id, { name, price, image }); 
     } else {
       // ถ้าเพิ่มใหม่
       await createCoffee({ name, price, image });
     }
-    onSuccess(); // รีเฟรช list
+    onSuccess(); // รีเฟรช list (และเคลียร์ฟอร์มใน App.tsx)
     setName("");
     setPrice(0);
     setImage("");
@@ -28,6 +33,7 @@ export default function CoffeeForm({ coffee, onSuccess }: CoffeeFormProps) {
 
   return (
     <form onSubmit={handleSubmit}>
+      {/* ... โค้ด Form ที่เหลือ ... */}
       <input
         type="text"
         placeholder="ชื่อกาแฟ"
