@@ -1,18 +1,22 @@
 // C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\CharacterStore.js
-const { validateLevel, validateStatus } = require("../../CharacterValidate");
-const { calculateMaxHP} = require("./CharacterHP");
+import { validateLevel, validateStatus } from './CharacterValidate.js';
+import { calculateMaxHP } from './CharacterHP.js';
 
+import { db } from "./firebaseConfig.js";
+import { 
+    collection, 
+    getDocs, 
+    getDoc, 
+    doc,
+    updateDoc,
+    deleteDoc,
+    addDoc
+    } from "firebase/firestore";
 
-let characters = [];
-let charactersId = 1;
-
-
-function createCharacter(characterData)
-{
+export async function createCharacter(characterData) {
     const skills = characterData.skills ?? {};
-
+// สร้างเอกสารใหม่ใน Firestore เป็น object
     const character = {
-        charactersId, // ID ของตัวละคร 
         /*Basic Info */
         name: characterData.name,// ชื่อของตัวละคร
         race: characterData.race,// เช่น มนุษย์, เอลฟ์, คนแคระ
@@ -90,21 +94,25 @@ function createCharacter(characterData)
     character.maxHP = calculateMaxHP(character);
     character.currentHP = character.maxHP;
 
-    characters.push(character);
+    const docRef = await addDoc(collection(db, "characters"), character);
 
-    saveCharacters({ 
-        characters 
-    });
-
-    return character;
+    return {id: docRef.id, ...character};
 }
 
-function getAllCharacters() {
-    return characters.filter(char => !char.isDeleted);
+export async function getAllCharacters() {
+    const q = query(collection(db, "characters"), where("isDeleted", "==", false));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
 }
 
-function getCharacterById(id) {
-    return characters.find(char => char.id === id && !char.isDeleted);
+export async function getCharacterById(id) {
+    const docRef = doc(db, "characters", id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists() || docSnap.data().isDeleted) {
+        return null;
+    }
+    return { id: docSnap.id, ...docSnap.data() };
 }
 
 function updateCharacter(id, updateData) {
