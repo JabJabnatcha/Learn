@@ -9,7 +9,8 @@ import {
     getDoc, 
     doc,
     updateDoc,
-    deleteDoc,
+    query,
+    where,
     addDoc
     } from "firebase/firestore";
 
@@ -28,6 +29,14 @@ export async function createCharacter(characterData) {
         background: characterData.background || [], //แต่ละ background อาจมีรายละเอียดแตกต่างกัน และจะให้ bonus ต่าง ๆ แก่ตัวละคร เลือกได้เมากน้อยสุดแค่ 1-3 background เลือกซ้ำไม่ได้
         experiencePoints: characterData.experiencePoints || 0, // ค่าเริ่มต้นเป็น 0
         language: characterData.language ?? ['Common'], // ค่าเริ่มต้นเป็น Common +ภาษาของเผ่าที่ไม่ใช่ Common เช่น Elvish, Dwarvish, Orcish+สามารถเพิ่มภาษาได้ตาม background หรือ เรียนรู้เพิ่มเติม
+        
+        /*Bio info */
+        age: characterData.age || 0,
+        height: characterData.height || '', // รูปแบบเช่น 5'8" หรือ 172 cm
+        weight: characterData.weight || '', // รูปแบบเช่น 150 lbs หรือ 68 kg
+        eyes: characterData.eyes || '',
+        skin: characterData.skin || '',
+        hair: characterData.hair || '',
 
         /*Status Stats */        
         status:{
@@ -115,105 +124,131 @@ export async function getCharacterById(id) {
     return { id: docSnap.id, ...docSnap.data() };
 }
 
-function updateCharacter(id, updateData) {
-    const character = characters.find(char => char.id === id && !char.isDeleted);
-
-    if (!character) {
+export async function updateCharacter(id, updateData) {
+    const docRef = doc(db, "characters", id);
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists() || docSnap.data().isDeleted) {
         return null;
     }
+    const character = docSnap.data();
+    const updatePayload = {};
 
     // === Basic Info ===
-    if (updateData.name !== undefined) character.name = updateData.name;
+    if (updateData.name !== undefined) updatePayload.name = updateData.name;
     if (updateData.level !== undefined) 
-        {character.level = validateLevel(updateData.level);
-        character.maxHP = calculateMaxHP(character);
-        character.currentHP = Math.min(character.currentHP, character.maxHP);
+        {updatePayload.level = validateLevel(updateData.level);
     }
-    if (updateData.race !== undefined) character.race = updateData.race;
-    if (updateData.subRace !== undefined) character.subRace = updateData.subRace;
-    if (updateData.characterClass !== undefined) character.characterClass = updateData.characterClass;
-    if (updateData.characterSubClass !== undefined) character.characterSubClass = updateData.characterSubClass;
-    if (updateData.alignment !== undefined) character.alignment = updateData.alignment;
-    if (updateData.background !== undefined) character.background = updateData.background;
-    if (updateData.experiencePoints !== undefined) character.experiencePoints = updateData.experiencePoints;
-    if (updateData.language !== undefined) character.language = updateData.language;
 
+    if (updateData.race !== undefined) updatePayload.race = updateData.race;
+    if (updateData.subRace !== undefined) updatePayload.subRace = updateData.subRace;
+    if (updateData.characterClass !== undefined) updatePayload.characterClass = updateData.characterClass;
+    if (updateData.characterSubClass !== undefined) updatePayload.characterSubClass = updateData.characterSubClass;
+    if (updateData.alignment !== undefined) updatePayload.alignment = updateData.alignment;
+    if (updateData.background !== undefined) updatePayload.background = updateData.background;
+    if (updateData.experiencePoints !== undefined) updatePayload.experiencePoints = updateData.experiencePoints;
+    if (updateData.language !== undefined) updatePayload.language = updateData.language;
+
+    // === Bio info ===
+    if (updateData.age !== undefined) updatePayload.age = updateData.age;
+    if (updateData.height !== undefined) updatePayload.height = updateData.height;
+    if (updateData.weight !== undefined) updatePayload.weight = updateData.weight;
+    if (updateData.eyes !== undefined) updatePayload.eyes = updateData.eyes;
+    if (updateData.skin !== undefined) updatePayload.skin = updateData.skin;
+    if (updateData.hair !== undefined) updatePayload.hair = updateData.hair;
+    
+    
     let statusChanged = false;
     // === Status Stats ===
     if (updateData.status) {
+        updatePayload.status = { ...character.status };
+
         for (const stat in updateData.status) {
             if (character.status.hasOwnProperty(stat)) {
-                character.status[stat] = validateStatus(updateData.status[stat]);
+                updatePayload.status[stat] = validateStatus(updateData.status[stat]);
                 statusChanged = true;
             }
         }
+        
     }
-    if (statusChanged && updateData.level === undefined) {
-        character.maxHP = calculateMaxHP(character);
-        character.currentHP = Math.min(character.currentHP, character.maxHP);
+    if (statusChanged || updateData.level !== undefined) {
+        const tempCharacter = { 
+            ...character, 
+            ...updatePayload 
+        };
+        updatePayload.maxHP = calculateMaxHP(tempCharacter);
+        updatePayload.currentHP = Math.min(
+        character.currentHP, 
+        updatePayload.maxHP
+        );
     }
     // === Skills Status ===
     if (updateData.skills) {
+        updatePayload.skills = { ...character.skills };
         for (const skill in updateData.skills) {
-            if (character.skills.hasOwnProperty(skill)) {
-                character.skills[skill] = !!updateData.skills[skill];
+            if (updatePayload.skills.hasOwnProperty(skill)) {
+                updatePayload.skills[skill] = !!updateData.skills[skill];
             }
         }
     }
-    if (updateData.proficiencyBonus !== undefined) character.proficiencyBonus = updateData.proficiencyBonus;
+    if (updateData.proficiencyBonus !== undefined) updatePayload.proficiencyBonus = updateData.proficiencyBonus;
 
     // === Combat Stats ===
-    if (updateData.maxHP !== undefined) character.maxHP = updateData.maxHP;
-    if (updateData.currentHP !== undefined) character.currentHP = Math.min(updateData.currentHP, character.maxHP);
-    if (updateData.temporaryHP !== undefined) character.temporaryHP = updateData.temporaryHP;
-    
-    if (updateData.armorClass !== undefined) character.armorClass = updateData.armorClass;
-    if (updateData.speed !== undefined) character.speed = updateData.speed;
+    if (updateData.maxHP !== undefined) updatePayload.maxHP = updateData.maxHP;
+    if (updateData.currentHP !== undefined) {
+        const maxHP = updatePayload.maxHP ?? character.maxHP;
+        updatePayload.currentHP = Math.min(updateData.currentHP, maxHP);
+    };
+    if (updateData.temporaryHP !== undefined) updatePayload.temporaryHP = updateData.temporaryHP;
 
-    if (updateData.inventory !== undefined) character.inventory = updateData.inventory;
-    if (updateData.equipment !== undefined) character.equipment = updateData.equipment;
-    
-    if (updateData.features !== undefined) character.features = updateData.features;
-    if (updateData.traits !== undefined) character.traits = updateData.traits;
-    
-    if (updateData.spells !== undefined) character.spells = updateData.spells;
-    if (updateData.notes !== undefined) character.notes = updateData.notes;
+    if (updateData.armorClass !== undefined) updatePayload.armorClass = updateData.armorClass;
+    if (updateData.speed !== undefined) updatePayload.speed = updateData.speed;
 
-    if (updateData.personalityTraits !== undefined) character.personalityTraits = updateData.personalityTraits;
-    if (updateData.ideals !== undefined) character.ideals = updateData.ideals;
-    if (updateData.bonds !== undefined) character.bonds = updateData.bonds;
-    if (updateData.flaws !== undefined) character.flaws = updateData.flaws;
+    if (updateData.inventory !== undefined) updatePayload.inventory = updateData.inventory;
+    if (updateData.equipment !== undefined) updatePayload.equipment = updateData.equipment;
+
+    if (updateData.features !== undefined) updatePayload.features = updateData.features;
+    if (updateData.traits !== undefined) updatePayload.traits = updateData.traits;
+    
+    if (updateData.spells !== undefined) updatePayload.spells = updateData.spells;
+    if (updateData.notes !== undefined) updatePayload.notes = updateData.notes;
+
+    if (updateData.personalityTraits !== undefined) updatePayload.personalityTraits = updateData.personalityTraits;
+    if (updateData.ideals !== undefined) updatePayload.ideals = updateData.ideals;
+    if (updateData.bonds !== undefined) updatePayload.bonds = updateData.bonds;
+    if (updateData.flaws !== undefined) updatePayload.flaws = updateData.flaws;
 
     if (updateData.deathSaves) {
+        updatePayload.deathSaves = { ...character.deathSaves };
+        
         if (updateData.deathSaves.success !== undefined) {
-            character.deathSaves.success = updateData.deathSaves.success;
+            updatePayload.deathSaves.success = updateData.deathSaves.success;
         }
         if (updateData.deathSaves.failure !== undefined) {
-            character.deathSaves.failure = updateData.deathSaves.failure;
+            updatePayload.deathSaves.failure = updateData.deathSaves.failure;
         }
     }
-    saveCharacters({
+    await updateDoc(docRef, updatePayload);
 
-        characters
-    });
-
-    return character;
+    return { id, ...character, ...updatePayload };
 }
 
-function deleteCharacterById(id) {
-    const character = characters.find(
-        char => char.id === id && !char.isDeleted
-    );
-    if (!character) {
+export async function deleteCharacterById(id) {
+    
+    if (!id) {
         return false;
     }
-    character.isDeleted = true;
 
-    saveCharacters({
-        characters
+    const docRef = doc(db, "characters", id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists() || docSnap.data().isDeleted) {
+        return false;
+    }
+
+    await updateDoc(docRef, {
+        isDeleted: true 
     });
 
     return true;
 }
-
-module.exports = { createCharacter, getAllCharacters, getCharacterById, updateCharacter, deleteCharacterById };

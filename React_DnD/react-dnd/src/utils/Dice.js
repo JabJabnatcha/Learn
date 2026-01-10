@@ -1,8 +1,9 @@
-function rollDice(sides) {
+//C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\Dice.js
+export function rollDice(sides) {
     return Math.floor(Math.random() * sides) + 1;
 }
 
-function rollMultipleDice(numberOfDice, sides) {
+export function rollMultipleDice(numberOfDice, sides) {
     let Dice_Results = [];
     let Dice_Total = 0;
 
@@ -24,8 +25,3 @@ function rollMultipleDice(numberOfDice, sides) {
         total: Dice_Total
     };
 }
-
-module.exports = {
-    rollDice,
-    rollMultipleDice
-};

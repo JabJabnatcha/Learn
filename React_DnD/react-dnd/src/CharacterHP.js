@@ -17,7 +17,7 @@ function abilityModifier(score) {
     return Math.floor((score - 10) / 2);
 }
 
-function calculateMaxHP(character) {
+export function calculateMaxHP(character) {
     const hitDie = CLASS_HIT_DICE[character.characterClass];
     if (!hitDie) {
         throw new Error(`Unknown class: ${character.characterClass}`);
@@ -36,5 +36,3 @@ function calculateMaxHP(character) {
 
     return Math.max(1, maxHP); // HP อย่างน้อยต้อง 1
 }
-
-module.exports = { calculateMaxHP };
