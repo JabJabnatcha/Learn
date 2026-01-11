@@ -26,7 +26,7 @@ export async function createCharacter(characterData) {
   let nextId = 1;
   if (!querySnapshot.empty) {
     const ids = querySnapshot.docs
-      .map((doc) => parseInt(doc.id))
+      .map((doc) => parseInt(doc.data().charId))
       .filter((id) => !isNaN(id));
 
     if (ids.length > 0) {
