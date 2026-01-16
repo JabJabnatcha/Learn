@@ -29,6 +29,9 @@ function calculateSkill(character, skill) {
     if (!ability) {
         throw new Error(`Unknown skill: ${skill}`);
     }
+    if(!character.status || character.status[ability]== null) {
+        throw new Error(`Missing ability score: ${ability}`);
+    }
 
     const score = character.status[ability];
     const modifier = abilityModifier(character.status[ability]);

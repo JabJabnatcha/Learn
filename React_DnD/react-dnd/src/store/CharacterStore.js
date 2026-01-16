@@ -1,8 +1,9 @@
 // C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\CharacterStore.js
-import { validateLevel, validateStatus } from "./CharacterValidate.js";
-import { calculateMaxHP } from "./CharacterHP.js";
+import { validateLevel, validateStatus } from "../domain/character/CharacterValidate.js";
+import { calculateMaxHP } from "../domain/character/CharacterHP.js";
+import { applyBackgrounds } from "../domain/character/characterBackground.js";
 
-import { db } from "./firebaseConfig.js";
+import { db } from "../firebase/firebaseConfig.js";
 import {
   collection,
   getDocs,
@@ -13,6 +14,7 @@ import {
   where,
   addDoc,
 } from "firebase/firestore";
+import { BACKGROUNDS } from "../data/background.js";
 
 export async function createCharacter(characterData) {
   const skills = characterData.skills ?? {};
@@ -51,6 +53,9 @@ export async function createCharacter(characterData) {
     experiencePoints: characterData.experiencePoints || 0, // ค่าเริ่มต้นเป็น 0
     language: characterData.language ?? ["Common"], // ค่าเริ่มต้นเป็น Common +ภาษาของเผ่าที่ไม่ใช่ Common เช่น Elvish, Dwarvish, Orcish+สามารถเพิ่มภาษาได้ตาม background หรือ เรียนรู้เพิ่มเติม
 
+    /*money */
+    money: characterData.money || { pp: 0, gp: 0, sp: 0, cp: 0 }, // เก็บเงินในรูปแบบ pp, gp, sp, cp เพิ่ม field ใหม่
+
     /*Bio info */
     age: characterData.age || 0,
     height: characterData.height || "", // รูปแบบเช่น 5'8" หรือ 172 cm
@@ -81,7 +86,7 @@ export async function createCharacter(characterData) {
       investigation: skills.investigation ?? false, //อิงกับ Intelligence
       medicine: skills.medicine ?? false, //อิงกับ Wisdom
       nature: skills.nature ?? false, //อิงกับ Intelligence
-      perception: skills.perception ?? false, //อิงกับ Wisdom
+      perception: skills.perception ?? false, //อิงกับ Wisdom[[]]
       performance: skills.performance ?? false, //อิงกับ Charisma
       persuasion: skills.persuasion ?? false, //อิงกับ Charisma
       religion: skills.religion ?? false, //อิงกับ Intelligence
@@ -121,6 +126,7 @@ export async function createCharacter(characterData) {
     /*is Deleted */
     isDeleted: false,
   };
+  applyBackgrounds(character,BACKGROUNDS);
   character.maxHP = calculateMaxHP(character);
   character.currentHP = character.maxHP;
 

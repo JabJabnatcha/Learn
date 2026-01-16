@@ -162,19 +162,156 @@ export const CLASSES = {
                 choose: 2 
             },
             ArmorProficiencies: [],
-            WeaponProficiencies: ["Simple Weapons", "Shortswords"],
+            WeaponProficiencies: ["Simple Weapons (Light)", "Martial weapons (Light)"],
             startingEquipment: {
                 A: ["Shortsword", "Any Simple Weapon"],
                 B: ["Dungeoneer's Pack", "Explorer's Pack"],
-                C: ["10 Darts"]
+                C: ["10 Darts","Aryisan Tools", "Musical Instrument"]
             }
         },
         subClasses: ["Way of the Open Hand", "Way of Shadow"]
     },
-    Wizard: {
-        subClasses: ["Evocation", "Necromancy"]
+    paladin: {
+        base:{
+            PrimaryStat: "Strength and Charisma",
+            HitDie: 10,
+            SavingThrows: ["Wisdom", "Charisma"],
+            SkillChoices:{
+                from: [
+                    "Athletics",
+                    "Insight",
+                    "Intimidation",
+                    "Medicine",
+                    "Persuasion",
+                    "Religion"
+                ],
+                choose: 2 
+            },
+            ArmorProficiencies: ["Light Armor", "Medium Armor", "Heavy Armor", "Shields"],
+            WeaponProficiencies: ["Simple Weapons", "Martial Weapons"],
+            startingEquipment: {
+                A: ["Martial Weapon and a Shield", "Two Martial Weapons"],
+                B: ["5 Javelins", "Any Simple Melee Weapon"],
+                C: ["Priest's Pack", "Explorer's Pack"],
+                D: ["Chain Mail", "Holy Symbol"]
+            }
+        },
+        subClasses: ["Oath of Devotion", "Oath of the Ancients"]
+    },
+    Ranger: {
+        base:{
+            PrimaryStat: "Dexterity and Wisdom",
+            HitDie: 10,
+            SavingThrows: ["Strength", "Dexterity"],
+            SkillChoices:{
+                from: [
+                    "Animal Handling",
+                    "Athletics",
+                    "Insight",
+                    "Investigation",
+                    "Nature",
+                    "Perception",
+                    "Stealth",
+                    "Survival"
+                ],
+                choose: 3 
+            },
+            ArmorProficiencies: ["Light Armor", "Medium Armor", "Shields"],
+            WeaponProficiencies: ["Simple Weapons", "Martial Weapons"],
+            startingEquipment: {
+                A: ["Scale Mail", "Leather Armor"],
+                B: ["Two Shortswords", "Any Simple Melee Weapon"],
+                C: ["Dungeoneer's Pack", "Explorer's Pack"],
+                D: ["Longbow (20 arrows)", "Any Simple Weapon"]
+            },
+        },
+        subClasses: ["Hunter", "Beast Master"]
     },
     Rogue: {
+        base:{
+            PrimaryStat: "Dexterity",
+            HitDie: 8,
+            SavingThrows: ["Dexterity", "Intelligence"],
+            SkillChoices:{
+                from: [
+                    "Acrobatics",
+                    "Athletics",
+                    "Deception",
+                    "Insight",
+                    "Intimidation",
+                    "Investigation",
+                    "Perception",
+                    "Performance",
+                    "Persuasion",
+                    "Sleight of Hand",
+                    "Stealth"
+                ],
+                choose: 4
+            },
+            ArmorProficiencies: ["Light Armor"],
+            WeaponProficiencies: ["Simple Weapons", "Hand Crossbows", "Longswords", "Rapiers", "Shortswords"],
+            startingEquipment: {
+                A: ["Rapier", "Shortsword"],
+                B: ["Shortbow (20 arrows)", "Shortsword"],
+                C: ["Burglar's Pack", "Dungeoneer's Pack", "Explorer's Pack"],
+                D: ["Leather Armor", "Two Daggers", "Thieves' Tools"]
+            },
+        },
         subClasses: ["Thief", "Assassin"]
+        
+    },
+    Sorcerer: {
+        base:{
+            PrimaryStat: "Charisma",
+            HitDie: 6,
+            SavingThrows: ["Constitution", "Charisma"],
+            SkillChoices:{
+                from: [
+                    "Arcana",
+                    "Deception",
+                    "Insight",
+                    "Intimidation",
+                    "Persuasion",
+                    "Religion"
+                ],
+                choose: 2
+            },
+            ArmorProficiencies: [],
+            WeaponProficiencies: ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light Crossbows"],
+            startingEquipment: {
+                A: ["Quarterstaff", "Dagger"],
+                B: ["Component Pouch", "Spellbook"],
+                C: ["Dungeoneer's Pack", "Explorer's Pack"],
+                D: ["Leather Armor", "Two Daggers"]
+            }
+        },
+        subClasses: ["Draconic Bloodline", "Wild Magic"]
+    },
+    Wizard: {
+        base:{
+            PrimaryStat: "Intelligence",
+            HitDie: 6,
+            SavingThrows: ["Intelligence", "Wisdom"],
+            SkillChoices:{
+                from: [
+                    "Arcana",
+                    "History",
+                    "Insight",
+                    "Investigation",
+                    "Medicine",
+                    "Religion"
+                ],
+                choose: 2 
+            },
+            ArmorProficiencies: [],
+            WeaponProficiencies: ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light Crossbows"],
+            startingEquipment: {
+                A: ["Quarterstaff", "Dagger"],
+                B: ["Component Pouch", "Spellbook"],
+                C: ["Scholar's Pack", "Explorer's Pack"],
+                D: ["Spellbook"]
+            }
+        },
+        subClasses: ["Evocation", "Necromancy"]
     }
-};
+}
