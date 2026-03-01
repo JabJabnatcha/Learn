@@ -1,0 +1,179 @@
+// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\entity\Character.js
+
+const MAX_LEVEL = 10;
+
+const EXP_TABLE = {
+  1: 0,
+  2: 300,
+  3: 900,
+  4: 2700,
+  5: 6500,
+  6: 14000,
+  7: 23000,
+  8: 34000,
+  9: 48000,
+  10: 64000,
+};
+
+const CLASS_HIT_DICE = {
+  Fighter: 10,
+  Wizard: 6,
+  Rogue: 8,
+  Cleric: 8,
+  Paladin: 10,
+  Ranger: 10,
+  Barbarian: 12,
+  Bard: 8,
+  Monk: 8,
+  Druid: 8,
+  Sorcerer: 6,
+  Warlock: 8,
+};
+
+export class Character {
+  constructor(rawData, backgrounds = []) {
+    this.#validateRequiredFields(rawData);
+
+    // Identity
+    this.charId = rawData.charId;
+    this.name = rawData.name;
+    this.race = rawData.race;
+    this.characterClass = rawData.characterClass;
+
+    // Progression
+    this.level = this.#validateLevel(rawData.level ?? 1);
+    this.experiencePoints = rawData.experiencePoints ?? 0;
+
+    // Stats
+    this.baseStats = this.#initializeBaseStats(rawData.status);
+    this.backgroundModifiers = {};
+    this.#applyBackgrounds(backgrounds);
+
+    // HP System
+    this.maxHP = this.#calculateMaxHP();
+    this.currentHP = this.maxHP;
+    this.temporaryHP = 0;
+
+    // State
+    this.status = "Alive"; // Alive | Unconscious | Dead
+  }
+
+  #validateRequiredFields(rawData) {
+    if (!rawData?.charId) throw new Error("Character must have charId");
+    if (!rawData?.name) throw new Error("Character must have name");
+    if (!rawData?.race) throw new Error("Character must have race");
+    if (!rawData?.characterClass) throw new Error("Character must have class");
+  }
+
+  #validateLevel(level) {
+    if (level < 1) return 1;
+    if (level > MAX_LEVEL) return MAX_LEVEL;
+    return level;
+  }
+
+  #initializeBaseStats(status = {}) {
+    return {
+      strength: status.strength ?? 10,
+      dexterity: status.dexterity ?? 10,
+      constitution: status.constitution ?? 10,
+      intelligence: status.intelligence ?? 10,
+      wisdom: status.wisdom ?? 10,
+      charisma: status.charisma ?? 10,
+    };
+  }
+
+  #applyBackgrounds(backgrounds) {
+    for (const bg of backgrounds) {
+      if (bg.statModifiers) {
+        for (const key in bg.statModifiers) {
+          this.backgroundModifiers[key] =
+            (this.backgroundModifiers[key] ?? 0) + bg.statModifiers[key];
+        }
+      }
+    }
+  }
+
+  #calculateMaxHP() {
+    const hitDie = CLASS_HIT_DICE[this.characterClass];
+    if (!hitDie) {
+      throw new Error(`Unknown class: ${this.characterClass}`);
+    }
+
+    const conMod = Math.floor((this.getFinalStat("constitution") - 10) / 2);
+
+    // Level 1
+    let maxHP = hitDie + conMod;
+
+    // Level 2+
+    const avgHitDie = Math.ceil(hitDie / 2) + 1;
+
+    for (let lvl = 2; lvl <= this.level; lvl++) {
+      maxHP += avgHitDie + conMod;
+    }
+
+    return Math.max(1, maxHP);
+  }
+
+  getFinalStat(statName) {
+    return this.baseStats[statName] + (this.backgroundModifiers[statName] ?? 0);
+  }
+
+  takeDamage(amount) {
+    if (this.status === "Dead") return;
+
+    let remainingDamage = amount;
+
+    // 1. หัก temporaryHP ก่อน
+    if (this.temporaryHP > 0) {
+      const tempUsed = Math.min(this.temporaryHP, remainingDamage);
+      this.temporaryHP -= tempUsed;
+      remainingDamage -= tempUsed;
+    }
+
+    // 2. หัก currentHP
+    if (remainingDamage > 0) {
+      this.currentHP = Math.max(0, this.currentHP - remainingDamage);
+    }
+
+    // 3. เช็คสถานะ
+    if (this.currentHP === 0) {
+      this.status = "Unconscious";
+    }
+  }
+
+  heal(amount) {
+    if (this.status === "Dead") return;
+
+    this.currentHP = Math.min(this.maxHP, this.currentHP + amount);
+
+    if (this.currentHP > 0) {
+      this.status = "Alive";
+    }
+  }
+
+  applyTemporaryHP(amount) {
+    this.temporaryHP = Math.max(this.temporaryHP, amount);
+  }
+
+  get proficiencyBonus() {
+    if (this.level <= 4) return 2;
+    if (this.level <= 8) return 3;
+    return 4;
+  }
+
+  isAlive() {
+    return this.status === "Alive";
+  }
+
+  isUnconscious() {
+    return this.status === "Unconscious";
+  }
+
+  isDead() {
+    return this.status === "Dead";
+  }
+
+  markDead() {
+    this.status = "Dead";
+  }
+}

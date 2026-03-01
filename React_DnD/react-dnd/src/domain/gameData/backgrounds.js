@@ -1,3 +1,4 @@
+//C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\data\background.js
 export const BACKGROUNDS = [
   // ===== Social =====
   {

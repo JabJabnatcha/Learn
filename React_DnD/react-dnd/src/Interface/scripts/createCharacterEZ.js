@@ -1,10 +1,10 @@
 // C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\scripts\createCharacterEZ.js
 import readline from "readline";
 import { createCharacter } from "../CharacterStore.js";
-import { RACES } from "../data/races.js";
-import { CLASSES } from "../data/classes.js";
-import { ALIGNMENTS } from "../data/alignments.js";
-import { generateStats } from "../utils/statGenerator.js";
+import { RACES } from "../../domain/data/races.js";
+import { CLASSES } from "../../domain/data/classes.js";
+import { ALIGNMENTS } from "../../domain/data/alignments.js";
+import { generateStats } from "../../domain/utils/statGenerator.js";
 
 const rl = readline.createInterface({
     input: process.stdin,

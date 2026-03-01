@@ -1,3 +1,4 @@
+// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\Skill_Check.js
 const { rollDice } = require('./Dice');
 // const { rollMultipleDice } = require('./dice');
 

@@ -1,3 +1,4 @@
+// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\services\calculateCharacterHP.js
 const CLASS_HIT_DICE = {
     Fighter: 10,
     Wizard: 6,

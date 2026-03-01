@@ -1,8 +1,8 @@
-// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\createCharacter.js
-import { applyBackgrounds } from "./characterBackground";
-import { calculateMaxHP } from "./CharacterHP";
+// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\services\createCharacter.js
+import { applyBackgrounds } from "../characterBackground";
+import { calculateMaxHP } from "./calculateCharacterHP";
 /*import { calculateSkill } from "./CharacterSkills";*/
-import { validateLevel, validateStatus } from "./CharacterValidate";
+import { validateLevel, validateStatus } from "./validateCharacter";
 
 export function createCharacterEntity(rawData, backgrounds) {
     const skills = rawData.skills ?? {};

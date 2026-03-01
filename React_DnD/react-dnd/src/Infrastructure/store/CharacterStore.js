@@ -1,5 +1,5 @@
 // C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\CharacterStore.js
-import { createCharacterEntity } from "../domain/character/createCharacter.js";
+import { createCharacterEntity } from "../../domain/character/createCharacter.js";
 
 import { db } from "../firebase/firebaseConfig.js";
 import {
@@ -12,7 +12,7 @@ import {
   where,
   addDoc,
 } from "firebase/firestore";
-import { BACKGROUNDS } from "../data/background.js";
+import { BACKGROUNDS } from "../../domain/data/background.js";
 
 export async function createCharacter(characterData) {
 

@@ -1,4 +1,5 @@
-import { rollDice } from "./Dice.js";
+// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\generation\statGenerator.js
+import { rollDice } from "../dice/rollDice.js";
 
 export function generateStats() {
     const rollStat = () => {
