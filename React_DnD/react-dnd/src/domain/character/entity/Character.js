@@ -30,6 +30,27 @@ const CLASS_HIT_DICE = {
   Warlock: 8,
 };
 
+const SKILL_MAPPING = {
+  acrobatics: "dexterity",
+  animalHandling: "wisdom",
+  arcana: "intelligence",
+  athletics: "strength",
+  deception: "charisma",
+  history: "intelligence",
+  insight: "wisdom",
+  intimidation: "charisma",
+  investigation: "intelligence",
+  medicine: "wisdom",
+  nature: "intelligence",
+  perception: "wisdom",
+  performance: "charisma",
+  persuasion: "charisma",
+  religion: "intelligence",
+  sleightOfHand: "dexterity",
+  stealth: "dexterity",
+  survival: "wisdom",
+};
+
 export class Character {
   constructor(rawData, backgrounds = []) {
     this.#validateRequiredFields(rawData);
@@ -53,6 +74,8 @@ export class Character {
     this.maxHP = this.#calculateMaxHP();
     this.currentHP = this.maxHP;
     this.temporaryHP = 0;
+    // SkillsProficiency
+    this.skillProficiencies = new Set(rawData.skillProficiencies ?? []);
 
     // State
     this.status = "Alive"; // Alive | Unconscious | Dead
@@ -91,6 +114,26 @@ export class Character {
         }
       }
     }
+  }
+
+  #getAbilityModifier(statName) {
+    const score = this.getFinalStat(statName);
+    return Math.floor((score - 10) / 2);
+  }
+
+  getSkillModifier(skill) {
+    const ability = SKILL_MAPPING[skill];
+    if (!ability) {
+      throw new Error(`Unknown skill: ${skill}`);
+    }
+
+    const abilityMod = this.#getAbilityModifier(ability);
+
+    const proficiency = this.skillProficiencies.has(skill)
+      ? this.proficiencyBonus
+      : 0;
+
+    return abilityMod + proficiency;
   }
 
   #calculateMaxHP() {
