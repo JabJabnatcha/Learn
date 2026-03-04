@@ -1,6 +1,6 @@
 // C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\entity\Character.js
-import { CharacterProfile } from "../value-object/CharacterProfile";
-import { Wallet } from "../value-object/wallet";
+import { CharacterProfile } from "../value-object/CharacterProfile.js";
+import { Wallet } from "../value-object/wallet.js";
 
 const MAX_LEVEL = 10;
 

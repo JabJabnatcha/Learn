@@ -1,7 +1,7 @@
 // src/Infrastructure/database/CharacterRepository.js
 
-import { createCharacterEntity } from "../../domain/character/createCharacter.js";
 import { db } from "../firebase/firebaseConfig.js";
+import { CharacterMapper } from "./CharacterMapper.js";
 import {
   collection,
   getDocs,
@@ -17,10 +17,12 @@ const COLLECTION_NAME = "characters";
 
 // ==================== CREATE ====================
 export async function createCharacter(characterEntity) {
+  const persistenceData = 
+  CharacterMapper.toPersistence(characterEntity);
+
   const docRef = await addDoc(
     collection(db, COLLECTION_NAME),
-    characterEntity
-  );
+    persistenceData);
 
   return { id: docRef.id, ...characterEntity };
 }
@@ -29,15 +31,17 @@ export async function createCharacter(characterEntity) {
 export async function getAllCharacters() {
   const q = query(
     collection(db, COLLECTION_NAME),
-    where("isDeleted", "==", false)
+    where("isDeleted", "==", false),
   );
 
   const querySnapshot = await getDocs(q);
 
-  return querySnapshot.docs.map((docSnap) => ({
-    id: docSnap.id,
-    ...docSnap.data(),
-  }));
+  return querySnapshot.docs.map((docSnap) =>
+    CharacterMapper.toDomain({
+      id: docSnap.id,
+      ...docSnap.data(),
+    }),
+  );
 }
 
 // ==================== READ ONE ====================
@@ -50,10 +54,10 @@ export async function getCharacterById(id) {
   const data = docSnap.data();
   if (data.isDeleted) return null;
 
-  return {
+  return CharacterMapper.toDomain({
     id: docSnap.id,
     ...data,
-  };
+  });
 }
 
 // ==================== UPDATE ====================
@@ -63,7 +67,7 @@ export async function updateCharacter(id, characterEntity) {
 
   if (!docSnap.exists()) return null;
 
-  await updateDoc(docRef, characterEntity);
+  await updateDoc(docRef, CharacterMapper.toPersistence(characterEntity));
 
   return { id, ...characterEntity };
 }

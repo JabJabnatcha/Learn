@@ -1,79 +1,35 @@
 // C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\Application\services\createCharacter.js
-export function createCharacterEntity(rawData, backgrounds) {
-    const character ={
-        charId: rawData.charId,
-        name: rawData.name,
-        race: rawData.race,
-        subRace: rawData.subRace ?? "",
-        characterClass: rawData.characterClass,
-        characterSubClass: rawData.characterSubClass ?? "",
-        alignment: rawData.alignment ?? "",
-        level: validateLevel(rawData.level),
-        background: rawData.background ?? [],
-        experiencePoints: rawData.experiencePoints ?? 0,
-        language: rawData.language ?? ["Common"],
 
-        money: rawData.money ?? { pp: 0, gp: 0, sp: 0, cp: 0 },
+// src/Application/services/createCharacter.js
 
-        age: rawData.age ?? 0,
-        height: rawData.height ?? "",
-        weight: rawData.weight ?? "",
-        eyes: rawData.eyes ?? "",
-        skin: rawData.skin ?? "",
-        hair: rawData.hair ?? "",
+import { Character } from "../../domain/character/entity/Character.js";
+import { CharacterProfile } from "../../domain/character/value-object/CharacterProfile.js";
+import { Wallet } from "../../domain/character/value-object/wallet.js";
 
-        status: {
-            strength: validateStatus(rawData.status?.strength),
-            dexterity: validateStatus(rawData.status?.dexterity),
-            constitution: validateStatus(rawData.status?.constitution),
-            intelligence: validateStatus(rawData.status?.intelligence),
-            wisdom: validateStatus(rawData.status?.wisdom),
-            charisma: validateStatus(rawData.status?.charisma),
-        },
+export function createCharacter(rawData, backgrounds = []) {
 
-        skills: {
-            acrobatics: skills.acrobatics ?? false,
-            animalHandling: skills.animalHandling ?? false,
-            arcana: skills.arcana ?? false,
-            athletics: skills.athletics ?? false,
-            deception: skills.deception ?? false,
-            history: skills.history ?? false,
-            insight: skills.insight ?? false,
-            intimidation: skills.intimidation ?? false,
-            medicine: skills.medicine ?? false,
-            nature: skills.nature ?? false,
-            perception: skills.perception ?? false,
-            performance: skills.performance ?? false,
-            persuasion: skills.persuasion ?? false,
-            religion: skills.religion ?? false,
-            sleightOfHand: skills.sleightOfHand ?? false,
-            stealth: skills.stealth ?? false,
-            survival: skills.survival ?? false,
-        },
-        proficiencyBonus: rawData.proficiencyBonus ?? 2,
-        
-        armorClass: rawData.armorClass ?? 0,
-        speed: rawData.speed ?? 30,
-        maxHP: 0,
-        currentHP: 0,
-        temporaryHP: 0,
+  // 1️⃣ เตรียม Value Object: Profile
+  const profile = new CharacterProfile({
+    age: rawData.age,
+    height: rawData.height,
+    weight: rawData.weight,
+    eyes: rawData.eyes,
+    skin: rawData.skin,
+    hair: rawData.hair,
+  });
 
-        inventory: rawData.inventory ?? [],
-        equipment: rawData.equipment ?? [],
+  // 2️⃣ เตรียม Value Object: Wallet
+  const wallet = new Wallet(rawData.money);
 
-        features: rawData.features ?? [],
-        traits: rawData.traits ?? [],
-        spells: rawData.spells ?? [],
-        note: rawData.note ?? [],
+  // 3️⃣ สร้าง Entity
+  const character = new Character(
+    {
+      ...rawData,
+      profile,
+      money: wallet,
+    },
+    backgrounds
+  );
 
-        personalityTraits: rawData.personalityTraits ?? "",
-        ideals: rawData.ideals ?? "",
-        bonds: rawData.bonds ?? "",
-        flaws: rawData.flaws ?? "",
-
-        deathSave: { success: 0, failure: 0 },
-        isDeleted: false,
-    };
-    
-return character;
+  return character;
 }

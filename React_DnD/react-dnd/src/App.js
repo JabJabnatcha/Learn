@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllCharacters, createCharacter } from "./CharacterStoreFirebase";
+import { getAllCharacters, createCharacter } from "./Infrastructure/database/CharacterRepository.js";
 
 function App() {
   const [characters, setCharacters] = useState([]);
