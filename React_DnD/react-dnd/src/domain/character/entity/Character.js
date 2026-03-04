@@ -1,4 +1,6 @@
 // C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\entity\Character.js
+import { CharacterProfile } from "../value-object/CharacterProfile";
+import { Wallet } from "../value-object/wallet";
 
 const MAX_LEVEL = 10;
 
@@ -53,6 +55,18 @@ const SKILL_MAPPING = {
 
 export class Character {
   constructor(rawData, backgrounds = []) {
+    this.profile =
+      rawData.profile instanceof CharacterProfile
+        ? rawData.profile
+        : new CharacterProfile({
+            age: rawData.age,
+            height: rawData.height,
+            weight: rawData.weight,
+            eyes: rawData.eyes,
+            skin: rawData.skin,
+            hair: rawData.hair,
+          });
+
     this.#validateRequiredFields(rawData);
 
     // Identity
@@ -77,8 +91,26 @@ export class Character {
     // SkillsProficiency
     this.skillProficiencies = new Set(rawData.skillProficiencies ?? []);
 
+    // wallet
+    this.wallet =
+      rawData.money instanceof Wallet
+        ? rawData.money
+        : new Wallet(rawData.money);
+
     // State
     this.status = "Alive"; // Alive | Unconscious | Dead
+  }
+
+  #validateStatScore(score) {
+    if (typeof score !== "number") {
+      throw new Error("Stat must be a number");
+    }
+
+    if (score < 1 || score > 30) {
+      throw new Error("Stat must be between 1 and 30");
+    }
+
+    return score;
   }
 
   #validateRequiredFields(rawData) {
@@ -89,19 +121,25 @@ export class Character {
   }
 
   #validateLevel(level) {
-    if (level < 1) return 1;
-    if (level > MAX_LEVEL) return MAX_LEVEL;
+    if (typeof level !== "number") {
+      throw new Error("Level must be a number");
+    }
+
+    if (level < 1 || level > MAX_LEVEL) {
+      throw new Error(`Level must be between 1 and ${MAX_LEVEL}`);
+    }
+
     return level;
   }
 
   #initializeBaseStats(status = {}) {
     return {
-      strength: status.strength ?? 10,
-      dexterity: status.dexterity ?? 10,
-      constitution: status.constitution ?? 10,
-      intelligence: status.intelligence ?? 10,
-      wisdom: status.wisdom ?? 10,
-      charisma: status.charisma ?? 10,
+      strength: this.#validateStatScore(status.strength ?? 10),
+      dexterity: this.#validateStatScore(status.dexterity ?? 10),
+      constitution: this.#validateStatScore(status.constitution ?? 10),
+      intelligence: this.#validateStatScore(status.intelligence ?? 10),
+      wisdom: this.#validateStatScore(status.wisdom ?? 10),
+      charisma: this.#validateStatScore(status.charisma ?? 10),
     };
   }
 
@@ -202,6 +240,18 @@ export class Character {
     if (this.level <= 4) return 2;
     if (this.level <= 8) return 3;
     return 4;
+  }
+
+  pay(cost) {
+    if (!this.wallet.canAfford(cost)) {
+      throw new Error("Not enough gold");
+    }
+
+    this.wallet = this.wallet.subtract(cost);
+  }
+
+  earn(amount) {
+    this.wallet = this.wallet.add(amount);
   }
 
   isAlive() {
