@@ -4,7 +4,7 @@ import { Wallet } from "../value-object/wallet.js";
 
 const MAX_LEVEL = 10;
 
-const EXP_TABLE = {
+const EXP_TABLE = { // eslint-disable-line no-unused-vars
   1: 0,
   2: 300,
   3: 900,
@@ -80,7 +80,7 @@ export class Character {
     this.experiencePoints = rawData.experiencePoints ?? 0;
 
     // Stats
-    this.baseStats = this.#initializeBaseStats(rawData.status);
+    this.baseStatus = this.#initializeBaseStatus(rawData.status);
     this.backgroundModifiers = {};
     this.#applyBackgrounds(backgrounds);
 
@@ -132,7 +132,7 @@ export class Character {
     return level;
   }
 
-  #initializeBaseStats(status = {}) {
+  #initializeBaseStatus(status = {}) {
     return {
       strength: this.#validateStatScore(status.strength ?? 10),
       dexterity: this.#validateStatScore(status.dexterity ?? 10),
@@ -196,7 +196,7 @@ export class Character {
   }
 
   getFinalStat(statName) {
-    return this.baseStats[statName] + (this.backgroundModifiers[statName] ?? 0);
+    return this.baseStatus[statName] + (this.backgroundModifiers[statName] ?? 0);
   }
 
   takeDamage(amount) {

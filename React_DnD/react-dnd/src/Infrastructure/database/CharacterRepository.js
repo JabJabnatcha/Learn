@@ -1,85 +1,84 @@
 // src/Infrastructure/database/CharacterRepository.js
 
-import { db } from "../firebase/firebaseConfig.js";
+import { db } from "./dexieConfig.js";
 import { CharacterMapper } from "./CharacterMapper.js";
-import {
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  updateDoc,
-  query,
-  where,
-  addDoc,
-} from "firebase/firestore";
-
-const COLLECTION_NAME = "characters";
 
 // ==================== CREATE ====================
 export async function createCharacter(characterEntity) {
-  const persistenceData = 
-  CharacterMapper.toPersistence(characterEntity);
+  try {
+    const persistenceData =
+      CharacterMapper.toPersistence(characterEntity);
 
-  const docRef = await addDoc(
-    collection(db, COLLECTION_NAME),
-    persistenceData);
+    console.log("Saving character:", persistenceData);
 
-  return { id: docRef.id, ...characterEntity };
+    // Ensure charId exists
+    if (!persistenceData.charId) {
+      throw new Error("Character must have charId before saving");
+    }
+
+    // Add with charId as primary key
+    await db.characters.put(persistenceData);
+
+    const saved = await db.characters.get(characterEntity.charId);
+
+    if (!saved) {
+      console.error("Failed to retrieve saved character with charId:", characterEntity.charId);
+      // Return converted character entity as fallback
+      return CharacterMapper.toDomain(persistenceData);
+    }
+
+    return CharacterMapper.toDomain(saved);
+  } catch (error) {
+    console.error("CharacterRepository.createCharacter error:", error);
+    console.error("Character entity:", characterEntity);
+    throw error;
+  }
 }
 
 // ==================== READ ALL ====================
 export async function getAllCharacters() {
-  const q = query(
-    collection(db, COLLECTION_NAME),
-    where("isDeleted", "==", false),
-  );
+  try {
+    const characters = await db.characters
+      .where('isDeleted')
+      .equals(false)
+      .toArray();
 
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map((docSnap) =>
-    CharacterMapper.toDomain({
-      id: docSnap.id,
-      ...docSnap.data(),
-    }),
-  );
+    return characters.map((char) =>
+      CharacterMapper.toDomain(char)
+    );
+  } catch (error) {
+    console.error("CharacterRepository.getAllCharacters error:", error);
+    throw error;
+  }
 }
 
 // ==================== READ ONE ====================
-export async function getCharacterById(id) {
-  const docRef = doc(db, COLLECTION_NAME, id);
-  const docSnap = await getDoc(docRef);
+export async function getCharacterById(charId) {
+  const character = await db.characters.get(charId);
 
-  if (!docSnap.exists()) return null;
+  if (!character || character.isDeleted) return null;
 
-  const data = docSnap.data();
-  if (data.isDeleted) return null;
-
-  return CharacterMapper.toDomain({
-    id: docSnap.id,
-    ...data,
-  });
+  return CharacterMapper.toDomain(character);
 }
 
 // ==================== UPDATE ====================
-export async function updateCharacter(id, characterEntity) {
-  const docRef = doc(db, COLLECTION_NAME, id);
-  const docSnap = await getDoc(docRef);
+export async function updateCharacter(charId, characterEntity) {
+  const existing = await db.characters.get(charId);
 
-  if (!docSnap.exists()) return null;
+  if (!existing) return null;
 
-  await updateDoc(docRef, CharacterMapper.toPersistence(characterEntity));
+  await db.characters.update(charId, CharacterMapper.toPersistence(characterEntity));
 
-  return { id, ...characterEntity };
+  return { charId, ...characterEntity };
 }
 
 // ==================== SOFT DELETE ====================
-export async function deleteCharacterById(id) {
-  const docRef = doc(db, COLLECTION_NAME, id);
-  const docSnap = await getDoc(docRef);
+export async function deleteCharacterById(charId) {
+  const existing = await db.characters.get(charId);
 
-  if (!docSnap.exists()) return false;
+  if (!existing) return false;
 
-  await updateDoc(docRef, {
+  await db.characters.update(charId, {
     isDeleted: true,
   });
 

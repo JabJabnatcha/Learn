@@ -14,25 +14,32 @@ export class CharacterMapper {
       level: character.level,
       experiencePoints: character.experiencePoints,
 
-      profile: character.profile.toJSON(),
-      wallet: character.wallet.toJSON(),
+      profile: character.profile?.toJSON?.() || {},
+      wallet: character.wallet?.toJSON?.() || { pp: 0, gp: 0, sp: 0, cp: 0 },
 
-      baseStats: character.baseStats,
+      baseStatus: character.baseStatus || {},
       status: character.status,
 
-      currentHP: character.currentHP,
-      temporaryHP: character.temporaryHP,
+      currentHP: character.currentHP || 0,
+      temporaryHP: character.temporaryHP || 0,
 
       isDeleted: character.isDeleted || false,
     };
   }
 
   static toDomain(rawData) {
+    // Ensure charId exists (fallback for old data)
+    const dataWithCharId = {
+      ...rawData,
+      charId: rawData.charId || rawData.id || crypto.randomUUID(),
+    };
+
     return new Character(
       {
-        ...rawData,
-        money: new Wallet(rawData.wallet),
-        profile: new CharacterProfile(rawData.profile),
+        ...dataWithCharId,
+        status: rawData.baseStatus || {},
+        wallet: new Wallet(rawData.wallet || {}),
+        profile: new CharacterProfile(rawData.profile || {}),
       },
       [],
     );

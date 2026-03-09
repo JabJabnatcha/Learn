@@ -19,16 +19,18 @@ export function createCharacter(rawData, backgrounds = []) {
   });
 
   // 2️⃣ เตรียม Value Object: Wallet
-  const wallet = new Wallet(data.money ?? 0);
+  const wallet = new Wallet(
+    data.wallet ?? { pp: 0, gp: data.money ?? 0, sp: 0, cp: 0 },
+  );
 
   // 3️⃣ สร้าง Entity
   const character = new Character(
     {
       ...data,
       profile,
-      wallet,
+      money: wallet,
     },
-    backgrounds
+    backgrounds,
   );
 
   return character;

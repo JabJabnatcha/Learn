@@ -1,8 +1,5 @@
 {
   "name": "react-dnd",
   "private": true,
-  "type": "module",
-  "dependencies": {
-    "firebase": "^12.7.0"
-  }
+  "type": "module"
 }
