@@ -9,8 +9,11 @@ export class CharacterMapper {
     return {
       charId: character.charId,
       name: character.name,
+      alignment: character.alignment,
       race: character.race,
+      subRace: character.subRace,
       characterClass: character.characterClass,
+      characterSubClass: character.characterSubClass,
       level: character.level,
       experiencePoints: character.experiencePoints,
 

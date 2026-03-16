@@ -72,8 +72,11 @@ export class Character {
     // Identity
     this.charId = rawData.charId;
     this.name = rawData.name;
+    this.alignment = rawData.alignment;
     this.race = rawData.race;
+    this.subRace = rawData.subRace;
     this.characterClass = rawData.characterClass;
+    this.characterSubClass = rawData.characterSubClass;
 
     // Progression
     this.level = this.#validateLevel(rawData.level ?? 1);

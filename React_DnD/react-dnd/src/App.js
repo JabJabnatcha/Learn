@@ -4,13 +4,18 @@ import { createCharacter as createCharacterService } from "./Application/service
 import { createCharacter as createCharacterRepo } from "./Infrastructure/database/CharacterRepository.js";
 import { RACES } from "./domain/gameData/races.js";
 import { CLASSES } from "./domain/gameData/classes.js";
+import { ALIGNMENTS } from "./domain/gameData/alignments.js";
 
 function App() {
   const [characters, setCharacters] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
+    alignment: "",
     race: "",
+    subRace: "",
     characterClass: "",
+    characterSubClass: "",
+    
     level: 1,
     status: {
       strength: 10,
@@ -36,6 +41,20 @@ function App() {
     }
     fetchCharacters();
   }, []);
+
+  const raceData = RACES[formData.race];
+  const classData = CLASSES[formData.characterClass];
+
+const subraceOptions =
+  raceData?.subRaces && Object.keys(raceData.subRaces).length > 0
+    ? Object.keys(raceData.subRaces)
+    : [];
+    
+const subclassOptions =
+  classData?.subClasses && classData.subClasses.length > 0
+    ? classData.subClasses
+    : [];
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -81,6 +100,7 @@ function App() {
       setFormData({
         name: "",
         race: "",
+        subrace: "",
         characterClass: "",
         level: 1,
         status: {
@@ -140,6 +160,24 @@ function App() {
           </div>
           <div>
             <label>
+              Alignment:
+              <select
+                name="alignment"
+                value={formData.alignment}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select Alignment</option>
+                {ALIGNMENTS.map((alignment) => (
+                  <option key={alignment} value={alignment}>
+                    {alignment}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>
               Race:
               <select
                 name="race"
@@ -151,6 +189,25 @@ function App() {
                 {Object.keys(RACES).map((race) => (
                   <option key={race} value={race}>
                     {race}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>
+              Subrace:
+              <select
+                name="subRace"
+                value={formData.subRace}
+                onChange={handleInputChange}
+                disabled={!formData.race || subraceOptions.length === 0}
+                required
+              >
+                <option value="">{subraceOptions.length === 0 ? "No subraces available" : "Select Subrace"}</option>
+                {subraceOptions.map((subrace) => (
+                  <option key={subrace} value={subrace}>
+                    {subrace}
                   </option>
                 ))}
               </select>
@@ -171,6 +228,34 @@ function App() {
                     {cls}
                   </option>
                 ))}
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>
+              SubClass:
+              <select
+                name="characterSubClass"
+                value={formData.characterSubClass}
+                onChange={handleInputChange}
+                disabled={!formData.characterClass || !CLASSES[formData.characterClass]?.subClasses || CLASSES[formData.characterClass].subClasses.length === 0}
+                required
+              >
+                <option value="">
+                  {!formData.characterClass
+                    ? "Select class first"
+                    : !CLASSES[formData.characterClass]?.subClasses ||
+                      CLASSES[formData.characterClass].subClasses.length === 0
+                    ? "No subclasses available"
+                    : "Select Subclass"}
+                </option>
+                {formData.characterClass &&
+                  CLASSES[formData.characterClass]?.subClasses &&
+                  CLASSES[formData.characterClass].subClasses.map((subcls) => (
+                    <option key={subcls} value={subcls}>
+                      {subcls}
+                    </option>
+                  ))}
               </select>
             </label>
           </div>
@@ -375,10 +460,19 @@ function App() {
               >
                 <h3>{c.name}</h3>
                 <p>
+                  <strong>Alignment:</strong> {c.alignment}
+                </p>
+                <p>
                   <strong>Race:</strong> {c.race}
                 </p>
                 <p>
+                  <strong>Subrace:</strong> {c.subRace}
+                </p>
+                <p>
                   <strong>Class:</strong> {c.characterClass}
+                </p>
+                <p>
+                  <strong>Subclass:</strong> {c.characterSubClass}
                 </p>
                 <p>
                   <strong>Level:</strong> {c.level}
