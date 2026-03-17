@@ -1,5 +1,6 @@
 // C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\entity\Character.js
 import { RACES } from "../../gameData/races.js";
+import { CLASSES } from "../../gameData/classes.js";
 import { CharacterProfile } from "../value-object/CharacterProfile.js";
 import { Wallet } from "../value-object/wallet.js";
 
@@ -17,21 +18,6 @@ const EXP_TABLE = {
   8: 34000,
   9: 48000,
   10: 64000,
-};
-
-const CLASS_HIT_DICE = {
-  Fighter: 10,
-  Wizard: 6,
-  Rogue: 8,
-  Cleric: 8,
-  Paladin: 10,
-  Ranger: 10,
-  Barbarian: 12,
-  Bard: 8,
-  Monk: 8,
-  Druid: 8,
-  Sorcerer: 6,
-  Warlock: 8,
 };
 
 const SKILL_MAPPING = {
@@ -59,6 +45,8 @@ export class Character {
   constructor(rawData, backgrounds = []) {
     const raceData = RACES[rawData.race];
     const subRaceData = raceData?.subRaces?.[rawData.subRace];
+    const classData = CLASSES[rawData.characterClass];
+    // const subClassData = classData?.subClasses?.[rawData.characterSubClass];
 
     this.profile =
       rawData.profile instanceof CharacterProfile
@@ -91,12 +79,14 @@ export class Character {
     this.baseStatus = this.#initializeBaseStatus(rawData.status);
     // Apply race
     this.#applyRace(raceData.base, subRaceData);
+    // Apply class
+    this.#applyClass(classData.base);
     this.backgroundModifiers = {};
     this.#applyBackgrounds(backgrounds);
     // HP System
     this.maxHP = this.#calculateMaxHP();
   
-    this.currentHP = this.maxHP;
+    this.currentHP = rawData.currentHP ?? this.maxHP;
     this.temporaryHP = 0;
     // SkillsProficiency
     this.skillProficiencies = new Set(rawData.skillProficiencies ?? []);
@@ -143,15 +133,22 @@ export class Character {
   }
 
   #initializeBaseStatus(status = {}) {
-    return {
-      strength: this.#validateStatScore(status.strength ?? 10),
-      dexterity: this.#validateStatScore(status.dexterity ?? 10),
-      constitution: this.#validateStatScore(status.constitution ?? 10),
-      intelligence: this.#validateStatScore(status.intelligence ?? 10),
-      wisdom: this.#validateStatScore(status.wisdom ?? 10),
-      charisma: this.#validateStatScore(status.charisma ?? 10),
-    };
-  }
+  const safe = (val) => {
+    const num = Number(val);
+    if (isNaN(num) || num < 1) return 10;
+    if (num > 30) return 30;
+    return num;
+  };
+
+  return {
+    strength: safe(status.strength),
+    dexterity: safe(status.dexterity),
+    constitution: safe(status.constitution),
+    intelligence: safe(status.intelligence),
+    wisdom: safe(status.wisdom),
+    charisma: safe(status.charisma),
+  };
+}
 
   #applyRace(race, subRace) {
     this.features = [...new Set([...(race.features ?? []), ...(subRace?.features ?? [])])];
@@ -169,6 +166,17 @@ export class Character {
         this.baseStatus[key] += raceBonus[stat];
       }
     }
+  }
+
+  #applyClass(classBase) {
+    this.savingThrows = classBase.SavingThrows ?? [];
+    this.armorProficiencies = classBase.ArmorProficiencies ?? [];
+    this.weaponProficiencies = classBase.WeaponProficiencies ?? [];
+    this.primaryStat = classBase.PrimaryStat ?? "None";
+
+    this.hitDie = classBase.HitDie ?? 0;
+    // this.startingEquipment = classBase.startingEquipment ?? {};
+    this.skillChoices = classBase.SkillChoices ?? null;
   }
 
   #applyBackgrounds(backgrounds) {
@@ -203,7 +211,7 @@ export class Character {
   }
 
   #calculateMaxHP() {
-    const hitDie = CLASS_HIT_DICE[this.characterClass];
+    const hitDie = this.hitDie;
     if (!hitDie) {
       throw new Error(`Unknown class: ${this.characterClass}`);
     }

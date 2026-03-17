@@ -21,7 +21,6 @@ const SKILLS = [
   "sleightOfHand",
   "stealth",
   "survival",
-
 ];
 
 function GetAllCharacters() {
@@ -74,7 +73,8 @@ function GetAllCharacters() {
                   <strong>Class:</strong> {c.characterClass}
                 </p>
                 <p>
-                  <strong>Subclass:</strong> {c.characterSubClass || "Not Available"}
+                  <strong>Subclass:</strong>{" "}
+                  {c.characterSubClass || "Not Available"}
                 </p>
                 <p>
                   <strong>Level:</strong> {c.level}
@@ -88,6 +88,18 @@ function GetAllCharacters() {
                 <p>
                   <strong>Languages:</strong>{" "}
                   {c.languages?.join(", ") || "Not Available"}
+                </p>
+                <p>
+                  <strong>Saving Throws:</strong>{" "}
+                  {c.savingThrows?.join(", ") || "None"}
+                </p>
+                <p>
+                  <strong>Armor:</strong>{" "}
+                  {c.armorProficiencies?.join(", ") || "None"}
+                </p>
+                <p>
+                  <strong>Weapons:</strong>{" "}
+                  {c.weaponProficiencies?.join(", ") || "None"}
                 </p>
                 <p>
                   <strong>Status:</strong> {c.status}
@@ -118,9 +130,7 @@ function GetAllCharacters() {
                   <strong>Charisma:</strong> {c.getFinalStat("charisma")} (
                   {Math.floor((c.getFinalStat("charisma") - 10) / 2)})
                 </p>
-                <h4>
-                  Skills
-                </h4>
+                <h4>Skills</h4>
                 {SKILLS.map((skill) => {
                   return (
                     <p key={skill}>
