@@ -2,6 +2,28 @@
 import { useEffect, useState } from "react";
 import { getAllCharacters as getAllCharactersService } from "../Application/services/getAllCharacters.js";
 
+const SKILLS = [
+  "acrobatics",
+  "animalHandling",
+  "arcana",
+  "athletics",
+  "deception",
+  "history",
+  "insight",
+  "intimidation",
+  "investigation",
+  "medicine",
+  "nature",
+  "perception",
+  "performance",
+  "persuasion",
+  "religion",
+  "sleightOfHand",
+  "stealth",
+  "survival",
+
+];
+
 function GetAllCharacters() {
   const [characters, setCharacters] = useState([]);
 
@@ -61,6 +83,13 @@ function GetAllCharacters() {
                   <strong>HP:</strong> {c.currentHP}/{c.maxHP}
                 </p>
                 <p>
+                  <strong>Speed:</strong> {c.speed} ft.
+                </p>
+                <p>
+                  <strong>Languages:</strong>{" "}
+                  {c.languages?.join(", ") || "Not Available"}
+                </p>
+                <p>
                   <strong>Status:</strong> {c.status}
                 </p>
                 <p>
@@ -89,6 +118,23 @@ function GetAllCharacters() {
                   <strong>Charisma:</strong> {c.getFinalStat("charisma")} (
                   {Math.floor((c.getFinalStat("charisma") - 10) / 2)})
                 </p>
+                <h4>
+                  Skills
+                </h4>
+                {SKILLS.map((skill) => {
+                  return (
+                    <p key={skill}>
+                      <strong>{skill}:</strong> {c.getSkillModifier(skill)}
+                      {c.skillProficiencies.has(skill) ? " (Proficient)" : ""}
+                    </p>
+                  );
+                })}
+                <h4>Features</h4>
+                <ul>
+                  {c.features?.map((feature, index) => (
+                    <li key={index}>{feature}</li>
+                  )) || <li>No features available.</li>}
+                </ul>
               </div>
             );
           })}

@@ -1,10 +1,12 @@
 // C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\entity\Character.js
+import { RACES } from "../../gameData/races.js";
 import { CharacterProfile } from "../value-object/CharacterProfile.js";
 import { Wallet } from "../value-object/wallet.js";
 
 const MAX_LEVEL = 10;
 
-const EXP_TABLE = { // eslint-disable-line no-unused-vars
+const EXP_TABLE = {
+  // eslint-disable-line no-unused-vars
   1: 0,
   2: 300,
   3: 900,
@@ -55,6 +57,9 @@ const SKILL_MAPPING = {
 
 export class Character {
   constructor(rawData, backgrounds = []) {
+    const raceData = RACES[rawData.race];
+    const subRaceData = raceData?.subRaces?.[rawData.subRace];
+
     this.profile =
       rawData.profile instanceof CharacterProfile
         ? rawData.profile
@@ -84,11 +89,13 @@ export class Character {
 
     // Stats
     this.baseStatus = this.#initializeBaseStatus(rawData.status);
+    // Apply race
+    this.#applyRace(raceData.base, subRaceData);
     this.backgroundModifiers = {};
     this.#applyBackgrounds(backgrounds);
-
     // HP System
     this.maxHP = this.#calculateMaxHP();
+  
     this.currentHP = this.maxHP;
     this.temporaryHP = 0;
     // SkillsProficiency
@@ -146,6 +153,24 @@ export class Character {
     };
   }
 
+  #applyRace(race, subRace) {
+    this.features = [...new Set([...(race.features ?? []), ...(subRace?.features ?? [])])];
+    this.languages = [...new Set([...(race.languages ?? []), ...(subRace?.languages ?? [])])];
+    this.speed = subRace?.speed ?? race.speed ?? 30;
+
+    const raceBonus = {
+      ...(race.bonus ?? {}),
+      ...(subRace?.bonus ?? {}),
+    };
+    for (const stat in raceBonus) {
+      const key = stat.toLowerCase();
+      
+      if (this.baseStatus[key] !== undefined) {
+        this.baseStatus[key] += raceBonus[stat];
+      }
+    }
+  }
+
   #applyBackgrounds(backgrounds) {
     for (const bg of backgrounds) {
       if (bg.statModifiers) {
@@ -199,7 +224,9 @@ export class Character {
   }
 
   getFinalStat(statName) {
-    return this.baseStatus[statName] + (this.backgroundModifiers[statName] ?? 0);
+    return (
+      this.baseStatus[statName] + (this.backgroundModifiers[statName] ?? 0)
+    );
   }
 
   takeDamage(amount) {
