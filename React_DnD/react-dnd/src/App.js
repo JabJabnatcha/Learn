@@ -1,4 +1,3 @@
-// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\App.js
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import CreateCharacter from "./components/CreateCharacter.js";
 import GetAllCharacters from "./components/GetAllCharacters.js";
@@ -9,7 +8,9 @@ function App() {
       <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
         <h1>D&D Character Manager</h1>
         <nav>
-          <Link to="/create" style={{ marginRight: "20px" }}>Create Character</Link>
+          <Link to="/create" style={{ marginRight: "20px" }}>
+            Create Character
+          </Link>
           <Link to="/list">View All Characters</Link>
         </nav>
         <Routes>

@@ -1,5 +1,3 @@
-// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\Infrastructure\database\CharacterMapper.js
-
 import { Character } from "../../domain/character/entity/Character.js";
 import { CharacterProfile } from "../../domain/character/value-object/CharacterProfile.js";
 import { Wallet } from "../../domain/character/value-object/wallet.js";
@@ -31,7 +29,6 @@ export class CharacterMapper {
   }
 
   static toDomain(rawData) {
-    // Ensure charId exists (fallback for old data)
     const dataWithCharId = {
       ...rawData,
       charId: rawData.charId || rawData.id || crypto.randomUUID(),

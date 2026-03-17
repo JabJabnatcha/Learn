@@ -1,18 +1,16 @@
-// src/Infrastructure/database/dexieConfig.js
-
-import Dexie from 'dexie';
+import Dexie from "dexie";
 
 export class CharacterDatabase extends Dexie {
   characters;
 
   constructor() {
-    super('CharacterDatabase');
+    super("CharacterDatabase");
 
     this.version(1).stores({
-      characters: 'charId, name, race, characterClass, level, isDeleted'
+      characters: "charId, name, race, characterClass, level, isDeleted",
     });
 
-    this.characters = this.table('characters');
+    this.characters = this.table("characters");
   }
 }
 

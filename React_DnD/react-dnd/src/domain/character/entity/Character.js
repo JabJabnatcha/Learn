@@ -1,24 +1,9 @@
-// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\entity\Character.js
 import { RACES } from "../../gameData/races.js";
 import { CLASSES } from "../../gameData/classes.js";
 import { CharacterProfile } from "../value-object/CharacterProfile.js";
 import { Wallet } from "../value-object/wallet.js";
 
 const MAX_LEVEL = 10;
-
-const EXP_TABLE = {
-  // eslint-disable-line no-unused-vars
-  1: 0,
-  2: 300,
-  3: 900,
-  4: 2700,
-  5: 6500,
-  6: 14000,
-  7: 23000,
-  8: 34000,
-  9: 48000,
-  10: 64000,
-};
 
 const SKILL_MAPPING = {
   acrobatics: "dexterity",
@@ -46,7 +31,6 @@ export class Character {
     const raceData = RACES[rawData.race];
     const subRaceData = raceData?.subRaces?.[rawData.subRace];
     const classData = CLASSES[rawData.characterClass];
-    // const subClassData = classData?.subClasses?.[rawData.characterSubClass];
 
     this.profile =
       rawData.profile instanceof CharacterProfile
@@ -62,7 +46,6 @@ export class Character {
 
     this.#validateRequiredFields(rawData);
 
-    // Identity
     this.charId = rawData.charId;
     this.name = rawData.name;
     this.alignment = rawData.alignment;
@@ -70,35 +53,30 @@ export class Character {
     this.subRace = rawData.subRace;
     this.characterClass = rawData.characterClass;
     this.characterSubClass = rawData.characterSubClass;
-
-    // Progression
     this.level = this.#validateLevel(rawData.level ?? 1);
     this.experiencePoints = rawData.experiencePoints ?? 0;
 
-    // Stats
     this.baseStatus = this.#initializeBaseStatus(rawData.status);
-    // Apply race
+
     this.#applyRace(raceData.base, subRaceData);
-    // Apply class
+
     this.#applyClass(classData.base);
     this.backgroundModifiers = {};
     this.#applyBackgrounds(backgrounds);
-    // HP System
+
     this.maxHP = this.#calculateMaxHP();
-  
+
     this.currentHP = rawData.currentHP ?? this.maxHP;
     this.temporaryHP = 0;
-    // SkillsProficiency
+
     this.skillProficiencies = new Set(rawData.skillProficiencies ?? []);
 
-    // wallet
     this.wallet =
       rawData.money instanceof Wallet
         ? rawData.money
         : new Wallet(rawData.money);
 
-    // State
-    this.status = "Alive"; // Alive | Unconscious | Dead
+    this.status = "Alive";
   }
 
   #validateStatScore(score) {
@@ -133,26 +111,30 @@ export class Character {
   }
 
   #initializeBaseStatus(status = {}) {
-  const safe = (val) => {
-    const num = Number(val);
-    if (isNaN(num) || num < 1) return 10;
-    if (num > 30) return 30;
-    return num;
-  };
+    const safe = (val) => {
+      const num = Number(val);
+      if (isNaN(num) || num < 1) return 10;
+      if (num > 30) return 30;
+      return num;
+    };
 
-  return {
-    strength: safe(status.strength),
-    dexterity: safe(status.dexterity),
-    constitution: safe(status.constitution),
-    intelligence: safe(status.intelligence),
-    wisdom: safe(status.wisdom),
-    charisma: safe(status.charisma),
-  };
-}
+    return {
+      strength: safe(status.strength),
+      dexterity: safe(status.dexterity),
+      constitution: safe(status.constitution),
+      intelligence: safe(status.intelligence),
+      wisdom: safe(status.wisdom),
+      charisma: safe(status.charisma),
+    };
+  }
 
   #applyRace(race, subRace) {
-    this.features = [...new Set([...(race.features ?? []), ...(subRace?.features ?? [])])];
-    this.languages = [...new Set([...(race.languages ?? []), ...(subRace?.languages ?? [])])];
+    this.features = [
+      ...new Set([...(race.features ?? []), ...(subRace?.features ?? [])]),
+    ];
+    this.languages = [
+      ...new Set([...(race.languages ?? []), ...(subRace?.languages ?? [])]),
+    ];
     this.speed = subRace?.speed ?? race.speed ?? 30;
 
     const raceBonus = {
@@ -161,7 +143,7 @@ export class Character {
     };
     for (const stat in raceBonus) {
       const key = stat.toLowerCase();
-      
+
       if (this.baseStatus[key] !== undefined) {
         this.baseStatus[key] += raceBonus[stat];
       }
@@ -175,7 +157,7 @@ export class Character {
     this.primaryStat = classBase.PrimaryStat ?? "None";
 
     this.hitDie = classBase.HitDie ?? 0;
-    // this.startingEquipment = classBase.startingEquipment ?? {};
+
     this.skillChoices = classBase.SkillChoices ?? null;
   }
 
@@ -218,10 +200,8 @@ export class Character {
 
     const conMod = Math.floor((this.getFinalStat("constitution") - 10) / 2);
 
-    // Level 1
     let maxHP = hitDie + conMod;
 
-    // Level 2+
     const avgHitDie = Math.ceil(hitDie / 2) + 1;
 
     for (let lvl = 2; lvl <= this.level; lvl++) {
@@ -242,19 +222,16 @@ export class Character {
 
     let remainingDamage = amount;
 
-    // 1. หัก temporaryHP ก่อน
     if (this.temporaryHP > 0) {
       const tempUsed = Math.min(this.temporaryHP, remainingDamage);
       this.temporaryHP -= tempUsed;
       remainingDamage -= tempUsed;
     }
 
-    // 2. หัก currentHP
     if (remainingDamage > 0) {
       this.currentHP = Math.max(0, this.currentHP - remainingDamage);
     }
 
-    // 3. เช็คสถานะ
     if (this.currentHP === 0) {
       this.status = "Unconscious";
     }

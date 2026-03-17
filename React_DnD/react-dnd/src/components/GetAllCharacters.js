@@ -1,4 +1,3 @@
-// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\components\GetAllCharacters.js
 import { useEffect, useState } from "react";
 import { getAllCharacters as getAllCharactersService } from "../Application/services/getAllCharacters.js";
 

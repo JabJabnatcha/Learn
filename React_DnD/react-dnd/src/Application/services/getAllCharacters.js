@@ -1,5 +1,3 @@
-// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\Application\services\getAllCharacters.js
-
 import { db } from "../../Infrastructure/database/dexieConfig.js";
 import { CharacterMapper } from "../../Infrastructure/database/CharacterMapper.js";
 

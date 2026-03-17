@@ -1,5 +1,3 @@
-// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\value-object\CharacterProfile.js
-
 export class CharacterProfile {
   constructor({
     age = 0,

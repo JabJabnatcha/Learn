@@ -1,29 +1,24 @@
-// src/Infrastructure/database/CharacterRepository.js
-
 import { db } from "./dexieConfig.js";
 import { CharacterMapper } from "./CharacterMapper.js";
 
 // ==================== CREATE ====================
 export async function createCharacter(characterEntity) {
   try {
-    const persistenceData =
-      CharacterMapper.toPersistence(characterEntity);
+    const persistenceData = CharacterMapper.toPersistence(characterEntity);
 
-    console.log("Saving character:", persistenceData);
-
-    // Ensure charId exists
     if (!persistenceData.charId) {
       throw new Error("Character must have charId before saving");
     }
 
-    // Add with charId as primary key
     await db.characters.put(persistenceData);
 
     const saved = await db.characters.get(characterEntity.charId);
 
     if (!saved) {
-      console.error("Failed to retrieve saved character with charId:", characterEntity.charId);
-      // Return converted character entity as fallback
+      console.error(
+        "Failed to retrieve saved character with charId:",
+        characterEntity.charId,
+      );
       return CharacterMapper.toDomain(persistenceData);
     }
 
@@ -39,13 +34,11 @@ export async function createCharacter(characterEntity) {
 export async function getAllCharacters() {
   try {
     const characters = await db.characters
-      .where('isDeleted')
+      .where("isDeleted")
       .equals(false)
       .toArray();
 
-    return characters.map((char) =>
-      CharacterMapper.toDomain(char)
-    );
+    return characters.map((char) => CharacterMapper.toDomain(char));
   } catch (error) {
     console.error("CharacterRepository.getAllCharacters error:", error);
     throw error;
@@ -67,7 +60,10 @@ export async function updateCharacter(charId, characterEntity) {
 
   if (!existing) return null;
 
-  await db.characters.update(charId, CharacterMapper.toPersistence(characterEntity));
+  await db.characters.update(
+    charId,
+    CharacterMapper.toPersistence(characterEntity),
+  );
 
   return { charId, ...characterEntity };
 }

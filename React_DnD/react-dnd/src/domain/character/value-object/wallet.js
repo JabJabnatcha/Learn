@@ -1,6 +1,3 @@
-// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\character\value-object\wallet.js
-// domain/character/value-object/Wallet.js
-
 export class Wallet {
   constructor({ pp = 0, gp = 0, sp = 0, cp = 0 } = {}) {
     this.pp = this.validate(pp);
@@ -13,7 +10,7 @@ export class Wallet {
 
   validate(value) {
     if (typeof value !== "number") return 0;
-    return value; // อนุญาตติดลบได้
+    return value;
   }
 
   add({ pp = 0, gp = 0, sp = 0, cp = 0 }) {

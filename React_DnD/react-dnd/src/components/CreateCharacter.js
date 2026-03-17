@@ -1,4 +1,3 @@
-// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\components\CreateCharacter.js
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createCharacter as createCharacterService } from "../Application/services/createCharacter.js";
