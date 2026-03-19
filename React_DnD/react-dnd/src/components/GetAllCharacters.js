@@ -104,30 +104,30 @@ function GetAllCharacters() {
                   <strong>Status:</strong> {c.status}
                 </p>
                 <p>
-                  <strong>Strength:</strong> {c.getFinalStat("strength")} (
-                  {Math.floor((c.getFinalStat("strength") - 10) / 2)})
+                  <strong>Strength:</strong> {c.getFinalStat("strength")} 
+                  ({c.getAbilityModifier("strength")})
                 </p>
                 <p>
                   <strong>Dexterity:</strong> {c.getFinalStat("dexterity")} (
-                  {Math.floor((c.getFinalStat("dexterity") - 10) / 2)})
+                  {c.getAbilityModifier("dexterity")})
                 </p>
                 <p>
                   <strong>Constitution:</strong>{" "}
                   {c.getFinalStat("constitution")} (
-                  {Math.floor((c.getFinalStat("constitution") - 10) / 2)})
+                  {c.getAbilityModifier("constitution")})
                 </p>
                 <p>
                   <strong>Intelligence:</strong>{" "}
                   {c.getFinalStat("intelligence")} (
-                  {Math.floor((c.getFinalStat("intelligence") - 10) / 2)})
+                  {c.getAbilityModifier("intelligence")})
                 </p>
                 <p>
                   <strong>Wisdom:</strong> {c.getFinalStat("wisdom")} (
-                  {Math.floor((c.getFinalStat("wisdom") - 10) / 2)})
+                  {c.getAbilityModifier("wisdom")})
                 </p>
                 <p>
                   <strong>Charisma:</strong> {c.getFinalStat("charisma")} (
-                  {Math.floor((c.getFinalStat("charisma") - 10) / 2)})
+                  {c.getAbilityModifier("charisma")})
                 </p>
                 <h4>Skills</h4>
                 {SKILLS.map((skill) => {

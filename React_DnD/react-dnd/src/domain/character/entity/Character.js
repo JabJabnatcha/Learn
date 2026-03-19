@@ -1,7 +1,10 @@
-import { RACES } from "../../gameData/races.js";
 import { CLASSES } from "../../gameData/classes.js";
 import { CharacterProfile } from "../value-object/CharacterProfile.js";
 import { Wallet } from "../value-object/wallet.js";
+import { calculateMaxHP } from "../services/HpCalculator.js";
+import { applyRace } from "../services/RaceApplier.js";
+import { applyClass } from "../services/ClassApplier.js";
+import { AbilityScore } from "../value-object/AbilityScores.js";
 
 const MAX_LEVEL = 10;
 
@@ -28,10 +31,6 @@ const SKILL_MAPPING = {
 
 export class Character {
   constructor(rawData, backgrounds = []) {
-    const raceData = RACES[rawData.race];
-    const subRaceData = raceData?.subRaces?.[rawData.subRace];
-    const classData = CLASSES[rawData.characterClass];
-
     this.profile =
       rawData.profile instanceof CharacterProfile
         ? rawData.profile
@@ -55,16 +54,40 @@ export class Character {
     this.characterSubClass = rawData.characterSubClass;
     this.level = this.#validateLevel(rawData.level ?? 1);
     this.experiencePoints = rawData.experiencePoints ?? 0;
+    
+    this.abilityScores = new AbilityScore(rawData.status);
 
-    this.baseStatus = this.#initializeBaseStatus(rawData.status);
+    const raceApplied = applyRace(
+      this.abilityScores,
+      rawData.race,
+      rawData.subRace,
+    );
+    this.features = raceApplied.features;
+    this.languages = raceApplied.languages;
+    this.speed = raceApplied.speed;
+    this.abilityScores = raceApplied.abilityScore;
 
-    this.#applyRace(raceData.base, subRaceData);
+    const classData = CLASSES[rawData.characterClass];
+    if (!classData) {
+      throw new Error(`Unknown class: ${rawData.characterClass}`);
+    }
+    const classApplied = applyClass(classData.base);
 
-    this.#applyClass(classData.base);
+    this.savingThrows = classApplied.savingThrows;
+    this.armorProficiencies = classApplied.armorProficiencies;
+    this.weaponProficiencies = classApplied.weaponProficiencies;
+    this.primaryStat = classApplied.primaryStat;
+    this.hitDie = classApplied.hitDie;
+    this.skillChoices = classApplied.skillChoices;
+
     this.backgroundModifiers = {};
     this.#applyBackgrounds(backgrounds);
 
-    this.maxHP = this.#calculateMaxHP();
+    this.maxHP = calculateMaxHP(
+      this.level,
+      this.hitDie,
+      this.getFinalStat("constitution"),
+    );
 
     this.currentHP = rawData.currentHP ?? this.maxHP;
     this.temporaryHP = 0;
@@ -77,18 +100,6 @@ export class Character {
         : new Wallet(rawData.money);
 
     this.status = "Alive";
-  }
-
-  #validateStatScore(score) {
-    if (typeof score !== "number") {
-      throw new Error("Stat must be a number");
-    }
-
-    if (score < 1 || score > 30) {
-      throw new Error("Stat must be between 1 and 30");
-    }
-
-    return score;
   }
 
   #validateRequiredFields(rawData) {
@@ -110,57 +121,6 @@ export class Character {
     return level;
   }
 
-  #initializeBaseStatus(status = {}) {
-    const safe = (val) => {
-      const num = Number(val);
-      if (isNaN(num) || num < 1) return 10;
-      if (num > 30) return 30;
-      return num;
-    };
-
-    return {
-      strength: safe(status.strength),
-      dexterity: safe(status.dexterity),
-      constitution: safe(status.constitution),
-      intelligence: safe(status.intelligence),
-      wisdom: safe(status.wisdom),
-      charisma: safe(status.charisma),
-    };
-  }
-
-  #applyRace(race, subRace) {
-    this.features = [
-      ...new Set([...(race.features ?? []), ...(subRace?.features ?? [])]),
-    ];
-    this.languages = [
-      ...new Set([...(race.languages ?? []), ...(subRace?.languages ?? [])]),
-    ];
-    this.speed = subRace?.speed ?? race.speed ?? 30;
-
-    const raceBonus = {
-      ...(race.bonus ?? {}),
-      ...(subRace?.bonus ?? {}),
-    };
-    for (const stat in raceBonus) {
-      const key = stat.toLowerCase();
-
-      if (this.baseStatus[key] !== undefined) {
-        this.baseStatus[key] += raceBonus[stat];
-      }
-    }
-  }
-
-  #applyClass(classBase) {
-    this.savingThrows = classBase.SavingThrows ?? [];
-    this.armorProficiencies = classBase.ArmorProficiencies ?? [];
-    this.weaponProficiencies = classBase.WeaponProficiencies ?? [];
-    this.primaryStat = classBase.PrimaryStat ?? "None";
-
-    this.hitDie = classBase.HitDie ?? 0;
-
-    this.skillChoices = classBase.SkillChoices ?? null;
-  }
-
   #applyBackgrounds(backgrounds) {
     for (const bg of backgrounds) {
       if (bg.statModifiers) {
@@ -171,19 +131,13 @@ export class Character {
       }
     }
   }
-
-  #getAbilityModifier(statName) {
-    const score = this.getFinalStat(statName);
-    return Math.floor((score - 10) / 2);
-  }
-
   getSkillModifier(skill) {
     const ability = SKILL_MAPPING[skill];
     if (!ability) {
       throw new Error(`Unknown skill: ${skill}`);
     }
 
-    const abilityMod = this.#getAbilityModifier(ability);
+    const abilityMod = this.getAbilityModifier(ability);
 
     const proficiency = this.skillProficiencies.has(skill)
       ? this.proficiencyBonus
@@ -192,28 +146,14 @@ export class Character {
     return abilityMod + proficiency;
   }
 
-  #calculateMaxHP() {
-    const hitDie = this.hitDie;
-    if (!hitDie) {
-      throw new Error(`Unknown class: ${this.characterClass}`);
-    }
-
-    const conMod = Math.floor((this.getFinalStat("constitution") - 10) / 2);
-
-    let maxHP = hitDie + conMod;
-
-    const avgHitDie = Math.ceil(hitDie / 2) + 1;
-
-    for (let lvl = 2; lvl <= this.level; lvl++) {
-      maxHP += avgHitDie + conMod;
-    }
-
-    return Math.max(1, maxHP);
+  getAbilityModifier(statName) {
+    return Math.floor((this.getFinalStat(statName) - 10) / 2);
   }
 
   getFinalStat(statName) {
     return (
-      this.baseStatus[statName] + (this.backgroundModifiers[statName] ?? 0)
+      this.abilityScores.get(statName) +
+      (this.backgroundModifiers[statName] ?? 0)
     );
   }
 
