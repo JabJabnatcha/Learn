@@ -1,10 +1,14 @@
 import { CLASSES } from "../../gameData/classes.js";
+import { BACKGROUNDS } from "../../gameData/backgrounds.js";
 import { CharacterProfile } from "../value-object/CharacterProfile.js";
 import { Wallet } from "../value-object/wallet.js";
 import { calculateMaxHP } from "../services/HpCalculator.js";
 import { applyRace } from "../services/RaceApplier.js";
 import { applyClass } from "../services/ClassApplier.js";
+import { applyBackgrounds } from "../services/BackgroundApplier.js";
 import { AbilityScore } from "../value-object/AbilityScores.js";
+import { Item } from "../../item/Item.js";
+import { toItem } from "../../item/index.js";
 
 const MAX_LEVEL = 10;
 
@@ -69,11 +73,12 @@ export class Character {
     this.speed = raceApplied.speed;
     this.abilityScores = raceApplied.abilityScore;
 
-    const classData = CLASSES[rawData.characterClass];
+    const classData = CLASSES[this.characterClass];
     if (!classData) {
-      throw new Error(`Unknown class: ${rawData.characterClass}`);
+      throw new Error(`Unknown class: ${this.characterClass}`);
     }
-    const classApplied = applyClass(classData.base);
+
+    const classApplied = applyClass(classData.base, this.characterSubClass);
 
     this.savingThrows = classApplied.savingThrows;
     this.armorProficiencies = classApplied.armorProficiencies;
@@ -81,9 +86,31 @@ export class Character {
     this.primaryStat = classApplied.primaryStat;
     this.hitDie = classApplied.hitDie;
     this.skillChoices = classApplied.skillChoices;
+    this.subClass = classApplied.subClass;
+    this.subClassFeatures = classApplied.subClassFeatures;
 
-    this.backgroundModifiers = {};
-    this.#applyBackgrounds(backgrounds);
+    this.backgrounds = Array.isArray(backgrounds) ? backgrounds : [backgrounds];
+    const backgroundApplied = applyBackgrounds(this.backgrounds);
+
+    this.backgroundModifiers = backgroundApplied.statModifiers;
+    this.features = [...new Set([...(this.features ?? []), ...backgroundApplied.features])];
+    this.skillProficiencies = new Set([
+      ...(rawData.skillProficiencies ?? []),
+      ...backgroundApplied.skillProficiencies,
+    ]);
+
+    this.wallet =
+      rawData.money instanceof Wallet ? rawData.money : new Wallet(rawData.money);
+    this.wallet = this.wallet.add(backgroundApplied.wallet);
+
+    this.inventory = Array.isArray(rawData.inventory)
+      ? rawData.inventory.map((itemEntry) => {
+          if (itemEntry instanceof Item) return itemEntry;
+          if (typeof itemEntry === "string") return toItem(itemEntry);
+          if (itemEntry?.id) return toItem(itemEntry.id);
+          throw new Error("Invalid inventory item format");
+        })
+      : [];
 
     this.maxHP = calculateMaxHP(
       this.level,
@@ -93,14 +120,6 @@ export class Character {
 
     this.currentHP = rawData.currentHP ?? this.maxHP;
     this.temporaryHP = 0;
-
-    this.skillProficiencies = new Set(rawData.skillProficiencies ?? []);
-
-    this.wallet =
-      rawData.money instanceof Wallet
-        ? rawData.money
-        : new Wallet(rawData.money);
-
     this.status = "Alive";
   }
 
@@ -160,6 +179,78 @@ export class Character {
     }
 
     return value + (this.backgroundModifiers[statName] ?? 0);
+  }
+
+  getTotalProficiencies() {
+    return {
+      armor: [...new Set([...(this.armorProficiencies || [])])],
+      weapons: [...new Set([...(this.weaponProficiencies || [])])],
+      savingThrows: [...new Set([...(this.savingThrows || [])])],
+      skills: [...new Set([...this.skillProficiencies])],
+      tools: [...new Set(this.inventory.filter((item) => item.type === "tool").map((item) => item.name))],
+    };
+  }
+
+  getEquippedArmor() {
+    return this.inventory.find((item) => item.type === "armor" && item.equipped);
+  }
+
+  getEquippedShield() {
+    return this.inventory.find((item) => item.type === "armor" && item.equipped && item.id === "shield");
+  }
+
+  getArmorClass() {
+    const dexterityMod = this.getAbilityModifier("dexterity");
+    const armor = this.getEquippedArmor();
+    const shield = this.getEquippedShield();
+
+    let ac = 10;
+
+    if (armor) {
+      ac = armor.armorClass;
+      if (armor.dexterityLimit !== null && armor.dexterityLimit !== undefined) {
+        ac += Math.min(dexterityMod, armor.dexterityLimit);
+      } else {
+        ac += dexterityMod;
+      }
+    } else {
+      ac += dexterityMod;
+    }
+
+    if (shield) {
+      ac += shield.armorClass || 2;
+    }
+
+    return ac;
+  }
+
+  addItem(itemDataOrId) {
+    const newItem = itemDataOrId instanceof Item ? itemDataOrId : toItem(itemDataOrId);
+    this.inventory = [...this.inventory, newItem];
+    return this;
+  }
+
+  removeItem(itemId) {
+    this.inventory = this.inventory.filter((item) => item.id !== itemId);
+    return this;
+  }
+
+  equipItem(itemId) {
+    this.inventory = this.inventory.map((item) =>
+      item.id === itemId ? item.equip() : item,
+    );
+    return this;
+  }
+
+  unequipItem(itemId) {
+    this.inventory = this.inventory.map((item) =>
+      item.id === itemId ? item.unequip() : item,
+    );
+    return this;
+  }
+
+  getInventoryWeight() {
+    return this.inventory.reduce((sum, item) => sum + (item.weight || 0), 0);
   }
 
   takeDamage(amount) {

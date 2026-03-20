@@ -20,6 +20,7 @@ export class CharacterMapper {
 
       baseStatus: character.baseStatus?.toJSON?.() || {},
       status: character.status,
+      inventory: character.inventory?.map((item) => item.toJSON?.() || item) || [],
 
       currentHP: character.currentHP || 0,
       temporaryHP: character.temporaryHP || 0,
@@ -38,6 +39,7 @@ export class CharacterMapper {
       {
         ...dataWithCharId,
         status: rawData.baseStatus || {},
+        inventory: rawData.inventory || [],
         wallet: new Wallet(rawData.wallet || {}),
         profile: new CharacterProfile(rawData.profile || {}),
       },

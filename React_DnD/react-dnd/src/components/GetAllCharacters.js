@@ -101,8 +101,25 @@ function GetAllCharacters() {
                   {c.weaponProficiencies?.join(", ") || "None"}
                 </p>
                 <p>
+                  <strong>AC:</strong> {c.getArmorClass ? c.getArmorClass() : "N/A"}
+                </p>
+                <p>
                   <strong>Status:</strong> {c.status}
                 </p>
+                <div>
+                  <strong>Inventory:</strong>
+                  {c.inventory && c.inventory.length > 0 ? (
+                    <ul>
+                      {c.inventory.map((item) => (
+                        <li key={item.id}>
+                          {item.name} {item.equipped ? "(Equipped)" : ""}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <em>No inventory</em>
+                  )}
+                </div>
                 <p>
                   <strong>Strength:</strong> {c.getFinalStat("strength")} 
                   ({c.getAbilityModifier("strength")})

@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import CreateCharacter from "./components/CreateCharacter.js";
 import GetAllCharacters from "./components/GetAllCharacters.js";
+import ItemShop from "./components/ItemShop.js";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/create" element={<CreateCharacter />} />
           <Route path="/list" element={<GetAllCharacters />} />
+          <Route path="/shop" element={<ItemShop />} />
           <Route path="/" element={<GetAllCharacters />} />
         </Routes>
       </div>

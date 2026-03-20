@@ -5,6 +5,7 @@ import { createCharacter as createCharacterRepo } from "../Infrastructure/databa
 import { RACES } from "../domain/gameData/races.js";
 import { CLASSES } from "../domain/gameData/classes.js";
 import { ALIGNMENTS } from "../domain/gameData/alignments.js";
+import { toItem } from "../domain/item/index.js";
 
 function CreateCharacter() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ function CreateCharacter() {
     subRace: "",
     characterClass: "",
     characterSubClass: "",
+    startingEquipmentOption: "A",
     level: 1,
     status: {
       strength: 10,
@@ -46,6 +48,18 @@ function CreateCharacter() {
       ? classData.subClasses
       : [];
 
+  const startingEquipmentOptions = classData?.base?.startingEquipment || {};
+  const selectedEquipmentIds =
+    startingEquipmentOptions[formData.startingEquipmentOption] || [];
+
+  const selectedEquipmentItems = selectedEquipmentIds.map((itemId) => {
+    try {
+      return toItem(itemId);
+    } catch {
+      return null;
+    }
+  }).filter(Boolean);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name.startsWith("status.")) {
@@ -70,6 +84,7 @@ function CreateCharacter() {
           gp: parseInt(formData.money) || 0,
         },
         status: formData.status,
+        inventory: selectedEquipmentIds,
       };
 
       const characterEntity = createCharacterService(rawData);
@@ -84,6 +99,7 @@ function CreateCharacter() {
           subRace: "",
           characterClass: "",
           characterSubClass: "",
+          startingEquipmentOption: "A",
           level: 1,
           status: {
             strength: 10,
@@ -241,6 +257,39 @@ function CreateCharacter() {
               </select>
             </label>
           </div>
+
+          <div style={{ gridColumn: "1 / span 2" }}>
+            <label>
+              Starter equipment option:
+              <select
+                name="startingEquipmentOption"
+                value={formData.startingEquipmentOption}
+                onChange={handleInputChange}
+                disabled={!formData.characterClass}
+              >
+                {Object.keys(startingEquipmentOptions).map((opt) => (
+                  <option key={opt} value={opt}>
+                    Option {opt}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div style={{ marginTop: "8px" }}>
+              <strong>Items included:</strong>
+              <ul>
+                {selectedEquipmentItems.length === 0 ? (
+                  <li>No selected items or invalid selection.</li>
+                ) : (
+                  selectedEquipmentItems.map((item) => (
+                    <li key={item.id}>
+                      {item.name} ({item.type})
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+          </div>
+
           <div>
             <label>
               Level:{" "}
