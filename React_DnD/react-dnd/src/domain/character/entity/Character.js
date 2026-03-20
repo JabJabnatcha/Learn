@@ -54,14 +54,16 @@ export class Character {
     this.characterSubClass = rawData.characterSubClass;
     this.level = this.#validateLevel(rawData.level ?? 1);
     this.experiencePoints = rawData.experiencePoints ?? 0;
-    
-    this.abilityScores = new AbilityScore(rawData.status);
+
+    const baseStatusPayload = rawData.baseStatus ?? rawData.status ?? {};
+    this.baseStatus = new AbilityScore(baseStatusPayload);
 
     const raceApplied = applyRace(
-      this.abilityScores,
+      this.baseStatus,
       rawData.race,
       rawData.subRace,
     );
+
     this.features = raceApplied.features;
     this.languages = raceApplied.languages;
     this.speed = raceApplied.speed;
@@ -147,14 +149,17 @@ export class Character {
   }
 
   getAbilityModifier(statName) {
-    return Math.floor((this.getFinalStat(statName) - 10) / 2);
+    return this.abilityScores.getModifier(statName);
   }
 
   getFinalStat(statName) {
-    return (
-      this.abilityScores.get(statName) +
-      (this.backgroundModifiers[statName] ?? 0)
-    );
+    const value = this.abilityScores.get(statName);
+
+    if (value === undefined || value === null) {
+      throw new Error(`Unknown ability stat: ${statName}`);
+    }
+
+    return value + (this.backgroundModifiers[statName] ?? 0);
   }
 
   takeDamage(amount) {

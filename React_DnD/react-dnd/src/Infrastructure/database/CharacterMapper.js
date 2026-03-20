@@ -18,7 +18,7 @@ export class CharacterMapper {
       profile: character.profile?.toJSON?.() || {},
       wallet: character.wallet?.toJSON?.() || { pp: 0, gp: 0, sp: 0, cp: 0 },
 
-      baseStatus: character.baseStatus || {},
+      baseStatus: character.baseStatus?.toJSON?.() || {},
       status: character.status,
 
       currentHP: character.currentHP || 0,

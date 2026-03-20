@@ -1,25 +1,62 @@
+const ABILITY_KEYS = [
+  "strength",
+  "dexterity",
+  "constitution",
+  "intelligence",
+  "wisdom",
+  "charisma",
+];
+
+function normalizeKey(stat) {
+  if (!stat) return null;
+  const lowered = stat.toString().toLowerCase();
+  return ABILITY_KEYS.includes(lowered) ? lowered : null;
+}
+
+function readValue(stats = {}, statName) {
+  if (!statName) return 0;
+
+  const candidates = [
+    statName,
+    statName.toLowerCase(),
+    statName.toUpperCase(),
+    statName[0]?.toUpperCase() + statName.slice(1).toLowerCase(),
+  ];
+
+  for (const candidate of candidates) {
+    const value = stats?.[candidate];
+    if (value !== undefined && value !== null && !Number.isNaN(Number(value))) {
+      return Number(value);
+    }
+  }
+
+  return 0;
+}
+
 export class AbilityScore {
-  constructor(stats) {
-    this.stats = {
-      Strength: stats.Strength ?? 0,
-      Dexterity: stats.Dexterity ?? 0,
-      Constitution: stats.Constitution ?? 0,
-      Intelligence: stats.Intelligence ?? 0,
-      Wisdom: stats.Wisdom ?? 0,
-      Charisma: stats.Charisma ?? 0,
-    };
+  constructor(stats = {}) {
+    this.stats = {};
+
+    for (const key of ABILITY_KEYS) {
+      this.stats[key] = readValue(stats, key);
+    }
   }
 
   // ==================== GET ====================
   get(stat) {
-    return this.stats[stat] ?? 0;
+    const key = normalizeKey(stat);
+    if (!key) throw new Error(`Unknown ability stat: ${stat}`);
+    return this.stats[key] ?? 0;
   }
 
   // ==================== ADD ====================
   add(stat, value) {
+    const key = normalizeKey(stat);
+    if (!key) throw new Error(`Unknown ability stat: ${stat}`);
+
     return new AbilityScore({
       ...this.stats,
-      [stat]: this.get(stat) + value,
+      [key]: this.get(key) + Number(value),
     });
   }
 
@@ -41,6 +78,9 @@ export class AbilityScore {
 
   // ==================== MERGE ====================
   merge(other) {
+    if (!(other instanceof AbilityScore)) {
+      throw new Error("Can only merge with another AbilityScore");
+    }
     return this.addMany(other.stats);
   }
 
