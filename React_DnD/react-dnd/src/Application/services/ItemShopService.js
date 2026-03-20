@@ -1,14 +1,9 @@
-import { getAllCharacters } from "./getAllCharacters.js";
-import { updateCharacter as updateCharacterRepo } from "../Infrastructure/database/CharacterRepository.js";
-import { toItem } from "../../domain/item/index.js";
+// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\Application\services\ItemShopService.js
+import { updateCharacter as updateCharacterRepo } from "../../Infrastructure/database/CharacterRepository.js";
+import { toItem } from "../../domain/Item/index.js";
 
 function moneyToCopper({ pp = 0, gp = 0, sp = 0, cp = 0 }) {
-  return (
-    cp +
-    sp * 10 +
-    gp * 100 +
-    pp * 1000
-  );
+  return cp + sp * 10 + gp * 100 + pp * 1000;
 }
 
 export async function buyItem(character, itemId) {
@@ -42,7 +37,7 @@ export async function sellItem(character, itemId) {
     cp: saleCopper,
   };
 
-  character.wallet = character.wallet.add(saleWallet);
+  character.earn(saleWallet);
 
   const updated = await updateCharacterRepo(character.charId, character);
   return updated;

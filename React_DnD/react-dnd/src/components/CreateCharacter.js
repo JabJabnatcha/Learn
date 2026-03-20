@@ -5,7 +5,7 @@ import { createCharacter as createCharacterRepo } from "../Infrastructure/databa
 import { RACES } from "../domain/gameData/races.js";
 import { CLASSES } from "../domain/gameData/classes.js";
 import { ALIGNMENTS } from "../domain/gameData/alignments.js";
-import { toItem } from "../domain/item/index.js";
+import { toItem } from "../domain/Item/index.js";
 
 function CreateCharacter() {
   const navigate = useNavigate();

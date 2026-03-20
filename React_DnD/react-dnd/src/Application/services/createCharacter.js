@@ -2,6 +2,7 @@ import { Character } from "../../domain/character/entity/Character.js";
 import { CharacterProfile } from "../../domain/character/value-object/CharacterProfile.js";
 import { Wallet } from "../../domain/character/value-object/wallet.js";
 
+
 export function createCharacter(rawData, backgrounds = []) {
   const data = { ...rawData, charId: rawData.charId || crypto.randomUUID() };
   const profile = new CharacterProfile({

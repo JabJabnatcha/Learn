@@ -1,3 +1,4 @@
+// C:\Users\Laptop-JAB\Desktop\Learn\React_DnD\react-dnd\src\domain\Item\index.js
 import { Item } from "./Item.js";
 import { WEAPONS } from "./weapons.js";
 import { ARMOR } from "./armor.js";
@@ -24,3 +25,5 @@ export function toItem(itemId) {
   }
   return new Item(data);
 }
+
+export { Item };

@@ -12,7 +12,10 @@ function App() {
           <Link to="/create" style={{ marginRight: "20px" }}>
             Create Character
           </Link>
-          <Link to="/list">View All Characters</Link>
+          <Link to="/list" style={{ marginRight: "20px" }}>
+            View All Characters
+          </Link>
+          <Link to="/shop">Item Shop</Link>
         </nav>
         <Routes>
           <Route path="/create" element={<CreateCharacter />} />

@@ -1,5 +1,5 @@
 import { CLASSES } from "../../gameData/classes.js";
-import { BACKGROUNDS } from "../../gameData/backgrounds.js";
+// import { BACKGROUNDS } from "../../gameData/backgrounds.js";
 import { CharacterProfile } from "../value-object/CharacterProfile.js";
 import { Wallet } from "../value-object/wallet.js";
 import { calculateMaxHP } from "../services/HpCalculator.js";
@@ -7,8 +7,7 @@ import { applyRace } from "../services/RaceApplier.js";
 import { applyClass } from "../services/ClassApplier.js";
 import { applyBackgrounds } from "../services/BackgroundApplier.js";
 import { AbilityScore } from "../value-object/AbilityScores.js";
-import { Item } from "../../item/Item.js";
-import { toItem } from "../../item/index.js";
+import { Item, toItem } from "../../Item/index.js";
 
 const MAX_LEVEL = 10;
 

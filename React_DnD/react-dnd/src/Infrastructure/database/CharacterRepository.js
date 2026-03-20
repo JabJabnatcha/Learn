@@ -56,16 +56,31 @@ export async function getCharacterById(charId) {
 
 // ==================== UPDATE ====================
 export async function updateCharacter(charId, characterEntity) {
-  const existing = await db.characters.get(charId);
+  try {
+    const existing = await db.characters.get(charId);
+    if (!existing) {
+      throw new Error(`Character with charId ${charId} not found`);
+    }
 
-  if (!existing) return null;
+    const persistenceData = CharacterMapper.toPersistence(characterEntity);
 
-  await db.characters.update(
-    charId,
-    CharacterMapper.toPersistence(characterEntity),
-  );
+    await db.characters.put(persistenceData);
 
-  return { charId, ...characterEntity };
+    const updated = await db.characters.get(charId);
+
+    if (!updated) {
+      console.error(
+        "Failed to retrieve updated character with charId:",
+        charId,
+      );
+      return CharacterMapper.toDomain(persistenceData);
+    }
+    return CharacterMapper.toDomain(updated);
+  } catch (error) {
+    console.error("CharacterRepository.updateCharacter error:", error);
+    console.error("Character entity:", characterEntity);
+    throw error;
+  }
 }
 
 // ==================== SOFT DELETE ====================
