@@ -1,0 +1,32 @@
+@DnDGame2._0_HostAddress = http://localhost:5157
+
+GET {{DnDGame2._0_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+POST {{DnDGame2._0_HostAddress}}/api/character
+Content-Type: application/json
+
+{
+  "name": "Aragorn",
+  "race": "Human",
+  "subRace": "",
+  "class": "Fighter",
+  "subClass": "",
+  "background": "Noble",
+  "strength": 16,
+  "dexterity": 14,
+  "constitution": 15,
+  "intelligence": 10,
+  "wisdom": 12,
+  "charisma": 13,
+  "gold": 100
+}
+
+###
+
+GET {{DnDGame2._0_HostAddress}}/api/character
+Accept: application/json
+
+###
