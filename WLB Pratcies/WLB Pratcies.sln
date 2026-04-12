@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jab01-Practice-Vue-TS-Tailwind", "Jab01-Practice-Vue-TS-Tailwind", "{7321EB92-B903-14E6-3587-361B0A83A9B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend", "Jab01-Practice-Vue-TS-Tailwind\Backend\Backend.csproj", "{84E24DA4-8575-F6FB-2C85-8E942EDDB8C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84E24DA4-8575-F6FB-2C85-8E942EDDB8C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84E24DA4-8575-F6FB-2C85-8E942EDDB8C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84E24DA4-8575-F6FB-2C85-8E942EDDB8C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84E24DA4-8575-F6FB-2C85-8E942EDDB8C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{84E24DA4-8575-F6FB-2C85-8E942EDDB8C0} = {7321EB92-B903-14E6-3587-361B0A83A9B6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9E4C814B-D882-4248-8D0A-BB407DCE8B88}
+	EndGlobalSection
+EndGlobal

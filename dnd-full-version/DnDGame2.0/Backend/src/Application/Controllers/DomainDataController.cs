@@ -74,17 +74,32 @@ public class DomainDataController : ControllerBase
 
         var classes = new List<string>();
         var subClasses = new Dictionary<string, string[]>();
-
+        var ClassesData = new Dictionary<string, object>();
         foreach (var classProperty in classesDoc.RootElement.EnumerateObject())
         {
-            classes.Add(classProperty.Name);
-            if (classProperty.Value.TryGetProperty("subClasses", out var subClassesProperty) && subClassesProperty.ValueKind == JsonValueKind.Array)
+            var className = classProperty.Name;
+
+            // ✅ list ชื่อ class
+            classes.Add(className);
+
+            // ✅ เก็บ data ทั้งก้อน (รวม startingEquipment)
+            ClassesData[className] = JsonSerializer.Deserialize<object>(
+                classProperty.Value.GetRawText()
+            )!;
+
+            // ✅ subClasses (ของเดิม)
+            if (classProperty.Value.TryGetProperty("subClasses", out var subClassesProperty)
+                && subClassesProperty.ValueKind == JsonValueKind.Array)
             {
-                subClasses[classProperty.Name] = subClassesProperty.EnumerateArray().Select(x => x.GetString() ?? string.Empty).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+                subClasses[className] = subClassesProperty
+                    .EnumerateArray()
+                    .Select(x => x.GetString() ?? string.Empty)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .ToArray();
             }
             else
             {
-                subClasses[classProperty.Name] = Array.Empty<string>();
+                subClasses[className] = Array.Empty<string>();
             }
         }
 
@@ -106,10 +121,10 @@ public class DomainDataController : ControllerBase
 
         var alignmentsPath = Path.Combine(dataPath, "alignment.json");
         var alignments = new List<string>();
-        
+
         // Enhanced path search for alignment.json
         string? foundAlignmentPath = null;
-        
+
         // First try the computed dataPath
         if (System.IO.File.Exists(alignmentsPath))
         {
@@ -129,7 +144,7 @@ public class DomainDataController : ControllerBase
                 Path.Combine(Directory.GetCurrentDirectory(), "Backend", "src", "Domain", "Data", "alignment.json"),
                 Path.Combine(Directory.GetCurrentDirectory(), "src", "Domain", "Data", "alignment.json"),
             };
-            
+
             foreach (var candidate in alignmentCandidates)
             {
                 if (System.IO.File.Exists(candidate))
@@ -139,7 +154,7 @@ public class DomainDataController : ControllerBase
                 }
             }
         }
-        
+
         if (foundAlignmentPath != null)
         {
             try
@@ -173,6 +188,7 @@ public class DomainDataController : ControllerBase
             subRaces,
             classes,
             subClasses,
+            ClassesData = ClassesData,
             backgrounds,
             alignments,
         });

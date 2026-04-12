@@ -6,11 +6,6 @@
           <v-col cols="12">
             <v-sheet class="pa-6" elevation="2">
               <h1 class="text-h4 mb-4">DnD Character Manager</h1>
-              <p>
-                View all characters and create new ones. The frontend posts to
-                <code>/api/character</code> and fetches from
-                <code>/api/character</code>.
-              </p>
             </v-sheet>
           </v-col>
         </v-row>
@@ -20,9 +15,9 @@
             <character-form @created="loadCharacters" />
           </v-col>
 
-          <v-col cols="12" xl="7">
+          <!-- <v-col cols="12" xl="7">
             <character-list :characters="characters" :loading="loading" />
-          </v-col>
+          </v-col> -->
         </v-row>
       </v-container>
     </v-main>
