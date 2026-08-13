@@ -1,0 +1,24 @@
+<div class="tab-pane active">
+    <div class="code-col">
+        <div class="card">
+            <div class="card-title">Lessons 9 & 10: DI Lifetimes visualizer</div>
+            <p class="explanation">Compares Transient, Scoped, and Singleton execution states. Injects two instances of each into the HTTP pipeline.</p>
+            <pre><code>builder.Services.AddTransient&lt;ITransient, T&gt;();
+builder.Services.AddScoped&lt;IScoped, S&gt;();
+builder.Services.AddSingleton&lt;ISingleton, Si&gt;();</code></pre>
+        </div>
+    </div>
+    <div class="play-col">
+        <div class="card">
+            <div class="card-title">Run Lifetime Identifier check</div>
+            <button class="btn btn-primary" data-action="run">Fetch Active Instance IDs</button>
+        </div>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                <span>Console Output</span>
+            </div>
+            <div id="console-output" class="terminal-output empty">Waiting for run trigger...</div>
+        </div>
+    </div>
+</div>

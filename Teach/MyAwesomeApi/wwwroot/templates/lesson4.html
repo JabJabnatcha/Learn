@@ -1,0 +1,32 @@
+<div class="tab-pane active">
+    <div class="code-col">
+        <div class="card">
+            <div class="card-title">Lesson 4: Abstract Template Method</div>
+            <p class="explanation">The abstract base class defines the invariant execution skeleton, forcing sub-nodes to override only specific steps.</p>
+            <pre><code>public abstract class ReportGenerator
+{
+    public void GenerateReport()
+    {
+        OpenConnection();
+        var data = FetchData(); // abstract
+        var formatted = FormatReport(data); // abstract
+        CloseConnection();
+    }
+}</code></pre>
+        </div>
+    </div>
+    <div class="play-col">
+        <div class="card">
+            <div class="card-title">Run Lesson 4 Example</div>
+            <p class="explanation">Runs the workflow template and prints steps.</p>
+            <button class="btn btn-primary" data-action="run">Execute Template Workflow</button>
+        </div>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                <span>Console Output</span>
+            </div>
+            <div id="console-output" class="terminal-output empty">Waiting for run trigger...</div>
+        </div>
+    </div>
+</div>

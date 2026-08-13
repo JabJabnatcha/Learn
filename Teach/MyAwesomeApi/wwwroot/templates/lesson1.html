@@ -1,0 +1,32 @@
+<div class="tab-pane active">
+    <div class="code-col">
+        <div class="card">
+            <div class="card-title">Lesson 1: BankAccount State & Behavior</div>
+            <p class="explanation">Bundles related state (private field <code>_balance</code>) and behavior (<code>Deposit</code> method) in a single class blueprint.</p>
+            <pre><code>public class BankAccount
+{
+    private double _balance;
+    public BankAccount(double initial) { _balance = initial; }
+    public void Deposit(double amount) { if (amount > 0) _balance += amount; }
+    public double GetBalance() => _balance;
+}</code></pre>
+        </div>
+    </div>
+    <div class="play-col">
+        <div class="card">
+            <div class="card-title">Run Lesson 1 Example</div>
+            <div class="form-group">
+                <label for="l1-deposit">Deposit Amount</label>
+                <input type="number" id="l1-deposit" class="form-input" value="150">
+            </div>
+            <button class="btn btn-primary" data-action="run">Run Code Execution</button>
+        </div>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                <span>Console Output</span>
+            </div>
+            <div id="console-output" class="terminal-output empty">Waiting for run trigger...</div>
+        </div>
+    </div>
+</div>

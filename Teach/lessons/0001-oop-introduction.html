@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1: Introduction to OOP</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .code-editor-container{background:#0b0f19;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.5rem;margin-bottom:1.5rem;}
+        .code-textarea{width:100%;height:280px;background:#131d31;color:#f1f5f9;font-family:var(--font-mono);font-size:.95rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:1rem;resize:vertical;outline:none;}
+        .code-textarea:focus{border-color:var(--primary-color);}
+        .test-result-box{margin-top:1rem;padding:1rem;border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:.9rem;display:none;}
+        .why-card{background:#1e293b;border-left:4px solid #3b82f6;padding:1.25rem;margin-bottom:1.5rem;border-radius:0 var(--radius-md) var(--radius-md) 0;}
+        .why-title{font-weight:700;color:#60a5fa;margin-bottom:.5rem;font-size:1.05rem;}
+        .run-card{background:#0f172a;border-left:4px solid #10b981;padding:1.25rem;margin-bottom:1.5rem;border-radius:0 var(--radius-md) var(--radius-md) 0;}
+        .run-title{font-weight:700;color:#34d399;margin-bottom:.5rem;font-size:1.05rem;}
+        .capability-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:1.5rem;}
+        .capability-item{background:#162032;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.25rem;}
+        .capability-title{font-weight:700;color:#818cf8;margin-bottom:.5rem;}
+        .tdd-step{display:flex;align-items:center;gap:1rem;background:#1e293b;padding:1rem;border-radius:var(--radius-md);border:1px solid var(--border-color);margin-bottom:.75rem;}
+        .badge{font-weight:700;padding:.2rem .7rem;border-radius:var(--radius-sm);font-size:.85rem;text-transform:uppercase;white-space:nowrap;}
+        .badge-red{background:#7f1d1d;color:#fecaca;border:1px solid #991b1b;}
+        .badge-green{background:#064e3b;color:#d1fae5;border:1px solid #065f46;}
+        .badge-blue{background:#1e3a8a;color:#bfdbfe;border:1px solid #1d4ed8;}
+        .lifetime-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;background:#1e293b;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border-color);}
+        .lifetime-table th,.lifetime-table td{padding:1rem;text-align:left;border-bottom:1px solid var(--border-color);}
+        .lifetime-table th{background:#0f172a;color:#818cf8;font-weight:600;}
+        .onion{display:flex;flex-direction:column;align-items:center;gap:.5rem;background:#1e293b;padding:1.5rem;border-radius:var(--radius-lg);border:1px solid var(--border-color);margin-bottom:1.5rem;}
+        .onion-layer{width:100%;max-width:420px;text-align:center;padding:.75rem;border-radius:var(--radius-md);font-weight:700;border:1px solid rgba(255,255,255,.1);}
+        .layer-p{background:#ef4444;color:#fee2e2;}
+        .layer-i{background:#f59e0b;color:#fef3c7;}
+        .layer-a{background:#3b82f6;color:#dbeafe;}
+        .layer-d{background:#10b981;color:#d1fae5;}
+    </style>
+</head>
+<body>
+    <h1>Lesson 1: Introduction to OOP</h1>
+
+    <div class="alert alert-info"><strong>Lesson Goal:</strong> Understand why we use OOP in business systems and how to model business domains into Classes and Objects in C#, with comparisons to C++ and Java.</div>
+
+    <h2>1. Why Do Most Business Systems Use OOP?</h2>
+    <p>In traditional <mark>Procedure-Oriented Programming</mark>, we focus primarily on procedures and functions, keeping data separated from logic. For complex business systems like sales, banking, or inventory, data and business rules are tightly coupled. <mark>Object-Oriented Programming</mark> solves this by modelling concepts as <strong>Objects</strong> that contain both:</p>
+    <ul>
+        <li><strong>State (Data/Attributes):</strong> e.g. bank account balance, customer name, product price.</li>
+        <li><strong>Behavior (Business Rules):</strong> e.g. withdrawing money (checking balance first), calculating discounts.</li>
+    </ul>
+
+    <h2>2. Class vs Object — Blueprint vs Instance</h2>
+    <ul>
+        <li><mark>Class</mark>: The blueprint or template defining what data and behaviors an entity has.</li>
+        <li><mark>Object</mark>: A real instance created from a class (e.g. Somchai's bank account holding $5,000).</li>
+    </ul>
+
+    <h2>3. Creating Classes Across Languages</h2>
+    <div class="lang-comparison">
+        <div class="lang-column">
+            <div class="lang-header"><span>C++</span><span class="lang-badge lang-cpp">Systems</span></div>
+            <pre><code>class BankAccount {
+private:
+    double balance;
+public:
+    BankAccount(double b) { balance = b; }
+    double getBalance() { return balance; }
+};</code></pre>
+        </div>
+        <div class="lang-column">
+            <div class="lang-header"><span>C#</span><span class="lang-badge lang-csharp">Backend</span></div>
+            <pre><code>public class BankAccount {
+    private double balance;
+    public BankAccount(double b) { balance = b; }
+    public double GetBalance() => balance;
+}</code></pre>
+        </div>
+        <div class="lang-column">
+            <div class="lang-header"><span>Java</span><span class="lang-badge lang-java">Backend</span></div>
+            <pre><code>public class BankAccount {
+    private double balance;
+    public BankAccount(double b) { this.balance = b; }
+    public double getBalance() { return balance; }
+}</code></pre>
+        </div>
+    </div>
+    
+    <div class="run-card">
+        <div class="run-title">&#9654; Live Execution Explanation (BankAccount)</div>
+        <p>In the running application, we instantiate the <code>BankAccount</code> class. Here is how it behaves:</p>
+        <ol>
+            <li>An instance is created with an initial balance (e.g., $1000).</li>
+            <li>We call the <code>Deposit(amount)</code> method (e.g., depositing $150).</li>
+            <li>The internal private balance state changes, and <code>GetBalance()</code> returns the new value ($1150).</li>
+        </ol>
+        <p>👉 <strong>Try it live:</strong> Open <a href="http://localhost:5239/lesson1/bankaccount?deposit=150" target="_blank">http://localhost:5239/lesson1/bankaccount?deposit=150</a> in your browser to trigger this code and see the JSON output.</p>
+    </div>
+
+    <h2>4. Interactive Quiz</h2>
+        <div class="quiz-container">
+        <div class="quiz-question">What is the core advantage that Object-Oriented Programming provides over Procedure-Oriented Programming for business systems?</div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="handleQuiz(this,0)">Managing DNS routing tables between network infrastructure nodes.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,1)">Executing machine code directly without the need for compilation.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,2)">Rendering pixel-level graphics inside a real-time game engine loop.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,3)">Fetching database rows faster using raw optimized SQL queries.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,4)">Grouping related state and behavior together in reusable class objects.</button>
+        </div>
+        <div id="quiz-feedback" class="quiz-feedback"></div>
+    </div>
+
+    <h2>5. Coding Exercise</h2>
+    <p><strong>Task:</strong> Fill in the blank with the C# keyword that declares a type blueprint.</p>
+        <div class="code-editor-container">
+        <textarea id="sandbox1" class="code-textarea" spellcheck="false">// Fill in the blank: What keyword creates a class in C#?
+public __________ BankAccount {
+    private double balance;
+    public BankAccount(double initial) { balance = initial; }
+    public double GetBalance() { return balance; }
+}</textarea>
+        <button class="btn btn-primary" style="margin-top:1rem" onclick="runTest1()">&#9654; Run Code Tests</button>
+        <div id="test-result1" class="test-result-box"></div>
+    </div>
+
+    <div class="lesson-footer">
+        <a href="../MISSION.md" class="btn btn-secondary">Mission Overview</a>
+        <a href="0002-encapsulation-properties.html" class="btn btn-primary">Next: Encapsulation &rarr;</a>
+    </div>
+    <script>
+        var CORRECT_IDX = 4;
+        var EXPLAIN = "OOP bundles both state (fields) and behavior (methods) into a single class, mirroring real-world business entities. This dramatically improves code organization, reuse, and maintainability compared to separating data and functions in procedural code.";
+        function handleQuiz(btn, idx) {
+            var btns = document.querySelectorAll('.quiz-btn');
+            btns.forEach(function(b){ b.disabled=true; });
+            var fb = document.getElementById('quiz-feedback');
+            fb.style.display='block';
+            if(idx===CORRECT_IDX){
+                btn.classList.add('correct');
+                fb.className='quiz-feedback alert-success';
+                fb.innerHTML='<strong>&#10003; Correct!</strong> '+EXPLAIN;
+            }else{
+                btn.classList.add('incorrect');
+                btns[CORRECT_IDX].classList.add('correct');
+                fb.className='quiz-feedback alert-danger';
+                fb.innerHTML='<strong>&#10007; Incorrect.</strong> The correct answer is highlighted. '+EXPLAIN;
+            }
+        }
+        function runTest1() {
+            var code = document.getElementById('sandbox1').value;
+            var box = document.getElementById('test-result1');
+            box.style.display = 'block';
+            if (/public\s+class\s+BankAccount/.test(code)) {
+                box.className = 'test-result-box alert-success';
+                box.innerHTML = '&#10003; <strong>Success!</strong> Correct — <mark>class</mark> is the keyword for defining an OOP blueprint in C#.';
+            } else {
+                box.className = 'test-result-box alert-warning';
+                box.innerHTML = '&#10007; <strong>Try again.</strong> Fill in the blank with the keyword that declares a type blueprint in C#.';
+            }
+        }
+    </script>
+</body>
+</html>

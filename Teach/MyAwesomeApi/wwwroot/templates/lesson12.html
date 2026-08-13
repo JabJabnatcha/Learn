@@ -1,0 +1,24 @@
+<div class="tab-pane active">
+    <div class="code-col">
+        <div class="card">
+            <div class="card-title">Lesson 12: Repository Pattern</div>
+            <p class="explanation">Separates data storage queries from application workflows. Presentation is decoupled from database drivers.</p>
+            <pre><code>public interface IProductRepository {
+    IEnumerable&lt;DomainProduct&gt; GetAll();
+}</code></pre>
+        </div>
+    </div>
+    <div class="play-col">
+        <div class="card">
+            <div class="card-title">Run Repository Mock Retrieval</div>
+            <button class="btn btn-primary" data-action="run">Query Repository</button>
+        </div>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                <span>Console Output</span>
+            </div>
+            <div id="console-output" class="terminal-output empty">Waiting for run trigger...</div>
+        </div>
+    </div>
+</div>

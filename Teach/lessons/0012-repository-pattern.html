@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 12: Repository Pattern</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .code-editor-container{background:#0b0f19;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.5rem;margin-bottom:1.5rem;}
+        .code-textarea{width:100%;height:280px;background:#131d31;color:#f1f5f9;font-family:var(--font-mono);font-size:.95rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:1rem;resize:vertical;outline:none;}
+        .code-textarea:focus{border-color:var(--primary-color);}
+        .test-result-box{margin-top:1rem;padding:1rem;border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:.9rem;display:none;}
+        .why-card{background:#1e293b;border-left:4px solid #3b82f6;padding:1.25rem;margin-bottom:1.5rem;border-radius:0 var(--radius-md) var(--radius-md) 0;}
+        .why-title{font-weight:700;color:#60a5fa;margin-bottom:.5rem;font-size:1.05rem;}
+        .run-card{background:#0f172a;border-left:4px solid #10b981;padding:1.25rem;margin-bottom:1.5rem;border-radius:0 var(--radius-md) var(--radius-md) 0;}
+        .run-title{font-weight:700;color:#34d399;margin-bottom:.5rem;font-size:1.05rem;}
+        .capability-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:1.5rem;}
+        .capability-item{background:#162032;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.25rem;}
+        .capability-title{font-weight:700;color:#818cf8;margin-bottom:.5rem;}
+        .tdd-step{display:flex;align-items:center;gap:1rem;background:#1e293b;padding:1rem;border-radius:var(--radius-md);border:1px solid var(--border-color);margin-bottom:.75rem;}
+        .badge{font-weight:700;padding:.2rem .7rem;border-radius:var(--radius-sm);font-size:.85rem;text-transform:uppercase;white-space:nowrap;}
+        .badge-red{background:#7f1d1d;color:#fecaca;border:1px solid #991b1b;}
+        .badge-green{background:#064e3b;color:#d1fae5;border:1px solid #065f46;}
+        .badge-blue{background:#1e3a8a;color:#bfdbfe;border:1px solid #1d4ed8;}
+        .lifetime-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;background:#1e293b;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border-color);}
+        .lifetime-table th,.lifetime-table td{padding:1rem;text-align:left;border-bottom:1px solid var(--border-color);}
+        .lifetime-table th{background:#0f172a;color:#818cf8;font-weight:600;}
+        .onion{display:flex;flex-direction:column;align-items:center;gap:.5rem;background:#1e293b;padding:1.5rem;border-radius:var(--radius-lg);border:1px solid var(--border-color);margin-bottom:1.5rem;}
+        .onion-layer{width:100%;max-width:420px;text-align:center;padding:.75rem;border-radius:var(--radius-md);font-weight:700;border:1px solid rgba(255,255,255,.1);}
+        .layer-p{background:#ef4444;color:#fee2e2;}
+        .layer-i{background:#f59e0b;color:#fef3c7;}
+        .layer-a{background:#3b82f6;color:#dbeafe;}
+        .layer-d{background:#10b981;color:#d1fae5;}
+    </style>
+</head>
+<body>
+    <h1>Lesson 12: Repository Pattern</h1>
+
+    <div class="alert alert-info"><strong>Lesson Goal:</strong> Understand the <mark>Repository Pattern</mark>, why it belongs in the Application layer, and how it decouples business logic from database technology.</div>
+
+    <h2>1. Repository Decoupling</h2>
+    <p>The <mark>Repository Pattern</mark> behaves like an in-memory collection of domain objects, hiding SQL queries and DbContext details from the core business application.</p>
+    <pre><code>public interface IProductRepository {
+    IEnumerable&lt;Product&gt; GetAll();
+    void Add(Product product);
+}</code></pre>
+
+    <div class="run-card">
+        <div class="run-title">&#9654; Live Execution Explanation (Decoupled Persistence)</div>
+        <p>In our Clean Architecture setup:
+        <ol>
+            <li>The Minimal API triggers the `/lesson12/products` route, receiving `IProductRepository` via DI.</li>
+            <li>The interface contract resides inside the <code>Application</code> layer.</li>
+            <li>The active implementation (<code>InMemoryProductRepository</code>) is loaded from the <code>Infrastructure</code> layer, returning mock product items.</li>
+        </ol>
+        The presentation endpoints never access the database driver or in-memory list directly, keeping layers clean.</p>
+        <p>👉 <strong>Try it live:</strong> Access <a href="http://localhost:5239/lesson12/products" target="_blank">http://localhost:5239/lesson12/products</a> to query the Repository.</p>
+    </div>
+
+    <h2>2. Interactive Quiz</h2>
+        <div class="quiz-container">
+        <div class="quiz-question">Why should the IProductRepository interface be defined in the Application layer rather than in Infrastructure?</div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="handleQuiz(this,0)">Because Infrastructure is reserved for UI and presentation concerns only.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,1)">Because the Application assembly is compiled before Infrastructure by MSBuild.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,2)">Because C# interfaces cannot reference abstract classes in the same project.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,3)">Application owns the contract so Infrastructure must conform to it — not vice versa.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,4)">Because .NET DI containers only scan assemblies named *.Application.dll.</button>
+        </div>
+        <div id="quiz-feedback" class="quiz-feedback"></div>
+    </div>
+
+    <div class="lesson-footer">
+        <a href="0011-clean-architecture.html" class="btn btn-secondary">&larr; Lesson 11</a>
+        <a href="0013-frontend-connection.html" class="btn btn-primary">Next: Frontend &rarr;</a>
+    </div>
+    <script>
+        var CORRECT_IDX = 3;
+        var EXPLAIN = "Placing the interface in Application ensures the Dependency Rule: Infrastructure (low-level detail) depends on Application (high-level policy). This is the core of DIP — business logic owns the contract, and infrastructure must adapt.";
+        function handleQuiz(btn, idx) {
+            var btns = document.querySelectorAll('.quiz-btn');
+            btns.forEach(function(b){ b.disabled=true; });
+            var fb = document.getElementById('quiz-feedback');
+            fb.style.display='block';
+            if(idx===CORRECT_IDX){
+                btn.classList.add('correct');
+                fb.className='quiz-feedback alert-success';
+                fb.innerHTML='<strong>&#10003; Correct!</strong> '+EXPLAIN;
+            }else{
+                btn.classList.add('incorrect');
+                btns[CORRECT_IDX].classList.add('correct');
+                fb.className='quiz-feedback alert-danger';
+                fb.innerHTML='<strong>&#10007; Incorrect.</strong> The correct answer is highlighted. '+EXPLAIN;
+            }
+        }
+    </script>
+</body>
+</html>

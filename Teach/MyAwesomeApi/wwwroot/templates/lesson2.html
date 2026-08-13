@@ -1,0 +1,34 @@
+<div class="tab-pane active">
+    <div class="code-col">
+        <div class="card">
+            <div class="card-title">Lesson 2: Encapsulation Property Validator</div>
+            <p class="explanation">Fields are kept private. Modification is only allowed through C# Properties, which validates inputs before saving.</p>
+            <pre><code>public class Product
+{
+    private double _price;
+    public double Price
+    {
+        get => _price;
+        set => _price = value >= 0 ? value : 0; // Rejects negative
+    }
+}</code></pre>
+        </div>
+    </div>
+    <div class="play-col">
+        <div class="card">
+            <div class="card-title">Run Lesson 2 Example</div>
+            <div class="form-group">
+                <label for="l2-price">Attempt Price Value</label>
+                <input type="number" id="l2-price" class="form-input" value="-50">
+            </div>
+            <button class="btn btn-primary" data-action="run">Run Code Execution</button>
+        </div>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                <span>Console Output</span>
+            </div>
+            <div id="console-output" class="terminal-output empty">Waiting for run trigger...</div>
+        </div>
+    </div>
+</div>

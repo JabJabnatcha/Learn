@@ -1,0 +1,29 @@
+<div class="tab-pane active">
+    <div class="code-col">
+        <div class="card">
+            <div class="card-title">Lesson 7: Dependency Inversion (DIP)</div>
+            <p class="explanation">DIP demands that high-level modules depend on abstractions (interfaces) rather than concrete implementations.</p>
+            <pre><code>public class CheckoutService
+{
+    private readonly IPaymentGateway _gateway;
+    public CheckoutService(IPaymentGateway gateway) { _gateway = gateway; }
+}</code></pre>
+        </div>
+    </div>
+    <div class="play-col">
+        <div class="card">
+            <div class="card-title">Run Lesson 7 Example</div>
+            <div class="btn-group">
+                <button class="btn btn-danger" data-action="run-bad">Bad DIP (Tightly Coupled)</button>
+                <button class="btn btn-success" data-action="run-good">Good DIP (Injected)</button>
+            </div>
+        </div>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                <span>Console Output</span>
+            </div>
+            <div id="console-output" class="terminal-output empty">Waiting for run trigger...</div>
+        </div>
+    </div>
+</div>

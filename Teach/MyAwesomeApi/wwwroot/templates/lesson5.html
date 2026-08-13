@@ -1,0 +1,26 @@
+<div class="tab-pane active">
+    <div class="code-col">
+        <div class="card">
+            <div class="card-title">Lesson 5: Minimal API Routing & API Key Guard</div>
+            <p class="explanation">Demonstrates query parameter bindings and custom HTTP middleware key validation pipeline.</p>
+            <pre><code>app.MapGet("/lesson5/search", (string? name, double? minPrice) => { ... });</code></pre>
+        </div>
+    </div>
+    <div class="play-col">
+        <div class="card">
+            <div class="card-title">Run Lesson 5 Example</div>
+            <div class="form-group">
+                <label for="l5-name">Search Product Name</label>
+                <input type="text" id="l5-name" class="form-input" value="Laptop">
+            </div>
+            <button class="btn btn-primary" data-action="run">Search Products</button>
+        </div>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                <span>Console Output</span>
+            </div>
+            <div id="console-output" class="terminal-output empty">Waiting for run trigger...</div>
+        </div>
+    </div>
+</div>

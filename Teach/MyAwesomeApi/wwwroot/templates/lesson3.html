@@ -1,0 +1,37 @@
+<div class="tab-pane active">
+    <div class="code-col">
+        <div class="card">
+            <div class="card-title">Lesson 3: Polymorphism Virtual Dispatch</div>
+            <p class="explanation">Inherits baseline properties, but redefines <code>GetDiscountRate</code> using <code>virtual</code> and <code>override</code> dispatch bindings.</p>
+            <pre><code>public class Customer
+{
+    public virtual double GetDiscountRate() => 0.0;
+}
+public class VipCustomer : Customer
+{
+    public override double GetDiscountRate() => 0.10; // 10%
+}</code></pre>
+        </div>
+    </div>
+    <div class="play-col">
+        <div class="card">
+            <div class="card-title">Run Lesson 3 Example</div>
+            <div class="form-group">
+                <label for="l3-type">Customer Class Type</label>
+                <select id="l3-type" class="form-input">
+                    <option value="VIP">VIP Customer</option>
+                    <option value="Gold">Gold Customer</option>
+                    <option value="Regular">Regular Customer</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" data-action="run">Run Code Execution</button>
+        </div>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                <span>Console Output</span>
+            </div>
+            <div id="console-output" class="terminal-output empty">Waiting for run trigger...</div>
+        </div>
+    </div>
+</div>

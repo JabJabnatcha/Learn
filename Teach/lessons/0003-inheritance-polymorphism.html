@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 3: Inheritance & Polymorphism</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .code-editor-container{background:#0b0f19;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.5rem;margin-bottom:1.5rem;}
+        .code-textarea{width:100%;height:280px;background:#131d31;color:#f1f5f9;font-family:var(--font-mono);font-size:.95rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:1rem;resize:vertical;outline:none;}
+        .code-textarea:focus{border-color:var(--primary-color);}
+        .test-result-box{margin-top:1rem;padding:1rem;border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:.9rem;display:none;}
+        .why-card{background:#1e293b;border-left:4px solid #3b82f6;padding:1.25rem;margin-bottom:1.5rem;border-radius:0 var(--radius-md) var(--radius-md) 0;}
+        .why-title{font-weight:700;color:#60a5fa;margin-bottom:.5rem;font-size:1.05rem;}
+        .run-card{background:#0f172a;border-left:4px solid #10b981;padding:1.25rem;margin-bottom:1.5rem;border-radius:0 var(--radius-md) var(--radius-md) 0;}
+        .run-title{font-weight:700;color:#34d399;margin-bottom:.5rem;font-size:1.05rem;}
+        .capability-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:1.5rem;}
+        .capability-item{background:#162032;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1.25rem;}
+        .capability-title{font-weight:700;color:#818cf8;margin-bottom:.5rem;}
+        .tdd-step{display:flex;align-items:center;gap:1rem;background:#1e293b;padding:1rem;border-radius:var(--radius-md);border:1px solid var(--border-color);margin-bottom:.75rem;}
+        .badge{font-weight:700;padding:.2rem .7rem;border-radius:var(--radius-sm);font-size:.85rem;text-transform:uppercase;white-space:nowrap;}
+        .badge-red{background:#7f1d1d;color:#fecaca;border:1px solid #991b1b;}
+        .badge-green{background:#064e3b;color:#d1fae5;border:1px solid #065f46;}
+        .badge-blue{background:#1e3a8a;color:#bfdbfe;border:1px solid #1d4ed8;}
+        .lifetime-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;background:#1e293b;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border-color);}
+        .lifetime-table th,.lifetime-table td{padding:1rem;text-align:left;border-bottom:1px solid var(--border-color);}
+        .lifetime-table th{background:#0f172a;color:#818cf8;font-weight:600;}
+        .onion{display:flex;flex-direction:column;align-items:center;gap:.5rem;background:#1e293b;padding:1.5rem;border-radius:var(--radius-lg);border:1px solid var(--border-color);margin-bottom:1.5rem;}
+        .onion-layer{width:100%;max-width:420px;text-align:center;padding:.75rem;border-radius:var(--radius-md);font-weight:700;border:1px solid rgba(255,255,255,.1);}
+        .layer-p{background:#ef4444;color:#fee2e2;}
+        .layer-i{background:#f59e0b;color:#fef3c7;}
+        .layer-a{background:#3b82f6;color:#dbeafe;}
+        .layer-d{background:#10b981;color:#d1fae5;}
+    </style>
+</head>
+<body>
+    <h1>Lesson 3: Inheritance & Polymorphism</h1>
+
+    <div class="alert alert-info"><strong>Lesson Goal:</strong> Understand <mark>Inheritance</mark> and <mark>Polymorphism</mark>, and how they eliminate repetitive <code>if-else</code> type-checking branches in business systems.</div>
+
+    <h2>1. The Problem — if-else Type Checking</h2>
+    <p>Without Polymorphism, every piece of business logic must manually branch per customer type:</p>
+    <pre><code>// &#x1F6D1; Adding a new type forces edits across the entire codebase
+if (customer.Type == "VIP")     { discount = 0.10; }
+else if (customer.Type == "Gold")  { discount = 0.05; }
+else if (customer.Type == "Guest") { discount = 0.00; }</code></pre>
+
+    <h2>2. The Solution — Inheritance + Polymorphism</h2>
+    <ul>
+        <li><mark>Inheritance</mark>: A child class reuses all fields and methods from a parent class using the <code>:</code> operator.</li>
+        <li><mark>Polymorphism</mark>: A child class redefines a parent method using <code>virtual</code> + <code>override</code>. The runtime automatically dispatches the correct version at runtime.</li>
+    </ul>
+    <pre><code>public class Customer {
+    public string Name { get; set; }
+    public virtual double GetDiscountRate() => 0.0; // Default: no discount
+}
+
+public class VipCustomer : Customer {
+    public override double GetDiscountRate() => 0.10; // 10% discount
+}
+
+public class GoldCustomer : Customer {
+    public override double GetDiscountRate() => 0.05; // 5% discount
+}</code></pre>
+
+    <div class="run-card">
+        <div class="run-title">&#9654; Live Execution Explanation (Polymorphic Binding)</div>
+        <p>In the running application, we invoke the discount rate calculation based on the dynamic type of the object:</p>
+        <ul>
+            <li>If you pass <code>type=VIP</code>, the runtime binds to the <code>VipCustomer</code> instance, returning 0.10 (10%).</li>
+            <li>If you pass <code>type=Gold</code>, it binds to <code>GoldCustomer</code>, returning 0.05 (5%).</li>
+            <li>If you pass any other value, it binds to the base <code>Customer</code> class, returning 0.00 (0%).</li>
+        </ul>
+        <p>👉 <strong>Try it live (VIP):</strong> Access <a href="http://localhost:5239/lesson3/discount?type=VIP" target="_blank">http://localhost:5239/lesson3/discount?type=VIP</a></p>
+        <p>👉 <strong>Try it live (Gold):</strong> Access <a href="http://localhost:5239/lesson3/discount?type=Gold" target="_blank">http://localhost:5239/lesson3/discount?type=Gold</a></p>
+    </div>
+
+    <h2>3. Interactive Quiz</h2>
+        <div class="quiz-container">
+        <div class="quiz-question">What concrete software problem does Polymorphism eliminate most effectively in business rule code?</div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="handleQuiz(this,0)">Broken CSS flexbox layouts on narrow mobile viewport sizes.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,1)">Repetitive if-else type-checking branches scattered throughout the codebase.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,2)">Unoptimized image compression ratios in static asset pipelines.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,3)">Missing firewall configuration between microservice network pods.</button>
+            <button class="quiz-btn" onclick="handleQuiz(this,4)">Slow EF Core database query plan compilation at application startup.</button>
+        </div>
+        <div id="quiz-feedback" class="quiz-feedback"></div>
+    </div>
+
+    <h2>4. Coding Exercise</h2>
+    <p><strong>Task:</strong> Make <code>VipCustomer</code> inherit from <code>Customer</code> and properly <code>override</code> the discount method.</p>
+    <div class="code-editor-container">
+        <textarea id="sandbox3" class="code-textarea" spellcheck="false">public class Customer {
+    public virtual double GetDiscountRate() => 0.0;
+}
+
+// 1. Inherit VipCustomer from Customer
+public class VipCustomer __________ Customer {
+
+    // 2. Add 'override' keyword to redefine the discount
+    public double GetDiscountRate() {
+        return 0.10;
+    }
+}</textarea>
+        <button class="btn btn-primary" style="margin-top:1rem" onclick="runTest3()">&#9654; Run Code Tests</button>
+        <div id="test-result3" class="test-result-box"></div>
+    </div>
+
+    <div class="lesson-footer">
+        <a href="0002-encapsulation-properties.html" class="btn btn-secondary">&larr; Lesson 2</a>
+        <a href="0004-interfaces-abstract-classes.html" class="btn btn-primary">Next: Interfaces &rarr;</a>
+    </div>
+    <script>
+        var CORRECT_IDX = 1;
+        var EXPLAIN = "Without Polymorphism, adding a new customer type requires finding and editing every if-else chain in the system. With Polymorphism, each subclass overrides the virtual method and the runtime dispatches the right version automatically — making the codebase Open for extension and Closed for modification.";
+        function handleQuiz(btn, idx) {
+            var btns = document.querySelectorAll('.quiz-btn');
+            btns.forEach(function(b){ b.disabled=true; });
+            var fb = document.getElementById('quiz-feedback');
+            fb.style.display='block';
+            if(idx===CORRECT_IDX){
+                btn.classList.add('correct');
+                fb.className='quiz-feedback alert-success';
+                fb.innerHTML='<strong>&#10003; Correct!</strong> '+EXPLAIN;
+            }else{
+                btn.classList.add('incorrect');
+                btns[CORRECT_IDX].classList.add('correct');
+                fb.className='quiz-feedback alert-danger';
+                fb.innerHTML='<strong>&#10007; Incorrect.</strong> The correct answer is highlighted. '+EXPLAIN;
+            }
+        }
+        function runTest3() {
+            var code = document.getElementById('sandbox3').value;
+            var box = document.getElementById('test-result3');
+            box.style.display = 'block';
+            var hasInherit = /class\s+VipCustomer\s*:\s*Customer/.test(code);
+            var hasOverride = /public\s+override\s+double\s+GetDiscountRate/.test(code);
+            if (!hasInherit) { box.className='test-result-box alert-warning'; box.innerHTML='&#10007; Inheritance not found. Use <code>: Customer</code>.'; return; }
+            if (!hasOverride) { box.className='test-result-box alert-warning'; box.innerHTML='&#10007; Missing <mark>override</mark> keyword on GetDiscountRate.'; return; }
+            box.className='test-result-box alert-success';
+            box.innerHTML='&#10003; <strong>Success!</strong> Polymorphism implemented correctly!';
+        }
+    </script>
+</body>
+</html>

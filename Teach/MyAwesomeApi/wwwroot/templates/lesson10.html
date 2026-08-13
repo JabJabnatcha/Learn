@@ -1,0 +1,23 @@
+<div class="tab-pane active">
+    <div class="code-col">
+        <div class="card">
+            <div class="card-title">Lesson 10: Service Registration in Program.cs</div>
+            <p class="explanation">Maps interface abstractions to concrete implementations in the IoC container. .NET resolves all parameters recursively.</p>
+            <pre><code>builder.Services.AddScoped&lt;IProductRepository, SqlProductRepository&gt;();</code></pre>
+        </div>
+    </div>
+    <div class="play-col">
+        <div class="card">
+            <div class="card-title">Run Lesson 10 Example</div>
+            <p class="explanation">Checks the registered DI tree map in the running application container.</p>
+            <button class="btn btn-primary" data-action="run">Run Resolver Audit</button>
+        </div>
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                <span>Console Output</span>
+            </div>
+            <div id="console-output" class="terminal-output empty">Waiting for run trigger...</div>
+        </div>
+    </div>
+</div>
