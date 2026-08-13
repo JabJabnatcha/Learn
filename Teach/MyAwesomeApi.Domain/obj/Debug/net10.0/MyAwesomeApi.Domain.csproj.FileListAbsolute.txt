@@ -1,0 +1,12 @@
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\bin\Debug\net10.0\MyAwesomeApi.Domain.deps.json
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\bin\Debug\net10.0\MyAwesomeApi.Domain.dll
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\bin\Debug\net10.0\MyAwesomeApi.Domain.pdb
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\obj\Debug\net10.0\MyAwesomeApi.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\obj\Debug\net10.0\MyAwesomeApi.Domain.AssemblyInfoInputs.cache
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\obj\Debug\net10.0\MyAwesomeApi.Domain.AssemblyInfo.cs
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\obj\Debug\net10.0\MyAwesomeApi.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\obj\Debug\net10.0\MyAwesomeApi.Domain.sourcelink.json
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\obj\Debug\net10.0\MyAwesomeApi.Domain.dll
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\obj\Debug\net10.0\refint\MyAwesomeApi.Domain.dll
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\obj\Debug\net10.0\MyAwesomeApi.Domain.pdb
+C:\Users\Laptop-JAB\Desktop\Learn\Teach\MyAwesomeApi.Domain\obj\Debug\net10.0\ref\MyAwesomeApi.Domain.dll
