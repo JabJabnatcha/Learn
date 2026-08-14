@@ -1,0 +1,40 @@
+﻿//Abstract class
+var employee = new Employee_Fulltime("john doe", 1, 75000);
+Console.WriteLine($"Employee Name: {employee.Name}");
+Console.WriteLine($"Employee Salary: {employee.CalculateSalary()}");
+
+var parttimeEmployee = new Employee_Parttime("jane doe", 2, 20, 30);
+Console.WriteLine($"Parttime Employee Name: {parttimeEmployee.Name}");
+Console.WriteLine($"Parttime Employee Salary: {parttimeEmployee.CalculateSalary()}");
+
+var contractorEmployee = new Employee_Contractor("jack doe", 3, 25, 40);
+Console.WriteLine($"Contractor Employee Name: {contractorEmployee.Name}");
+Console.WriteLine($"Contractor Employee Salary: {contractorEmployee.CalculateSalary()}");
+
+//interface class
+Console.WriteLine("\n");
+var employeeService = new EmployeeService(new InMemoryEmployeeRepository());
+Console.WriteLine("All Employees:");
+var allEmployees = employeeService.GetALLEmployee();
+foreach (var detail in allEmployees)
+{
+    Console.WriteLine($"Employee ID: {detail.Id}, Name: {detail.Name}, Salary: {detail.CalculateSalary()}");
+}
+
+var employeeById = employeeService.GetEmployeeById(5);
+Console.WriteLine($"Employee with ID 5: {employeeById.Name}");
+
+var newEmployee = new Employee_Fulltime("Serverus snapt", 7, 80000);
+employeeService.AddEmployee(newEmployee);
+Console.WriteLine($"Adding new employee: {newEmployee.Name}");
+
+
+var allEmployees2 = employeeService.GetALLEmployee();
+Console.WriteLine("All Employees:");
+foreach (var detail in allEmployees2)
+{
+    Console.WriteLine($"Employee ID: {detail.Id}, Name: {detail.Name}, Salary: {detail.CalculateSalary()}");
+}
+
+var employeeById2 = employeeService.GetEmployeeById(7);
+Console.WriteLine($"Employee with ID 7: {employeeById2.Name}");

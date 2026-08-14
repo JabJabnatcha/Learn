@@ -13,3 +13,15 @@ C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\refint\
 C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\my-practice.pdb
 C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\my-practice.genruntimeconfig.cache
 C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\ref\my-practice.dll
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\bin\Debug\net10.0\my-practice.staticwebassets.endpoints.json
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\my-practice.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\rjimswa.dswa.cache.json
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\rjsmrazor.dswa.cache.json
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\scopedcss\bundle\my-practice.styles.css
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\staticwebassets.build.json
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\staticwebassets.build.json.cache
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\staticwebassets.development.json
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\staticwebassets.build.endpoints.json
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\swae.build.ex.cache

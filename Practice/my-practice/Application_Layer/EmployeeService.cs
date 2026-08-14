@@ -1,30 +1,36 @@
 public class EmployeeService : IEmployeeService
 {
     private readonly IEmployeeRepository _employeeRepository;
+
     public EmployeeService(IEmployeeRepository employeeRepository)
     {
         _employeeRepository = employeeRepository;
     }
 
-    public IEnumerable<Employee> GetALL()
+    public IEnumerable<Employee> GetALLEmployee()
     {
         return _employeeRepository.GetALL();
     }
 
-    public Employee GetById(int id)
+    public Employee GetEmployeeById(int id)
     {
-        if (id <= 0)
+        var employee = _employeeRepository.GetById(id);
+        if (employee == null)
         {
             throw new ArgumentException("Invalid employee ID.");
         }
-        return _employeeRepository.GetById(id);
+        return employee;
     }
 
-    public void add(Employee employee)
+    public void AddEmployee(Employee employee)
     {
         if (employee == null)
         {
             throw new ArgumentNullException(nameof(employee), "Employee cannot be null.");
+        }
+        if (string.IsNullOrWhiteSpace(employee.Name))
+        {
+            throw new ArgumentException("Employee name cannot be empty.");
         }
         _employeeRepository.add(employee);
     }

@@ -1,6 +1,6 @@
 public interface IEmployeeService
 {
-    IEnumerable<Employee> GetALL();
-    Employee GetById(int id);
-    void add(Employee employee);
+    IEnumerable<Employee> GetALLEmployee();
+    Employee GetEmployeeById(int id);
+    void AddEmployee(Employee employee);
 }
