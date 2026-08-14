@@ -1,0 +1,15 @@
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\bin\Debug\net10.0\my-practice.exe
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\bin\Debug\net10.0\my-practice.deps.json
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\bin\Debug\net10.0\my-practice.runtimeconfig.json
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\bin\Debug\net10.0\my-practice.dll
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\bin\Debug\net10.0\my-practice.pdb
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\my-practice.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\my-practice.AssemblyInfoInputs.cache
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\my-practice.AssemblyInfo.cs
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\my-practice.csproj.CoreCompileInputs.cache
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\my-practice.sourcelink.json
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\my-practice.dll
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\refint\my-practice.dll
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\my-practice.pdb
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\my-practice.genruntimeconfig.cache
+C:\Users\Laptop-JAB\Desktop\Learn\Practice\my-practice\obj\Debug\net10.0\ref\my-practice.dll

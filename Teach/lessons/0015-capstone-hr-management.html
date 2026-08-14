@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 15 — Capstone: HR Employee Management System</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    /* ── Capstone-specific additions ── */
+    .capstone-banner {
+      background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(16,185,129,0.08) 100%);
+      border: 1px solid rgba(99,102,241,0.35);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .capstone-banner .label {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--primary-color);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .capstone-banner h1 {
+      border: none;
+      padding: 0;
+      margin-bottom: 0.5rem;
+    }
+    .capstone-banner .subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    /* ── Checkpoint Cards ── */
+    .checkpoint {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      transition: border-color 0.2s;
+    }
+    .checkpoint.done {
+      border-color: var(--accent-color);
+    }
+    .checkpoint-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .checkpoint-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .checkpoint-num {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .checkpoint.done .checkpoint-num {
+      background: var(--accent-color);
+    }
+    .checkpoint-num::after {
+      content: attr(data-num);
+    }
+    .cp-meta {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .tag-lesson { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+    .tag-time   { background: rgba(245,158,11,0.15); color: #fde68a; border: 1px solid rgba(245,158,11,0.3); }
+
+    .requirement-box {
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin: 1rem 0;
+    }
+    .requirement-box h4 {
+      color: #a5b4fc;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+    }
+
+    .rubric-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.88rem;
+    }
+    .rubric-table th {
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      font-weight: 700;
+      font-family: var(--font-heading);
+      border-bottom: 2px solid var(--border-color);
+    }
+    .rubric-table td {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid rgba(51,65,85,0.5);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+    .rubric-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .lvl-b { color: #fde68a; }
+    .lvl-c { color: #6ee7b7; }
+    .lvl-p { color: #93c5fd; }
+
+    /* ── Session Tracker ── */
+    .tracker {
+      background: #0f172a;
+      border: 1px solid rgba(99,102,241,0.4);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-top: 1.25rem;
+    }
+    .tracker-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary-color);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .tracker-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.6rem;
+    }
+    .timer-display {
+      font-family: var(--font-mono);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      min-width: 5.5rem;
+      letter-spacing: 0.05em;
+    }
+    .tracker-btn {
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+    .tracker-btn.start  { background: rgba(16,185,129,0.15); border-color: var(--accent-color);  color: #6ee7b7; }
+    .tracker-btn.pause  { background: rgba(245,158,11,0.15); border-color: var(--warning-color); color: #fde68a; }
+    .tracker-btn.reset  { background: rgba(239,68,68,0.1);   border-color: var(--error-color);   color: #fca5a5; }
+    .tracker-btn.mark   { background: rgba(99,102,241,0.15); border-color: var(--primary-color); color: #a5b4fc; }
+    .tracker-btn:hover { opacity: 0.85; }
+    .mistake-count {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      color: #fca5a5;
+      font-weight: 700;
+    }
+    .stuck-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      padding: 0.5rem 0.75rem;
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      resize: vertical;
+      min-height: 52px;
+      margin-top: 0.5rem;
+    }
+    .stuck-input::placeholder { color: #475569; }
+    .stuck-input:focus { outline: none; border-color: var(--primary-color); }
+
+    .done-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+      width: fit-content;
+    }
+    .done-toggle input[type=checkbox] { width: 1rem; height: 1rem; accent-color: var(--accent-color); cursor: pointer; }
+    .done-toggle span { font-size: 0.85rem; color: var(--text-secondary); }
+    .done-toggle:hover span { color: var(--text-primary); }
+
+    /* ── Progress bar ── */
+    .progress-bar-wrap {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+    .progress-bar-track {
+      height: 8px;
+      background: rgba(51,65,85,0.8);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      border-radius: 9999px;
+      transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+      width: 0%;
+    }
+
+    /* ── Quiz ── */
+    .quiz-section {
+      border: 2px solid rgba(99,102,241,0.4);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin: 2rem 0;
+      background: rgba(99,102,241,0.03);
+    }
+    .quiz-section h3 {
+      margin-top: 0;
+      color: #a5b4fc;
+    }
+    .q-block { margin-bottom: 2rem; }
+    .q-block:last-child { margin-bottom: 0; }
+    .q-text {
+      font-size: 0.97rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+    .q-num {
+      color: var(--primary-color);
+      margin-right: 0.35rem;
+    }
+    .q-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .q-opt {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.7rem 1rem;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .q-opt:hover:not(:disabled) { border-color: var(--primary-color); color: var(--text-primary); }
+    .q-opt.correct  { border-color: var(--accent-color); background: rgba(16,185,129,0.1); color: #6ee7b7; }
+    .q-opt.wrong    { border-color: var(--error-color);  background: rgba(239,68,68,0.1);  color: #fca5a5; }
+    .q-opt:disabled { cursor: default; }
+    .q-feedback { margin-top: 0.5rem; font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); display: none; }
+    .q-feedback.show { display: block; }
+    .q-feedback.ok  { background: rgba(16,185,129,0.1); color: #6ee7b7; }
+    .q-feedback.bad { background: rgba(239,68,68,0.1);  color: #fca5a5; }
+    .quiz-score-bar { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: none; }
+    .quiz-score-bar.show { display: block; }
+
+    /* ── Assessment Report ── */
+    .report-section {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+    .report-section h2 { margin-top: 0; }
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .report-card {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.1rem;
+      text-align: center;
+    }
+    .report-card .rc-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 0.4rem; }
+    .report-card .rc-value { font-family: var(--font-mono); font-size: 1.8rem; font-weight: 700; color: var(--text-primary); }
+    .report-card .rc-sub   { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.25rem; }
+    #report-output { white-space: pre-wrap; font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-secondary); background: #0f172a; border-radius: var(--radius-md); padding: 1rem; margin-top: 1rem; max-height: 320px; overflow-y: auto; }
+    .btn-generate {
+      margin-top: 1rem;
+      padding: 0.75rem 1.75rem;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: var(--font-sans);
+    }
+    .btn-generate:hover { background: var(--primary-hover); }
+    .btn-copy {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1.25rem;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.15s;
+    }
+    .btn-copy:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+    /* ── Misc ── */
+    .divider { border: none; border-top: 1px solid var(--border-color); margin: 2.5rem 0; }
+    .lessons-ref { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+    .lessons-ref a { font-size: 0.8rem; }
+    .warn-no-ai {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.35);
+      border-radius: var(--radius-md);
+      padding: 0.9rem 1.25rem;
+      margin-bottom: 1.75rem;
+      font-size: 0.9rem;
+      color: #fca5a5;
+    }
+    .warn-no-ai strong { color: #ef4444; }
+
+    /* ── Mistake Root Cause Log ── */
+    .mistake-entry-form {
+      display: none;
+      margin-top: 0.4rem;
+      gap: 0.4rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .mistake-entry-form.show { display: flex; }
+    .mistake-reason-input {
+      flex: 1;
+      min-width: 160px;
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.5);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      padding: 0.35rem 0.6rem;
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+    }
+    .mistake-reason-input::placeholder { color: #475569; }
+    .mistake-reason-input:focus { outline: none; border-color: var(--error-color); }
+    .mistake-log-list {
+      list-style: none;
+      margin: 0.4rem 0 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .mistake-log-item {
+      font-size: 0.78rem;
+      color: #fca5a5;
+      background: rgba(239,68,68,0.05);
+      border-radius: var(--radius-sm);
+      padding: 0.3rem 0.6rem;
+      border-left: 2px solid rgba(239,68,68,0.3);
+      display: flex;
+      gap: 0.5rem;
+      align-items: baseline;
+    }
+    .mistake-log-num {
+      color: rgba(239,68,68,0.55);
+      font-weight: 700;
+      font-size: 0.72rem;
+      min-width: 1.4rem;
+      flex-shrink: 0;
+    }
+    .mistake-log-ts {
+      color: #64748b;
+      font-size: 0.72rem;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     BANNER
+═══════════════════════════════════════ -->
+<div class="capstone-banner">
+  <div class="label">Lesson 15 · Capstone Project</div>
+  <h1>HR Employee Management System</h1>
+  <p class="subtitle">Integrate everything you learned in Lessons 1–14 into one production-quality backend.</p>
+</div>
+
+<div class="warn-no-ai">
+  <strong>🚫 No AI code generation.</strong> You write every line yourself. The lesson provides requirements and guidance — not syntax. Use lessons 1–14 as your reference.
+</div>
+
+<!-- Progress Bar -->
+<div class="progress-bar-wrap">
+  <div class="progress-label">
+    <span>Overall Progress</span>
+    <div>
+      <a href="javascript:void(0)" onclick="toggleBackupRestore()" style="color:var(--primary-color);font-size:0.8rem;text-decoration:none;margin-right:1rem;">💾 Backup/Restore</a>
+      <span id="progress-pct">0 / 8 checkpoints</span>
+    </div>
+  </div>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+  
+  <div id="backup-restore-panel" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px dashed var(--border-color);">
+    <p style="font-size:0.8rem;color:var(--text-secondary);margin:0 0 0.5rem 0;">Copy this JSON to backup, or paste backup JSON and click Restore:</p>
+    <div style="display:flex;gap:0.5rem;">
+      <textarea id="backup-json-text" style="flex:1;height:60px;background:#0f172a;color:#cbd5e1;border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:0.4rem;font-family:monospace;font-size:0.75rem;resize:none;"></textarea>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;">
+        <button class="btn btn-secondary" onclick="exportState()" style="padding:0.3rem 0.6rem;font-size:0.75rem;">Get Backup</button>
+        <button class="btn btn-primary" onclick="importState()" style="padding:0.3rem 0.6rem;font-size:0.75rem;">Restore</button>
+      </div>
+    </div>
+    <div id="backup-msg" style="font-size:0.75rem;margin-top:0.4rem;color:#10b981;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PRE-QUIZ
+═══════════════════════════════════════ -->
+<div class="quiz-section" id="pre-quiz">
+  <h3>🧠 Pre-Quiz — Concept Check <span style="font-size:0.8rem;color:var(--text-secondary);font-weight:400;">(complete before writing any code)</span></h3>
+  <p style="margin-bottom:1.5rem;font-size:0.9rem;">Answer from memory. No lesson lookup. This measures your starting fluency — wrong answers are fine, they guide the assessment.</p>
+
+  <!-- Q1 -->
+  <div class="q-block" id="pq-block-1">
+    <div class="q-text"><span class="q-num">1.</span> In Clean Architecture, which layer is allowed to know about the database?</div>
+    <div class="q-options">
+      <button class="q-opt" onclick="answerPre(1,'a',this)">Domain Layer</button>
+      <button class="q-opt" onclick="answerPre(1,'b',this)">Application Layer</button>
+      <button class="q-opt" onclick="answerPre(1,'c',this)">Infrastructure Layer</button>
+      <button class="q-opt" onclick="answerPre(1,'d',this)">Presentation Layer</button>
+    </div>
+    <div class="q-feedback" id="pq-fb-1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-block" id="pq-block-2">
+    <div class="q-text"><span class="q-num">2.</span> Which SOLID principle does this violate: one interface with methods GetEmployee(), CalculateSalary(), SendEmail(), GeneratePdfReport()?</div>
+    <div class="q-options">
+      <button class="q-opt" onclick="answerPre(2,'a',this)">Single Responsibility Principle</button>
+      <button class="q-opt" onclick="answerPre(2,'b',this)">Open/Closed Principle</button>
+      <button class="q-opt" onclick="answerPre(2,'c',this)">Interface Segregation Principle</button>
+      <button class="q-opt" onclick="answerPre(2,'d',this)">Dependency Inversion Principle</button>
+    </div>
+    <div class="q-feedback" id="pq-fb-2"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-block" id="pq-block-3">
+    <div class="q-text"><span class="q-num">3.</span> A new EmployeeService is created for every HTTP request and disposed when the request ends. What DI lifetime should you use?</div>
+    <div class="q-options">
+      <button class="q-opt" onclick="answerPre(3,'a',this)">Transient</button>
+      <button class="q-opt" onclick="answerPre(3,'b',this)">Scoped</button>
+      <button class="q-opt" onclick="answerPre(3,'c',this)">Singleton</button>
+      <button class="q-opt" onclick="answerPre(3,'d',this)">Prototype</button>
+    </div>
+    <div class="q-feedback" id="pq-fb-3"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-block" id="pq-block-4">
+    <div class="q-text"><span class="q-num">4.</span> The Repository Pattern's main benefit is that it…</div>
+    <div class="q-options">
+      <button class="q-opt" onclick="answerPre(4,'a',this)">Speeds up database queries automatically</button>
+      <button class="q-opt" onclick="answerPre(4,'b',this)">Hides data-access details behind an interface</button>
+      <button class="q-opt" onclick="answerPre(4,'c',this)">Replaces the need for Dependency Injection</button>
+      <button class="q-opt" onclick="answerPre(4,'d',this)">Makes all classes inherit from a base Repository</button>
+    </div>
+    <div class="q-feedback" id="pq-fb-4"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-block" id="pq-block-5">
+    <div class="q-text"><span class="q-num">5.</span> abstract class vs interface in C# — which statement is correct?</div>
+    <div class="q-options">
+      <button class="q-opt" onclick="answerPre(5,'a',this)">Abstract class can have method implementations; interface cannot have any</button>
+      <button class="q-opt" onclick="answerPre(5,'b',this)">A class can inherit multiple abstract classes</button>
+      <button class="q-opt" onclick="answerPre(5,'c',this)">Interface can have fields; abstract class cannot</button>
+      <button class="q-opt" onclick="answerPre(5,'d',this)">Abstract class can have implementations; interface can have default implementations (C# 8+)</button>
+    </div>
+    <div class="q-feedback" id="pq-fb-5"></div>
+  </div>
+
+  <div class="quiz-score-bar" id="pre-score-bar">
+    <strong id="pre-score-label"></strong>
+    <p id="pre-score-note" style="margin:0.4rem 0 0;font-size:0.85rem;"></p>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
+     PROJECT BRIEF
+═══════════════════════════════════════ -->
+<h2>📋 Project Brief</h2>
+<p>Build a <strong>.NET Web API</strong> for a company's HR department. The system manages three types of employees and exposes a REST API that a Vue.js frontend can consume.</p>
+
+<div class="card">
+  <div class="card-title">🏢 Business Requirements</div>
+  <ul>
+    <li>The company has <strong>three employee types</strong>: Full-Time, Part-Time, and Contractor.</li>
+    <li>Each type calculates salary differently.</li>
+    <li>HR can <strong>list all employees</strong>, <strong>get one by ID</strong>, and <strong>add a new employee</strong>.</li>
+    <li>The system must be <strong>testable</strong> — business logic must not depend on the database.</li>
+    <li>The system must follow <strong>Clean Architecture</strong> layer separation.</li>
+    <li>Frontend (Vue.js) must be able to call the API from a different origin (CORS).</li>
+  </ul>
+</div>
+
+<div class="alert alert-warning">
+  <strong>⏰ Target time:</strong> ~2 hours total. Each checkpoint has an expected duration shown on its tag. Use the tracker to compare your actual time.
+</div>
+
+<hr class="divider" />
+<h2>⚙️ Checkpoints</h2>
+<p>Complete them in order. Each checkpoint unlocks skills from specific lessons. Mark each one done when you're satisfied with your work.</p>
+
+<!-- ═══════════════════════════════════════
+     CHECKPOINT 1
+═══════════════════════════════════════ -->
+<div class="checkpoint" id="cp-1">
+  <div class="checkpoint-header">
+    <div class="checkpoint-title">
+      <div class="checkpoint-num" data-num="1"></div>
+      Domain Models — Employee Hierarchy
+    </div>
+    <div class="cp-meta">
+      <span class="tag tag-lesson">L1 · L2 · L3 · L4</span>
+      <span class="tag tag-time">~20 min</span>
+    </div>
+  </div>
+
+  <div class="requirement-box">
+    <h4>🎯 What to Build</h4>
+    <ul>
+      <li>Create the <strong>Domain layer</strong> of your project.</li>
+      <li>Design a base class (or abstract class) called <code>Employee</code> that holds shared data: Id, Name, Department, and HireDate.</li>
+      <li>Create three derived classes: <code>FullTimeEmployee</code>, <code>PartTimeEmployee</code>, <code>ContractEmployee</code>.</li>
+      <li>Each derived class must override a method <code>CalculateMonthlySalary()</code> with different logic:
+        <ul>
+          <li><strong>FullTime:</strong> fixed monthly salary (stored as a field).</li>
+          <li><strong>PartTime:</strong> hourly rate × hours worked per month.</li>
+          <li><strong>Contract:</strong> daily rate × working days in month.</li>
+        </ul>
+      </li>
+      <li>The <code>Employee</code> base must declare <code>CalculateMonthlySalary()</code> as a method that subclasses must implement — choose the right C# keyword.</li>
+    </ul>
+  </div>
+
+  <p><strong>Knowledge to use:</strong></p>
+  <div class="lessons-ref">
+    <a href="0001-oop-introduction.html">L1 — Classes &amp; Objects</a> ·
+    <a href="0002-encapsulation-properties.html">L2 — Encapsulation &amp; Properties</a> ·
+    <a href="0003-inheritance-polymorphism.html">L3 — Inheritance &amp; Polymorphism</a> ·
+    <a href="0004-interfaces-abstract-classes.html">L4 — Abstract Classes</a>
+  </div>
+
+  <details style="margin-top:1rem;">
+    <summary style="cursor:pointer;color:var(--primary-color);font-size:0.88rem;font-weight:600;">💡 Hints (try without first)</summary>
+    <div class="alert alert-info" style="margin-top:0.75rem;">
+      <ul>
+        <li>Think: should <code>Employee</code> be instantiated directly? That should guide your choice between <code>abstract class</code> and a regular class.</li>
+        <li>Use L3 knowledge to pick the right keyword that forces subclasses to override a method.</li>
+        <li>Properties vs public fields — revisit L2 to decide which is more appropriate for domain models.</li>
+      </ul>
+    </div>
+  </details>
+
+  <div style="margin-top:1.25rem;">
+    <table class="rubric-table">
+      <thead>
+        <tr>
+          <th>Level</th>
+          <th>Criterion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="lvl-b">🟡 Beginner</td>
+          <td>Classes exist and inherit from Employee. CalculateMonthlySalary() exists on all three, but may use public fields instead of properties.</td>
+        </tr>
+        <tr>
+          <td class="lvl-c">🟢 Competent</td>
+          <td>Employee is abstract. Properties used correctly. Override keyword used on all subclasses. Salary logic is per-type.</td>
+        </tr>
+        <tr>
+          <td class="lvl-p">🔵 Proficient</td>
+          <td>Can explain why abstract is chosen over interface here. Properties have correct access modifiers. No logic in the base class for salary.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tracker" id="tracker-1">
+    <div class="tracker-title">📊 Session Tracker — Checkpoint 1</div>
+    <div class="tracker-row">
+      <div class="timer-display" id="timer-1">00:00</div>
+      <button class="tracker-btn start" onclick="startTimer(1)">▶ Start</button>
+      <button class="tracker-btn pause" onclick="pauseTimer(1)">⏸ Pause</button>
+      <button class="tracker-btn reset" onclick="resetTimer(1)">↺ Reset</button>
+    </div>
+    <div class="tracker-row">
+      <span style="font-size:0.82rem;color:var(--text-secondary);">Mistakes / Revisions:</span>
+      <span class="mistake-count" id="mistakes-1">0</span>
+      <button class="tracker-btn mark" onclick="showMistakeForm(1)">+1 Mistake</button>
+    </div>
+    <div class="mistake-entry-form" id="mistake-form-1">
+      <input class="mistake-reason-input" id="mistake-reason-1" placeholder="Root cause เช่น 'ลืม keyword abstract', 'Properties นอก class'" onkeydown="if(event.key==='Enter')confirmMistake(1)" />
+      <button class="tracker-btn mark" onclick="confirmMistake(1)">บันทึก</button>
+      <button class="tracker-btn reset" style="font-size:0.78rem;padding:0.3rem 0.6rem;" onclick="cancelMistake(1)">ยกเลิก</button>
+    </div>
+    <div id="mistake-log-1"></div>
+    <textarea class="stuck-input" id="notes-1" placeholder="What got confusing? (e.g. 'forgot abstract keyword meaning')" oninput="saveNotes(1)"></textarea>
+    <label class="done-toggle">
+      <input type="checkbox" id="done-1" onchange="markDone(1)" />
+      <span>✅ Mark checkpoint as complete</span>
+    </label>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CHECKPOINT 2
+═══════════════════════════════════════ -->
+<div class="checkpoint" id="cp-2">
+  <div class="checkpoint-header">
+    <div class="checkpoint-title">
+      <div class="checkpoint-num" data-num="2"></div>
+      Define Interfaces (SOLID-compliant)
+    </div>
+    <div class="cp-meta">
+      <span class="tag tag-lesson">L4 · L6 · L7</span>
+      <span class="tag tag-time">~15 min</span>
+    </div>
+  </div>
+
+  <div class="requirement-box">
+    <h4>🎯 What to Build</h4>
+    <ul>
+      <li>In the <strong>Application layer</strong>, define two focused interfaces (not one fat one):</li>
+      <li><code>IEmployeeRepository</code> — declares data access operations: GetAll, GetById, Add.</li>
+      <li><code>IEmployeeService</code> — declares business operations: GetAllEmployees, GetEmployee, AddEmployee.</li>
+      <li>Each interface should have only the methods relevant to its single responsibility.</li>
+    </ul>
+  </div>
+
+  <p><strong>Knowledge to use:</strong></p>
+  <div class="lessons-ref">
+    <a href="0004-interfaces-abstract-classes.html">L4 — Interfaces</a> ·
+    <a href="0006-solid-principles-sol.html">L6 — SRP &amp; OCP</a> ·
+    <a href="0007-solid-principles-id.html">L7 — ISP &amp; DIP</a>
+  </div>
+
+  <details style="margin-top:1rem;">
+    <summary style="cursor:pointer;color:var(--primary-color);font-size:0.88rem;font-weight:600;">💡 Hints (try without first)</summary>
+    <div class="alert alert-info" style="margin-top:0.75rem;">
+      <ul>
+        <li>Interface Segregation (L7): would a class that only needs to read employees need to know about Add? Split accordingly.</li>
+        <li>Dependency Inversion (L7): the service should depend on the <em>repository interface</em>, not a concrete class.</li>
+        <li>Interfaces live in Application layer because they define <em>what</em> not <em>how</em>.</li>
+      </ul>
+    </div>
+  </details>
+
+  <div style="margin-top:1.25rem;">
+    <table class="rubric-table">
+      <thead>
+        <tr><th>Level</th><th>Criterion</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lvl-b">🟡 Beginner</td><td>Two interfaces exist with some methods. May have too many methods in one interface.</td></tr>
+        <tr><td class="lvl-c">🟢 Competent</td><td>Interfaces are focused. IEmployeeRepository only has data methods. IEmployeeService only has business methods.</td></tr>
+        <tr><td class="lvl-p">🔵 Proficient</td><td>Can articulate which SOLID principles each interface decision satisfies, and why they're in Application not Domain.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tracker" id="tracker-2">
+    <div class="tracker-title">📊 Session Tracker — Checkpoint 2</div>
+    <div class="tracker-row">
+      <div class="timer-display" id="timer-2">00:00</div>
+      <button class="tracker-btn start" onclick="startTimer(2)">▶ Start</button>
+      <button class="tracker-btn pause" onclick="pauseTimer(2)">⏸ Pause</button>
+      <button class="tracker-btn reset" onclick="resetTimer(2)">↺ Reset</button>
+    </div>
+    <div class="tracker-row">
+      <span style="font-size:0.82rem;color:var(--text-secondary);">Mistakes / Revisions:</span>
+      <span class="mistake-count" id="mistakes-2">0</span>
+      <button class="tracker-btn mark" onclick="showMistakeForm(2)">+1 Mistake</button>
+    </div>
+    <div class="mistake-entry-form" id="mistake-form-2">
+      <input class="mistake-reason-input" id="mistake-reason-2" placeholder="Root cause เช่น 'สับสน ISP vs SRP'" onkeydown="if(event.key==='Enter')confirmMistake(2)" />
+      <button class="tracker-btn mark" onclick="confirmMistake(2)">บันทึก</button>
+      <button class="tracker-btn reset" style="font-size:0.78rem;padding:0.3rem 0.6rem;" onclick="cancelMistake(2)">ยกเลิก</button>
+    </div>
+    <div id="mistake-log-2"></div>
+    <textarea class="stuck-input" id="notes-2" placeholder="What got confusing?" oninput="saveNotes(2)"></textarea>
+    <label class="done-toggle">
+      <input type="checkbox" id="done-2" onchange="markDone(2)" />
+      <span>✅ Mark checkpoint as complete</span>
+    </label>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CHECKPOINT 3
+═══════════════════════════════════════ -->
+<div class="checkpoint" id="cp-3">
+  <div class="checkpoint-header">
+    <div class="checkpoint-title">
+      <div class="checkpoint-num" data-num="3"></div>
+      Application Layer — EmployeeService
+    </div>
+    <div class="cp-meta">
+      <span class="tag tag-lesson">L7 · L11</span>
+      <span class="tag tag-time">~15 min</span>
+    </div>
+  </div>
+
+  <div class="requirement-box">
+    <h4>🎯 What to Build</h4>
+    <ul>
+      <li>Create <code>EmployeeService</code> in the Application layer that implements <code>IEmployeeService</code>.</li>
+      <li>It must receive its <code>IEmployeeRepository</code> dependency through the <strong>constructor</strong> — not by creating it internally.</li>
+      <li>Implement all methods. Business rules:
+        <ul>
+          <li><code>GetAllEmployees()</code> — returns all employees from the repository.</li>
+          <li><code>GetEmployee(id)</code> — returns a single employee or throws a meaningful exception if not found.</li>
+          <li><code>AddEmployee(employee)</code> — validates that Name is not empty before adding. Throw if invalid.</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <p><strong>Knowledge to use:</strong></p>
+  <div class="lessons-ref">
+    <a href="0007-solid-principles-id.html">L7 — DIP</a> ·
+    <a href="0011-clean-architecture.html">L11 — Clean Architecture layers</a>
+  </div>
+
+  <details style="margin-top:1rem;">
+    <summary style="cursor:pointer;color:var(--primary-color);font-size:0.88rem;font-weight:600;">💡 Hints (try without first)</summary>
+    <div class="alert alert-info" style="margin-top:0.75rem;">
+      <ul>
+        <li>Constructor injection is the DIP pattern from L7 — the class shouldn't create its own dependencies.</li>
+        <li>The service doesn't know <em>how</em> data is stored — that's Infrastructure's job (L11).</li>
+        <li>Throwing exceptions from business rules is perfectly acceptable at this layer.</li>
+      </ul>
+    </div>
+  </details>
+
+  <div style="margin-top:1.25rem;">
+    <table class="rubric-table">
+      <thead><tr><th>Level</th><th>Criterion</th></tr></thead>
+      <tbody>
+        <tr><td class="lvl-b">🟡 Beginner</td><td>EmployeeService exists and calls the repository. Dependency may be created with new inside the class.</td></tr>
+        <tr><td class="lvl-c">🟢 Competent</td><td>Dependency injected via constructor. All methods implemented. Name validation present.</td></tr>
+        <tr><td class="lvl-p">🔵 Proficient</td><td>No Infrastructure imports in Application layer. Can explain why creating IEmployeeRepository with new inside the service would violate DIP.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tracker" id="tracker-3">
+    <div class="tracker-title">📊 Session Tracker — Checkpoint 3</div>
+    <div class="tracker-row">
+      <div class="timer-display" id="timer-3">00:00</div>
+      <button class="tracker-btn start" onclick="startTimer(3)">▶ Start</button>
+      <button class="tracker-btn pause" onclick="pauseTimer(3)">⏸ Pause</button>
+      <button class="tracker-btn reset" onclick="resetTimer(3)">↺ Reset</button>
+    </div>
+    <div class="tracker-row">
+      <span style="font-size:0.82rem;color:var(--text-secondary);">Mistakes / Revisions:</span>
+      <span class="mistake-count" id="mistakes-3">0</span>
+      <button class="tracker-btn mark" onclick="showMistakeForm(3)">+1 Mistake</button>
+    </div>
+    <div class="mistake-entry-form" id="mistake-form-3">
+      <input class="mistake-reason-input" id="mistake-reason-3" placeholder="Root cause เช่น 'ลืม constructor injection'" onkeydown="if(event.key==='Enter')confirmMistake(3)" />
+      <button class="tracker-btn mark" onclick="confirmMistake(3)">บันทึก</button>
+      <button class="tracker-btn reset" style="font-size:0.78rem;padding:0.3rem 0.6rem;" onclick="cancelMistake(3)">ยกเลิก</button>
+    </div>
+    <div id="mistake-log-3"></div>
+    <textarea class="stuck-input" id="notes-3" placeholder="What got confusing?" oninput="saveNotes(3)"></textarea>
+    <label class="done-toggle">
+      <input type="checkbox" id="done-3" onchange="markDone(3)" />
+      <span>✅ Mark checkpoint as complete</span>
+    </label>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CHECKPOINT 4
+═══════════════════════════════════════ -->
+<div class="checkpoint" id="cp-4">
+  <div class="checkpoint-header">
+    <div class="checkpoint-title">
+      <div class="checkpoint-num" data-num="4"></div>
+      Infrastructure — In-Memory Repository
+    </div>
+    <div class="cp-meta">
+      <span class="tag tag-lesson">L12</span>
+      <span class="tag tag-time">~15 min</span>
+    </div>
+  </div>
+
+  <div class="requirement-box">
+    <h4>🎯 What to Build</h4>
+    <ul>
+      <li>Create <code>InMemoryEmployeeRepository</code> in the <strong>Infrastructure layer</strong>.</li>
+      <li>It must implement <code>IEmployeeRepository</code> from Application layer.</li>
+      <li>Store data in a <code>List&lt;Employee&gt;</code> in memory (no real database needed).</li>
+      <li>Pre-populate with <strong>at least 3 seed employees</strong> (one of each type) in the constructor.</li>
+      <li>Implement: GetAll, GetById, Add.</li>
+    </ul>
+  </div>
+
+  <p><strong>Knowledge to use:</strong></p>
+  <div class="lessons-ref">
+    <a href="0012-repository-pattern.html">L12 — Repository Pattern</a> ·
+    <a href="0011-clean-architecture.html">L11 — Clean Architecture</a>
+  </div>
+
+  <details style="margin-top:1rem;">
+    <summary style="cursor:pointer;color:var(--primary-color);font-size:0.88rem;font-weight:600;">💡 Hints (try without first)</summary>
+    <div class="alert alert-info" style="margin-top:0.75rem;">
+      <ul>
+        <li>Infrastructure depends on Application (for the interface) — but Application does NOT depend on Infrastructure.</li>
+        <li>GetById should return null (or throw) if not found — your Service in CP3 already handles that case.</li>
+        <li>The point of in-memory here: you can swap it for a real database later without changing Application.</li>
+      </ul>
+    </div>
+  </details>
+
+  <div style="margin-top:1.25rem;">
+    <table class="rubric-table">
+      <thead><tr><th>Level</th><th>Criterion</th></tr></thead>
+      <tbody>
+        <tr><td class="lvl-b">🟡 Beginner</td><td>Repository exists in Infrastructure. Implements the interface. Data stored somewhere.</td></tr>
+        <tr><td class="lvl-c">🟢 Competent</td><td>Uses List&lt;Employee&gt;. Seed data present. All three methods correctly implemented.</td></tr>
+        <tr><td class="lvl-p">🔵 Proficient</td><td>Can explain how this is swappable (e.g., to EF Core repo) without Application layer knowing. GetById handles missing gracefully.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tracker" id="tracker-4">
+    <div class="tracker-title">📊 Session Tracker — Checkpoint 4</div>
+    <div class="tracker-row">
+      <div class="timer-display" id="timer-4">00:00</div>
+      <button class="tracker-btn start" onclick="startTimer(4)">▶ Start</button>
+      <button class="tracker-btn pause" onclick="pauseTimer(4)">⏸ Pause</button>
+      <button class="tracker-btn reset" onclick="resetTimer(4)">↺ Reset</button>
+    </div>
+    <div class="tracker-row">
+      <span style="font-size:0.82rem;color:var(--text-secondary);">Mistakes / Revisions:</span>
+      <span class="mistake-count" id="mistakes-4">0</span>
+      <button class="tracker-btn mark" onclick="showMistakeForm(4)">+1 Mistake</button>
+    </div>
+    <div class="mistake-entry-form" id="mistake-form-4">
+      <input class="mistake-reason-input" id="mistake-reason-4" placeholder="Root cause เช่น 'ไม่รู้ว่า List<T> ใช้ยังไง'" onkeydown="if(event.key==='Enter')confirmMistake(4)" />
+      <button class="tracker-btn mark" onclick="confirmMistake(4)">บันทึก</button>
+      <button class="tracker-btn reset" style="font-size:0.78rem;padding:0.3rem 0.6rem;" onclick="cancelMistake(4)">ยกเลิก</button>
+    </div>
+    <div id="mistake-log-4"></div>
+    <textarea class="stuck-input" id="notes-4" placeholder="What got confusing?" oninput="saveNotes(4)"></textarea>
+    <label class="done-toggle">
+      <input type="checkbox" id="done-4" onchange="markDone(4)" />
+      <span>✅ Mark checkpoint as complete</span>
+    </label>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CHECKPOINT 5
+═══════════════════════════════════════ -->
+<div class="checkpoint" id="cp-5">
+  <div class="checkpoint-header">
+    <div class="checkpoint-title">
+      <div class="checkpoint-num" data-num="5"></div>
+      Register DI in Program.cs
+    </div>
+    <div class="cp-meta">
+      <span class="tag tag-lesson">L9 · L10</span>
+      <span class="tag tag-time">~10 min</span>
+    </div>
+  </div>
+
+  <div class="requirement-box">
+    <h4>🎯 What to Build</h4>
+    <ul>
+      <li>In <code>Program.cs</code>, register your services with the correct DI lifetimes:
+        <ul>
+          <li><code>IEmployeeRepository</code> → <code>InMemoryEmployeeRepository</code> — decide the correct lifetime and explain why.</li>
+          <li><code>IEmployeeService</code> → <code>EmployeeService</code> — decide the correct lifetime and explain why.</li>
+        </ul>
+      </li>
+      <li>Add CORS policy that allows requests from <code>http://localhost:5173</code> (Vue.js dev server).</li>
+    </ul>
+  </div>
+
+  <p><strong>Knowledge to use:</strong></p>
+  <div class="lessons-ref">
+    <a href="0009-dependency-injection-lifetimes.html">L9 — DI Lifetimes</a> ·
+    <a href="0010-registering-di-services.html">L10 — Program.cs Registration</a> ·
+    <a href="0013-frontend-connection.html">L13 — CORS &amp; Frontend</a>
+  </div>
+
+  <details style="margin-top:1rem;">
+    <summary style="cursor:pointer;color:var(--primary-color);font-size:0.88rem;font-weight:600;">💡 Hints (try without first)</summary>
+    <div class="alert alert-info" style="margin-top:0.75rem;">
+      <ul>
+        <li>The in-memory repository holds state (the list). Think: what lifetime keeps state across requests?</li>
+        <li>The service has no state of its own — what lifetime is appropriate?</li>
+        <li>CORS must be added as both a service (builder.Services) and as middleware (app.Use...).</li>
+      </ul>
+    </div>
+  </details>
+
+  <div style="margin-top:1.25rem;">
+    <table class="rubric-table">
+      <thead><tr><th>Level</th><th>Criterion</th></tr></thead>
+      <tbody>
+        <tr><td class="lvl-b">🟡 Beginner</td><td>Both services registered. CORS present. Lifetimes may be incorrect (e.g., both Transient).</td></tr>
+        <tr><td class="lvl-c">🟢 Competent</td><td>Repository = Singleton (state preserved). Service = Scoped or Transient. CORS configured correctly.</td></tr>
+        <tr><td class="lvl-p">🔵 Proficient</td><td>Can explain the consequence of using Transient for the repository (data lost between requests). Can explain why Singleton + Scoped service is not a problem here.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tracker" id="tracker-5">
+    <div class="tracker-title">📊 Session Tracker — Checkpoint 5</div>
+    <div class="tracker-row">
+      <div class="timer-display" id="timer-5">00:00</div>
+      <button class="tracker-btn start" onclick="startTimer(5)">▶ Start</button>
+      <button class="tracker-btn pause" onclick="pauseTimer(5)">⏸ Pause</button>
+      <button class="tracker-btn reset" onclick="resetTimer(5)">↺ Reset</button>
+    </div>
+    <div class="tracker-row">
+      <span style="font-size:0.82rem;color:var(--text-secondary);">Mistakes / Revisions:</span>
+      <span class="mistake-count" id="mistakes-5">0</span>
+      <button class="tracker-btn mark" onclick="showMistakeForm(5)">+1 Mistake</button>
+    </div>
+    <div class="mistake-entry-form" id="mistake-form-5">
+      <input class="mistake-reason-input" id="mistake-reason-5" placeholder="Root cause เช่น 'สับสน Scoped vs Singleton'" onkeydown="if(event.key==='Enter')confirmMistake(5)" />
+      <button class="tracker-btn mark" onclick="confirmMistake(5)">บันทึก</button>
+      <button class="tracker-btn reset" style="font-size:0.78rem;padding:0.3rem 0.6rem;" onclick="cancelMistake(5)">ยกเลิก</button>
+    </div>
+    <div id="mistake-log-5"></div>
+    <textarea class="stuck-input" id="notes-5" placeholder="What got confusing?" oninput="saveNotes(5)"></textarea>
+    <label class="done-toggle">
+      <input type="checkbox" id="done-5" onchange="markDone(5)" />
+      <span>✅ Mark checkpoint as complete</span>
+    </label>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CHECKPOINT 6
+═══════════════════════════════════════ -->
+<div class="checkpoint" id="cp-6">
+  <div class="checkpoint-header">
+    <div class="checkpoint-title">
+      <div class="checkpoint-num" data-num="6"></div>
+      API Controller — EmployeesController
+    </div>
+    <div class="cp-meta">
+      <span class="tag tag-lesson">L5 · L11 · L13</span>
+      <span class="tag tag-time">~15 min</span>
+    </div>
+  </div>
+
+  <div class="requirement-box">
+    <h4>🎯 What to Build</h4>
+    <ul>
+      <li>Create <code>EmployeesController</code> in the API/Presentation layer.</li>
+      <li>Inject <code>IEmployeeService</code> via constructor (not the repository directly).</li>
+      <li>Expose these endpoints:
+        <ul>
+          <li><code>GET /api/employees</code> — returns all employees.</li>
+          <li><code>GET /api/employees/{id}</code> — returns one employee. Return 404 if not found.</li>
+          <li><code>POST /api/employees</code> — accepts employee data and adds it. Return 201 on success.</li>
+        </ul>
+      </li>
+      <li>Return appropriate HTTP status codes (200, 201, 404, 400).</li>
+    </ul>
+  </div>
+
+  <p><strong>Knowledge to use:</strong></p>
+  <div class="lessons-ref">
+    <a href="0005-dotnet-cli-webapi.html">L5 — Web API Controllers</a> ·
+    <a href="0011-clean-architecture.html">L11 — Presentation layer</a> ·
+    <a href="0013-frontend-connection.html">L13 — API &amp; Frontend</a>
+  </div>
+
+  <details style="margin-top:1rem;">
+    <summary style="cursor:pointer;color:var(--primary-color);font-size:0.88rem;font-weight:600;">💡 Hints (try without first)</summary>
+    <div class="alert alert-info" style="margin-top:0.75rem;">
+      <ul>
+        <li>Controller talks to IEmployeeService, not IEmployeeRepository — Presentation should never skip layers.</li>
+        <li>Catch the exception from service's GetEmployee() and return NotFound() in the controller.</li>
+        <li>Use <code>[FromBody]</code> for POST, <code>[FromRoute]</code> for id — review L5 attribute routing.</li>
+      </ul>
+    </div>
+  </details>
+
+  <div style="margin-top:1.25rem;">
+    <table class="rubric-table">
+      <thead><tr><th>Level</th><th>Criterion</th></tr></thead>
+      <tbody>
+        <tr><td class="lvl-b">🟡 Beginner</td><td>Controller exists with 3 endpoints. May inject repository instead of service.</td></tr>
+        <tr><td class="lvl-c">🟢 Competent</td><td>Injects IEmployeeService. All 3 endpoints return correct status codes. GET/{id} returns 404 on miss.</td></tr>
+        <tr><td class="lvl-p">🔵 Proficient</td><td>Can explain why the controller should never talk to the repository directly. POST validates via service and returns 400 on bad input.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tracker" id="tracker-6">
+    <div class="tracker-title">📊 Session Tracker — Checkpoint 6</div>
+    <div class="tracker-row">
+      <div class="timer-display" id="timer-6">00:00</div>
+      <button class="tracker-btn start" onclick="startTimer(6)">▶ Start</button>
+      <button class="tracker-btn pause" onclick="pauseTimer(6)">⏸ Pause</button>
+      <button class="tracker-btn reset" onclick="resetTimer(6)">↺ Reset</button>
+    </div>
+    <div class="tracker-row">
+      <span style="font-size:0.82rem;color:var(--text-secondary);">Mistakes / Revisions:</span>
+      <span class="mistake-count" id="mistakes-6">0</span>
+      <button class="tracker-btn mark" onclick="showMistakeForm(6)">+1 Mistake</button>
+    </div>
+    <div class="mistake-entry-form" id="mistake-form-6">
+      <input class="mistake-reason-input" id="mistake-reason-6" placeholder="Root cause เช่น 'ลืม attribute routing'" onkeydown="if(event.key==='Enter')confirmMistake(6)" />
+      <button class="tracker-btn mark" onclick="confirmMistake(6)">บันทึก</button>
+      <button class="tracker-btn reset" style="font-size:0.78rem;padding:0.3rem 0.6rem;" onclick="cancelMistake(6)">ยกเลิก</button>
+    </div>
+    <div id="mistake-log-6"></div>
+    <textarea class="stuck-input" id="notes-6" placeholder="What got confusing?" oninput="saveNotes(6)"></textarea>
+    <label class="done-toggle">
+      <input type="checkbox" id="done-6" onchange="markDone(6)" />
+      <span>✅ Mark checkpoint as complete</span>
+    </label>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CHECKPOINT 7
+═══════════════════════════════════════ -->
+<div class="checkpoint" id="cp-7">
+  <div class="checkpoint-header">
+    <div class="checkpoint-title">
+      <div class="checkpoint-num" data-num="7"></div>
+      Unit Tests — 3 Cases
+    </div>
+    <div class="cp-meta">
+      <span class="tag tag-lesson">L8</span>
+      <span class="tag tag-time">~20 min</span>
+    </div>
+  </div>
+
+  <div class="requirement-box">
+    <h4>🎯 What to Build</h4>
+    <p>Write exactly <strong>3 unit tests</strong> for <code>EmployeeService</code>. Use a fake/stub repository — not the real InMemoryEmployeeRepository.</p>
+    <ul>
+      <li><strong>Test 1:</strong> <code>GetAllEmployees()</code> returns all employees from the repository.</li>
+      <li><strong>Test 2:</strong> <code>GetEmployee(id)</code> throws an exception when the employee is not found.</li>
+      <li><strong>Test 3:</strong> <code>AddEmployee()</code> throws an exception when Name is empty or null.</li>
+    </ul>
+    <p>Each test must follow the <strong>Arrange → Act → Assert</strong> pattern.</p>
+  </div>
+
+  <p><strong>Knowledge to use:</strong></p>
+  <div class="lessons-ref">
+    <a href="0008-unit-testing-tdd.html">L8 — Unit Testing &amp; TDD</a> ·
+    <a href="0007-solid-principles-id.html">L7 — DIP (why interfaces make testing easy)</a>
+  </div>
+
+  <details style="margin-top:1rem;">
+    <summary style="cursor:pointer;color:var(--primary-color);font-size:0.88rem;font-weight:600;">💡 Hints (try without first)</summary>
+    <div class="alert alert-info" style="margin-top:0.75rem;">
+      <ul>
+        <li>Create a <code>FakeEmployeeRepository</code> class that implements <code>IEmployeeRepository</code> with hardcoded test data.</li>
+        <li>This is possible because the Service depends on the <em>interface</em> — you can swap real for fake.</li>
+        <li>For exceptions: use the Assert method that checks a specific exception type is thrown.</li>
+        <li>No mocking library needed — a simple fake class is enough (L8 explains this).</li>
+      </ul>
+    </div>
+  </details>
+
+  <div style="margin-top:1.25rem;">
+    <table class="rubric-table">
+      <thead><tr><th>Level</th><th>Criterion</th></tr></thead>
+      <tbody>
+        <tr><td class="lvl-b">🟡 Beginner</td><td>3 tests exist and run. May use the real repository instead of a fake.</td></tr>
+        <tr><td class="lvl-c">🟢 Competent</td><td>Uses a FakeRepository. All 3 tests follow AAA pattern. Tests pass.</td></tr>
+        <tr><td class="lvl-p">🔵 Proficient</td><td>Can explain why using the real repository in unit tests is wrong (external state, not isolated). Can name what makes a "unit" test.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tracker" id="tracker-7">
+    <div class="tracker-title">📊 Session Tracker — Checkpoint 7</div>
+    <div class="tracker-row">
+      <div class="timer-display" id="timer-7">00:00</div>
+      <button class="tracker-btn start" onclick="startTimer(7)">▶ Start</button>
+      <button class="tracker-btn pause" onclick="pauseTimer(7)">⏸ Pause</button>
+      <button class="tracker-btn reset" onclick="resetTimer(7)">↺ Reset</button>
+    </div>
+    <div class="tracker-row">
+      <span style="font-size:0.82rem;color:var(--text-secondary);">Mistakes / Revisions:</span>
+      <span class="mistake-count" id="mistakes-7">0</span>
+      <button class="tracker-btn mark" onclick="showMistakeForm(7)">+1 Mistake</button>
+    </div>
+    <div class="mistake-entry-form" id="mistake-form-7">
+      <input class="mistake-reason-input" id="mistake-reason-7" placeholder="Root cause เช่น 'ไม่เข้าใจ Arrange-Act-Assert'" onkeydown="if(event.key==='Enter')confirmMistake(7)" />
+      <button class="tracker-btn mark" onclick="confirmMistake(7)">บันทึก</button>
+      <button class="tracker-btn reset" style="font-size:0.78rem;padding:0.3rem 0.6rem;" onclick="cancelMistake(7)">ยกเลิก</button>
+    </div>
+    <div id="mistake-log-7"></div>
+    <textarea class="stuck-input" id="notes-7" placeholder="What got confusing?" oninput="saveNotes(7)"></textarea>
+    <label class="done-toggle">
+      <input type="checkbox" id="done-7" onchange="markDone(7)" />
+      <span>✅ Mark checkpoint as complete</span>
+    </label>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CHECKPOINT 8
+═══════════════════════════════════════ -->
+<div class="checkpoint" id="cp-8">
+  <div class="checkpoint-header">
+    <div class="checkpoint-title">
+      <div class="checkpoint-num" data-num="8"></div>
+      Frontend Integration — Vue.js Call
+    </div>
+    <div class="cp-meta">
+      <span class="tag tag-lesson">L13</span>
+      <span class="tag tag-time">~10 min</span>
+    </div>
+  </div>
+
+  <div class="requirement-box">
+    <h4>🎯 What to Build</h4>
+    <ul>
+      <li>In your Vue.js project, create a component that on mount:
+        <ul>
+          <li>Calls <code>GET /api/employees</code>.</li>
+          <li>Displays a list of employee names and their monthly salary (call CalculateMonthlySalary on backend or include it in the response).</li>
+        </ul>
+      </li>
+      <li>Add a simple form that calls <code>POST /api/employees</code> to add a new FullTimeEmployee.</li>
+      <li>Verify CORS works — no browser console errors about blocked origin.</li>
+    </ul>
+  </div>
+
+  <p><strong>Knowledge to use:</strong></p>
+  <div class="lessons-ref">
+    <a href="0013-frontend-connection.html">L13 — Vue.js ↔ .NET API</a>
+  </div>
+
+  <details style="margin-top:1rem;">
+    <summary style="cursor:pointer;color:var(--primary-color);font-size:0.88rem;font-weight:600;">💡 Hints (try without first)</summary>
+    <div class="alert alert-info" style="margin-top:0.75rem;">
+      <ul>
+        <li>Use <code>onMounted</code> lifecycle hook to fetch data when the component loads.</li>
+        <li>The salary calculation can be a computed property on the response data, or you can add it as a field in your API response DTO.</li>
+        <li>If you get a CORS error, double-check that CORS middleware is placed before <code>app.MapControllers()</code> in Program.cs.</li>
+      </ul>
+    </div>
+  </details>
+
+  <div style="margin-top:1.25rem;">
+    <table class="rubric-table">
+      <thead><tr><th>Level</th><th>Criterion</th></tr></thead>
+      <tbody>
+        <tr><td class="lvl-b">🟡 Beginner</td><td>Vue component makes the GET request. Employee list shows in browser.</td></tr>
+        <tr><td class="lvl-c">🟢 Competent</td><td>GET and POST both work. Salary displayed. No CORS errors. Form clears after submit.</td></tr>
+        <tr><td class="lvl-p">🔵 Proficient</td><td>Error states handled (e.g., show message if API is down). Can explain the full HTTP request lifecycle from Vue click to .NET controller response.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tracker" id="tracker-8">
+    <div class="tracker-title">📊 Session Tracker — Checkpoint 8</div>
+    <div class="tracker-row">
+      <div class="timer-display" id="timer-8">00:00</div>
+      <button class="tracker-btn start" onclick="startTimer(8)">▶ Start</button>
+      <button class="tracker-btn pause" onclick="pauseTimer(8)">⏸ Pause</button>
+      <button class="tracker-btn reset" onclick="resetTimer(8)">↺ Reset</button>
+    </div>
+    <div class="tracker-row">
+      <span style="font-size:0.82rem;color:var(--text-secondary);">Mistakes / Revisions:</span>
+      <span class="mistake-count" id="mistakes-8">0</span>
+      <button class="tracker-btn mark" onclick="showMistakeForm(8)">+1 Mistake</button>
+    </div>
+    <div class="mistake-entry-form" id="mistake-form-8">
+      <input class="mistake-reason-input" id="mistake-reason-8" placeholder="Root cause เช่น 'CORS error ไม่รู้ว่าเพิ่มตรงไหน'" onkeydown="if(event.key==='Enter')confirmMistake(8)" />
+      <button class="tracker-btn mark" onclick="confirmMistake(8)">บันทึก</button>
+      <button class="tracker-btn reset" style="font-size:0.78rem;padding:0.3rem 0.6rem;" onclick="cancelMistake(8)">ยกเลิก</button>
+    </div>
+    <div id="mistake-log-8"></div>
+    <textarea class="stuck-input" id="notes-8" placeholder="What got confusing?" oninput="saveNotes(8)"></textarea>
+    <label class="done-toggle">
+      <input type="checkbox" id="done-8" onchange="markDone(8)" />
+      <span>✅ Mark checkpoint as complete</span>
+    </label>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
+     POST-QUIZ
+═══════════════════════════════════════ -->
+<div class="quiz-section" id="post-quiz">
+  <h3>🎓 Post-Quiz — Retention Check <span style="font-size:0.8rem;color:var(--text-secondary);font-weight:400;">(complete after all checkpoints)</span></h3>
+  <p style="margin-bottom:1.5rem;font-size:0.9rem;">Same style questions. Answer from memory. Compare with your pre-quiz result to see your growth.</p>
+
+  <!-- PQ1 -->
+  <div class="q-block" id="poq-block-1">
+    <div class="q-text"><span class="q-num">1.</span> You add a new ContractorEmployee type. Which layer do you change — and which do you NOT touch?</div>
+    <div class="q-options">
+      <button class="q-opt" onclick="answerPost(1,'a',this)">Change Domain only. Infrastructure and Application stay the same.</button>
+      <button class="q-opt" onclick="answerPost(1,'b',this)">Change Infrastructure only. Domain stays the same.</button>
+      <button class="q-opt" onclick="answerPost(1,'c',this)">Change all layers — adding a type always affects everything.</button>
+      <button class="q-opt" onclick="answerPost(1,'d',this)">Change only Program.cs to register the new type.</button>
+    </div>
+    <div class="q-feedback" id="poq-fb-1"></div>
+  </div>
+
+  <!-- PQ2 -->
+  <div class="q-block" id="poq-block-2">
+    <div class="q-text"><span class="q-num">2.</span> Your EmployeeService test fails because it depends on InMemoryEmployeeRepository which reads from disk. What's wrong?</div>
+    <div class="q-options">
+      <button class="q-opt" onclick="answerPost(2,'a',this)">Nothing — unit tests should use real dependencies</button>
+      <button class="q-opt" onclick="answerPost(2,'b',this)">The test is not a unit test — it's testing infrastructure, breaking isolation</button>
+      <button class="q-opt" onclick="answerPost(2,'c',this)">The test runner needs a database connection configured</button>
+      <button class="q-opt" onclick="answerPost(2,'d',this)">Program.cs needs to be invoked before the test</button>
+    </div>
+    <div class="q-feedback" id="poq-fb-2"></div>
+  </div>
+
+  <!-- PQ3 -->
+  <div class="q-block" id="poq-block-3">
+    <div class="q-text"><span class="q-num">3.</span> You register InMemoryEmployeeRepository as Transient. What happens when two requests arrive?</div>
+    <div class="q-options">
+      <button class="q-opt" onclick="answerPost(3,'a',this)">Both requests share the same list — data is consistent</button>
+      <button class="q-opt" onclick="answerPost(3,'b',this)">Each request gets a fresh empty list — employees added in one request vanish in the next</button>
+      <button class="q-opt" onclick="answerPost(3,'c',this)">The app crashes because Transient is not allowed for repositories</button>
+      <button class="q-opt" onclick="answerPost(3,'d',this)">Data is saved automatically to the database</button>
+    </div>
+    <div class="q-feedback" id="poq-fb-3"></div>
+  </div>
+
+  <!-- PQ4 -->
+  <div class="q-block" id="poq-block-4">
+    <div class="q-text"><span class="q-num">4.</span> The controller calls IEmployeeRepository directly instead of IEmployeeService. Which architecture rule does this break?</div>
+    <div class="q-options">
+      <button class="q-opt" onclick="answerPost(4,'a',this)">Dependency Inversion Principle</button>
+      <button class="q-opt" onclick="answerPost(4,'b',this)">Clean Architecture layer rule — Presentation skipping Application layer</button>
+      <button class="q-opt" onclick="answerPost(4,'c',this)">Interface Segregation Principle</button>
+      <button class="q-opt" onclick="answerPost(4,'d',this)">Open/Closed Principle</button>
+    </div>
+    <div class="q-feedback" id="poq-fb-4"></div>
+  </div>
+
+  <!-- PQ5 -->
+  <div class="q-block" id="poq-block-5">
+    <div class="q-text"><span class="q-num">5.</span> FullTimeEmployee and PartTimeEmployee both have CalculateMonthlySalary() but with different logic. This is an example of…</div>
+    <div class="q-options">
+      <button class="q-opt" onclick="answerPost(5,'a',this)">Encapsulation</button>
+      <button class="q-opt" onclick="answerPost(5,'b',this)">Overloading</button>
+      <button class="q-opt" onclick="answerPost(5,'c',this)">Polymorphism via method overriding</button>
+      <button class="q-opt" onclick="answerPost(5,'d',this)">Multiple inheritance</button>
+    </div>
+    <div class="q-feedback" id="poq-fb-5"></div>
+  </div>
+
+  <div class="quiz-score-bar" id="post-score-bar">
+    <strong id="post-score-label"></strong>
+    <p id="post-score-note" style="margin:0.4rem 0 0;font-size:0.85rem;"></p>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
+     ASSESSMENT REPORT
+═══════════════════════════════════════ -->
+<div class="report-section">
+  <h2>📊 Assessment Report</h2>
+  <p>Generate your full session report when you've completed all checkpoints and both quizzes. Share the output with your teacher for a detailed review.</p>
+
+  <div class="report-grid">
+    <div class="report-card">
+      <div class="rc-label">Checkpoints Done</div>
+      <div class="rc-value" id="rc-done">0/8</div>
+      <div class="rc-sub">out of 8</div>
+    </div>
+    <div class="report-card">
+      <div class="rc-label">Total Time</div>
+      <div class="rc-value" id="rc-time">—</div>
+      <div class="rc-sub">vs ~120 min expected</div>
+    </div>
+    <div class="report-card">
+      <div class="rc-label">Total Mistakes</div>
+      <div class="rc-value" id="rc-mistakes">—</div>
+      <div class="rc-sub">self-reported</div>
+    </div>
+    <div class="report-card">
+      <div class="rc-label">Pre → Post Quiz</div>
+      <div class="rc-value" id="rc-quizzes">—</div>
+      <div class="rc-sub">out of 5 each</div>
+    </div>
+  </div>
+
+  <button class="btn-generate" onclick="generateReport()">⚡ Generate Full Report</button>
+  <pre id="report-output" style="display:none;"></pre>
+  <button class="btn-copy" id="btn-copy" style="display:none;" onclick="copyReport()">📋 Copy to Clipboard</button>
+</div>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════ -->
+<div class="lesson-footer">
+  <a href="0014-course-wrapup.html" class="btn btn-secondary">← L14 Course Wrap-up</a>
+  <span style="font-size:0.8rem;color:var(--text-secondary);">Questions? Ask your teacher agent.</span>
+</div>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
+<script>
+// ── State ──────────────────────────────────────────────
+const TOTAL_CPS = 8;
+const EXPECTED_SECS = [0, 1200, 900, 900, 900, 600, 900, 1200, 600]; // index 0 unused
+
+const state = loadState();
+
+const PRE_ANSWERS  = { 1: 'c', 2: 'c', 3: 'b', 4: 'b', 5: 'd' };
+const POST_ANSWERS = { 1: 'a', 2: 'b', 3: 'b', 4: 'b', 5: 'c' };
+
+const PRE_EXPLANATIONS = {
+  1: "Infrastructure layer is where data access lives. Domain and Application stay database-agnostic.",
+  2: "Interface Segregation Principle — one interface doing unrelated things forces implementers to implement methods they don't need.",
+  3: "Scoped — created once per HTTP request and disposed when the request ends. Transient would be created multiple times within a request.",
+  4: "The Repository Pattern hides how data is stored behind an interface, making it swappable and testable.",
+  5: "C# 8+ introduced default interface implementations. Abstract class can always have method implementations."
+};
+const POST_EXPLANATIONS = {
+  1: "You only add a new class in Domain that extends Employee. Application (service) and Infrastructure (repository) don't change — this is OCP at work.",
+  2: "A unit test must test one unit in isolation. Using a real repository that accesses external resources breaks isolation.",
+  3: "Transient = new instance per injection. A new list is created each time, so employees added in one request are lost in the next.",
+  4: "Clean Architecture: the Presentation (Controller) must only talk to Application (Service). Skipping layers breaks the dependency rule.",
+  5: "Polymorphism: the same method name behaves differently depending on the actual type at runtime."
+};
+
+// ── Timers ──────────────────────────────────────────────
+const intervals = {};
+
+function fmt(secs) {
+  const m = String(Math.floor(secs / 60)).padStart(2, '0');
+  const s = String(secs % 60).padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+function startTimer(n) {
+  if (intervals[n]) return;
+  intervals[n] = setInterval(() => {
+    state.timers[n] = (state.timers[n] || 0) + 1;
+    document.getElementById(`timer-${n}`).textContent = fmt(state.timers[n]);
+    updateSummaryCards();
+    saveState();
+  }, 1000);
+}
+function pauseTimer(n) {
+  clearInterval(intervals[n]);
+  delete intervals[n];
+  saveState();
+}
+function resetTimer(n) {
+  pauseTimer(n);
+  state.timers[n] = 0;
+  document.getElementById(`timer-${n}`).textContent = '00:00';
+  updateSummaryCards();
+  saveState();
+}
+
+// ── Mistakes & Root Cause Log ────────────────────────────
+function showMistakeForm(n) {
+  const form = document.getElementById(`mistake-form-${n}`);
+  form.classList.add('show');
+  document.getElementById(`mistake-reason-${n}`).focus();
+}
+function cancelMistake(n) {
+  document.getElementById(`mistake-form-${n}`).classList.remove('show');
+  document.getElementById(`mistake-reason-${n}`).value = '';
+}
+function confirmMistake(n) {
+  const input = document.getElementById(`mistake-reason-${n}`);
+  const reason = input.value.trim() || '(ไม่ได้ระบุเหตุผล)';
+  state.mistakes[n] = (state.mistakes[n] || 0) + 1;
+  if (!state.mistakeLogs[n]) state.mistakeLogs[n] = [];
+  const now = new Date();
+  const ts = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  state.mistakeLogs[n].push({ reason, ts });
+  document.getElementById(`mistakes-${n}`).textContent = state.mistakes[n];
+  cancelMistake(n);
+  renderMistakeLog(n);
+  updateSummaryCards();
+  saveState();
+}
+function renderMistakeLog(n) {
+  const container = document.getElementById(`mistake-log-${n}`);
+  if (!container) return;
+  const logs = (state.mistakeLogs && state.mistakeLogs[n]) || [];
+  if (logs.length === 0) { container.innerHTML = ''; return; }
+  container.innerHTML = `<ul class="mistake-log-list">${logs.map((e, i) =>
+    `<li class="mistake-log-item"><span class="mistake-log-num">#${i + 1}</span><span class="mistake-log-ts">[${e.ts}]</span><span>${e.reason}</span></li>`
+  ).join('')}</ul>`;
+}
+
+// ── Notes ──────────────────────────────────────────────
+function saveNotes(n) {
+  state.notes[n] = document.getElementById(`notes-${n}`).value;
+  saveState();
+}
+
+// ── Done ──────────────────────────────────────────────
+function markDone(n) {
+  const checked = document.getElementById(`done-${n}`).checked;
+  state.done[n] = checked;
+  document.getElementById(`cp-${n}`).classList.toggle('done', checked);
+  updateProgress();
+  updateSummaryCards();
+  saveState();
+}
+
+function updateProgress() {
+  const doneCount = Object.values(state.done).filter(Boolean).length;
+  const pct = (doneCount / TOTAL_CPS) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = `${doneCount} / ${TOTAL_CPS} checkpoints`;
+}
+
+// ── Summary Cards ──────────────────────────────────────────────
+function updateSummaryCards() {
+  const doneCount = Object.values(state.done).filter(Boolean).length;
+  document.getElementById('rc-done').textContent = `${doneCount}/8`;
+
+  const totalSecs = Object.values(state.timers).reduce((a, b) => a + (b || 0), 0);
+  document.getElementById('rc-time').textContent = totalSecs > 0 ? fmt(totalSecs) : '—';
+
+  const totalMistakes = Object.values(state.mistakes).reduce((a, b) => a + (b || 0), 0);
+  document.getElementById('rc-mistakes').textContent = totalMistakes > 0 ? totalMistakes : '—';
+
+  const preScore  = state.quiz.pre  ? `${state.quiz.pre}/5`  : '?/5';
+  const postScore = state.quiz.post ? `${state.quiz.post}/5` : '?/5';
+  document.getElementById('rc-quizzes').textContent = `${preScore}→${postScore}`;
+}
+
+// ── Quiz Engine ──────────────────────────────────────────────
+let preAnswered = {};
+let postAnswered = {};
+
+function answerPre(qNum, choice, btn) {
+  if (preAnswered[qNum]) return;
+  preAnswered[qNum] = choice;
+
+  const allBtns = btn.closest('.q-options').querySelectorAll('.q-opt');
+  allBtns.forEach(b => b.disabled = true);
+
+  const correct = PRE_ANSWERS[qNum];
+  const isRight = choice === correct;
+  btn.classList.add(isRight ? 'correct' : 'wrong');
+  if (!isRight) {
+    allBtns.forEach(b => {
+      if (b.getAttribute('onclick').includes(`'${correct}'`)) b.classList.add('correct');
+    });
+  }
+
+  const fb = document.getElementById(`pq-fb-${qNum}`);
+  fb.className = `q-feedback show ${isRight ? 'ok' : 'bad'}`;
+  fb.textContent = (isRight ? '✅ Correct! ' : '❌ Not quite. ') + PRE_EXPLANATIONS[qNum];
+
+  checkQuizDone('pre');
+}
+
+function answerPost(qNum, choice, btn) {
+  if (postAnswered[qNum]) return;
+  postAnswered[qNum] = choice;
+
+  const allBtns = btn.closest('.q-options').querySelectorAll('.q-opt');
+  allBtns.forEach(b => b.disabled = true);
+
+  const correct = POST_ANSWERS[qNum];
+  const isRight = choice === correct;
+  btn.classList.add(isRight ? 'correct' : 'wrong');
+  if (!isRight) {
+    allBtns.forEach(b => {
+      if (b.getAttribute('onclick').includes(`'${correct}'`)) b.classList.add('correct');
+    });
+  }
+
+  const fb = document.getElementById(`poq-fb-${qNum}`);
+  fb.className = `q-feedback show ${isRight ? 'ok' : 'bad'}`;
+  fb.textContent = (isRight ? '✅ Correct! ' : '❌ Not quite. ') + POST_EXPLANATIONS[qNum];
+
+  checkQuizDone('post');
+}
+
+function checkQuizDone(which) {
+  const answers = which === 'pre' ? preAnswered : postAnswered;
+  const correct = which === 'pre' ? PRE_ANSWERS : POST_ANSWERS;
+  if (Object.keys(answers).length < 5) return;
+
+  const score = Object.entries(answers).filter(([q, a]) => a === correct[q]).length;
+  if (which === 'pre') {
+    state.quiz.pre = score;
+    const bar = document.getElementById('pre-score-bar');
+    bar.classList.add('show');
+    document.getElementById('pre-score-label').textContent = `Pre-Quiz Score: ${score}/5`;
+    document.getElementById('pre-score-note').textContent = score <= 2
+      ? 'Some core concepts need review — the checkpoints will help reinforce them.'
+      : score <= 4
+      ? 'Good foundation. The capstone will solidify your understanding.'
+      : 'Strong baseline! The capstone will deepen your applied knowledge.';
+  } else {
+    state.quiz.post = score;
+    const bar = document.getElementById('post-score-bar');
+    bar.classList.add('show');
+    document.getElementById('post-score-label').textContent = `Post-Quiz Score: ${score}/5`;
+    document.getElementById('post-score-note').textContent = score <= 2
+      ? 'Some areas still need work. Share your report with your teacher.'
+      : score <= 4
+      ? 'Good improvement! Review the checkpoints where you had most mistakes.'
+      : 'Excellent! You have strong retention of the course material.';
+  }
+  saveState();
+  updateSummaryCards();
+}
+
+// ── Report Generator ──────────────────────────────────────────────
+function generateReport() {
+  const totalSecs = Object.values(state.timers).reduce((a, b) => a + (b || 0), 0);
+  const totalMistakes = Object.values(state.mistakes).reduce((a, b) => a + (b || 0), 0);
+  const doneCount = Object.values(state.done).filter(Boolean).length;
+
+  const cpNames = [
+    '', // index 0 unused
+    'Domain Models (L1-4)',
+    'Interfaces / SOLID (L4,6,7)',
+    'Application Service (L7,11)',
+    'Repository / Infrastructure (L12)',
+    'DI Registration (L9,10)',
+    'API Controller (L5,11,13)',
+    'Unit Tests (L8)',
+    'Frontend Integration (L13)',
+  ];
+
+  const expectedSecs = EXPECTED_SECS.slice(1).reduce((a, b) => a + b, 0);
+
+  let lines = [];
+  lines.push('═══════════════════════════════════════════════');
+  lines.push(' CAPSTONE ASSESSMENT REPORT');
+  lines.push(' Lesson 15 — HR Employee Management System');
+  lines.push(' Generated: ' + new Date().toLocaleString());
+  lines.push('═══════════════════════════════════════════════');
+  lines.push('');
+  lines.push('── SUMMARY ─────────────────────────────────────');
+  lines.push(`Checkpoints Completed : ${doneCount} / 8`);
+  lines.push(`Total Time            : ${fmt(totalSecs)} (expected ~${fmt(expectedSecs)})`);
+  lines.push(`Time vs Expected      : ${totalSecs <= expectedSecs ? '✅ Within budget' : `⚠ +${fmt(totalSecs - expectedSecs)} over`}`);
+  lines.push(`Total Mistakes        : ${totalMistakes}`);
+  lines.push(`Pre-Quiz Score        : ${state.quiz.pre != null ? state.quiz.pre + '/5' : 'Not taken'}`);
+  lines.push(`Post-Quiz Score       : ${state.quiz.post != null ? state.quiz.post + '/5' : 'Not taken'}`);
+  if (state.quiz.pre != null && state.quiz.post != null) {
+    const diff = state.quiz.post - state.quiz.pre;
+    lines.push(`Quiz Improvement      : ${diff >= 0 ? '+' : ''}${diff} points`);
+  }
+  lines.push('');
+  lines.push('── PER-CHECKPOINT BREAKDOWN ─────────────────────');
+
+  for (let n = 1; n <= 8; n++) {
+    const t = state.timers[n] || 0;
+    const m = state.mistakes[n] || 0;
+    const d = state.done[n] ? '✅ DONE' : '⬜ INCOMPLETE';
+    const notes = (state.notes[n] || '').trim();
+    const mistakeLogs = (state.mistakeLogs && state.mistakeLogs[n]) || [];
+    const exp = EXPECTED_SECS[n];
+    const timeMark = t === 0 ? '(not started)' : t <= exp ? `${fmt(t)} ✅` : `${fmt(t)} ⚠ (+${fmt(t - exp)})`;
+
+    lines.push('');
+    lines.push(`CP ${n}: ${cpNames[n]}`);
+    lines.push(`  Status   : ${d}`);
+    lines.push(`  Time     : ${timeMark}`);
+    lines.push(`  Mistakes : ${m}${m === 0 ? ' (clean run!)' : m <= 2 ? ' (minor)' : ' (needs review)'}`);
+    if (notes) lines.push(`  Notes    : ${notes}`);
+    if (mistakeLogs.length > 0) {
+      lines.push(`  Root Causes:`);
+      mistakeLogs.forEach((entry, i) => {
+        lines.push(`    ${i + 1}. [${entry.ts}] ${entry.reason}`);
+      });
+    }
+  }
+
+  lines.push('');
+  lines.push('── WEAKNESS ANALYSIS ───────────────────────────');
+  const byMistakes = Array.from({length: 8}, (_, i) => i + 1)
+    .filter(n => (state.mistakes[n] || 0) > 0)
+    .sort((a, b) => (state.mistakes[b] || 0) - (state.mistakes[a] || 0));
+
+  if (byMistakes.length === 0) {
+    lines.push('No mistakes recorded. Excellent discipline! ✨');
+  } else {
+    lines.push('Checkpoints with most difficulty (by mistake count):');
+    byMistakes.slice(0, 3).forEach(n => {
+      lines.push(`  • CP ${n} (${cpNames[n]}): ${state.mistakes[n]} mistakes`);
+    });
+  }
+
+  const slowCps = Array.from({length: 8}, (_, i) => i + 1)
+    .filter(n => (state.timers[n] || 0) > EXPECTED_SECS[n]);
+  if (slowCps.length > 0) {
+    lines.push('');
+    lines.push('Checkpoints that took longer than expected:');
+    slowCps.forEach(n => {
+      const over = (state.timers[n] || 0) - EXPECTED_SECS[n];
+      lines.push(`  • CP ${n} (${cpNames[n]}): +${fmt(over)} over`);
+    });
+  }
+
+  lines.push('');
+  lines.push('── RECOMMENDED FOLLOW-UP ───────────────────────');
+  const weak = byMistakes.slice(0, 2);
+  const lessonRefs = {
+    1: 'Lessons 1-4 (OOP Core)',
+    2: 'Lessons 4, 6, 7 (Interfaces & SOLID)',
+    3: 'Lessons 7, 11 (DIP & Architecture)',
+    4: 'Lesson 12 (Repository Pattern)',
+    5: 'Lessons 9, 10 (DI Lifetimes)',
+    6: 'Lessons 5, 11, 13 (Web API & Architecture)',
+    7: 'Lesson 8 (Unit Testing)',
+    8: 'Lesson 13 (Frontend Integration)',
+  };
+  if (weak.length > 0) {
+    weak.forEach(n => lines.push(`  • Review ${lessonRefs[n]}`));
+  } else {
+    lines.push('  Great work! Consider next topics: EF Core, JWT Auth, or Design Patterns.');
+  }
+
+  lines.push('');
+  lines.push('═══════════════════════════════════════════════');
+
+  const output = lines.join('\n');
+  const el = document.getElementById('report-output');
+  const copyBtn = document.getElementById('btn-copy');
+  el.textContent = output;
+  el.style.display = 'block';
+  copyBtn.style.display = 'inline-block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyReport() {
+  const text = document.getElementById('report-output').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+// ── Persistence ──────────────────────────────────────────────
+const STORAGE_KEY = 'lesson15_capstone_v1';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return { timers: {}, mistakes: {}, notes: {}, done: {}, quiz: {}, mistakeLogs: {} };
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function restoreUI() {
+  for (let n = 1; n <= 8; n++) {
+    if (state.timers[n])   document.getElementById(`timer-${n}`).textContent = fmt(state.timers[n]);
+    if (state.mistakes[n]) document.getElementById(`mistakes-${n}`).textContent = state.mistakes[n];
+    if (state.notes[n])    document.getElementById(`notes-${n}`).value = state.notes[n];
+    if (state.done[n]) {
+      document.getElementById(`done-${n}`).checked = true;
+      document.getElementById(`cp-${n}`).classList.add('done');
+    }
+    renderMistakeLog(n);
+  }
+  updateProgress();
+  updateSummaryCards();
+}
+
+// ── Backup & Restore Utility ──────────────────────────────────
+function toggleBackupRestore() {
+  const panel = document.getElementById('backup-restore-panel');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block';
+    exportState();
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function exportState() {
+  document.getElementById('backup-json-text').value = JSON.stringify(state);
+  document.getElementById('backup-msg').textContent = 'Current progress backup string generated! Copy the text above.';
+  document.getElementById('backup-msg').style.color = '#10b981';
+}
+
+function importState() {
+  try {
+    const raw = document.getElementById('backup-json-text').value.trim();
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') {
+      state.timers = parsed.timers || {};
+      state.mistakes = parsed.mistakes || {};
+      state.notes = parsed.notes || {};
+      state.done = parsed.done || {};
+      state.quiz = parsed.quiz || {};
+      state.mistakeLogs = parsed.mistakeLogs || {};
+      
+      saveState();
+      restoreUI();
+      
+      document.getElementById('backup-msg').textContent = '✅ Progress restored successfully!';
+      document.getElementById('backup-msg').style.color = '#10b981';
+    } else {
+      throw new Error('Invalid format');
+    }
+  } catch(e) {
+    document.getElementById('backup-msg').textContent = '❌ Invalid backup data. Please check and try again.';
+    document.getElementById('backup-msg').style.color = '#ef4444';
+  }
+}
+
+// ── Init ──────────────────────────────────────────────
+restoreUI();
+</script>
+</body>
+</html>

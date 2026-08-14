@@ -2,6 +2,7 @@
 
 ## User Profile & Preferences
 - **Background**: Graduated in Software Engineering (1-2 years ago). Struggles with coding syntax and structure without AI. Fired from first job due to performance mismatches.
+- **Self-coding preference**: User explicitly wants to write ALL code themselves. Never scaffold project structure, generate code, or give syntax hints. Only guide with: what to build, which lesson to reference, and evaluation rubric.
 - **Prior Knowledge (Conceptual)**: Knows basic control flows (if-else, loops), heard of Clean Architecture, SDLC, TDD, but the knowledge is fragmented/confusing.
 - **Starting Level**: Complete beginner in practical programming & structuring, but has conceptual familiarity.
 - **Goal**: Full-stack developer who can design, build, and deliver projects independently.
@@ -49,7 +50,17 @@
 - **Lesson 3.3** (Clean Architecture): Created (Lesson 11)
 - **Lesson 3.4** (Repository Pattern): Created (Lesson 12)
 - **Lesson 4.1** (Frontend Connection): Created (Lesson 13)
-- **Lesson 4.2** (Course Wrap-up): Created (Lesson 14)
+- **Lesson 5.0** (Capstone — HR Employee Management): Created (Lesson 15)
+
+
+## Capstone Session Log (Active Attempt)
+- **Date**: 2026-08-13
+- **Checkpoint 1 (Domain Models)**:
+  - **Status**: In Progress
+  - **Time Elapsed**: 13:37
+  - **Mistakes / Revisions**: 16
+  - **Key Struggle**: Syntax and structural issues with C# classes (properties outside class boundary, constructor return type, inheritance connection, and overriding a non-existent method instead of implementing the abstract salary method).
+
 
 
 
