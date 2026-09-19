@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 18: Code Placement & Data Flow Across Layers</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .flow-step {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: transform var(--transition-fast), border-color var(--transition-fast);
+        }
+        .flow-step:hover {
+            transform: translateX(4px);
+            border-color: var(--primary-color);
+        }
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .circle-pres { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 2px solid #ef4444; }
+        .circle-app  { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 2px solid #3b82f6; }
+        .circle-dom  { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 2px solid #10b981; }
+        .circle-infra{ background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 2px solid #f59e0b; }
+        .interactive-card {
+            background: #0b0f19;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .code-pill {
+            display: inline-block;
+            background: #1e293b;
+            border: 1px solid var(--border-color);
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .classify-btn {
+            background: #131d31;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 0.35rem;
+            transition: all var(--transition-fast);
+        }
+        .classify-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--text-primary);
+        }
+        .classify-item {
+            background: #162032;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-controls">
+        <button class="lang-ctrl-btn" onclick="document.body.className='show-th-only'">🇹🇭 ภาษาไทย</button>
+        <button class="lang-ctrl-btn" onclick="document.body.className='show-en-only'">🇬🇧 English</button>
+        <button class="lang-ctrl-btn active" onclick="document.body.className='show-both'">🌐 Bilingual</button>
+    </div>
+
+    <h1>Lesson 18: Code Placement & Data Flow Across Layers</h1>
+
+    <div class="alert alert-info">
+        <p class="lang-th"><strong>เป้าหมายของบทเรียน:</strong> เข้าใจอย่างลึกซึ้งและสามารถอธิบายได้ว่า <em>โค้ดแต่ละไฟล์ควรสังกัดอยู่ใน Layer ไหน</em>, <em>รับข้อมูลมาจากใครในรูปแบบใด</em>, <em>ทำงานอะไร</em> และ <em>ส่งผลลัพธ์ต่อไปที่ไหน อย่างไร</em> ตามหลักสถาปัตยกรรมระดับสากล</p>
+        <p class="lang-en"><strong>Lesson Goal:</strong> Master the architectural placement of code: know exactly which layer each class belongs to, what input it receives from whom, what responsibility it fulfills, and where and how it dispatches output.</p>
+    </div>
+
+    <div class="alert alert-success">
+        📖 <strong>คู่มืออ้างอิงฉบับสมบูรณ์:</strong> เปิดอ่านตารางสรุปโค้ดทุกประเภทได้ที่ <a href="../reference/code-placement-and-data-flow-guide.html" target="_blank"><strong>Code Placement & Data Flow Master Guide</strong></a>
+    </div>
+
+    <h2>1. การเดินทางของข้อมูล 4 ขั้นตอน (The 4-Stage Flow)</h2>
+    <div class="flow-container">
+        <div class="flow-step">
+            <div class="step-circle circle-pres">1</div>
+            <div>
+                <strong style="color:#f87171;">Presentation Layer (Controller / Endpoint)</strong>
+                <p><strong>รับ:</strong> HTTP Request (JSON) จากผู้ใช้ &rarr; แปลงเป็น Request DTO<br>
+                <strong>หน้าที่:</strong> ตรวจ Auth, เช็ค Validation เบื้องต้น, ส่งต่อให้ Service<br>
+                <strong>ส่ง:</strong> เรียก Application Service แล้วนำผลลัพธ์แปลงเป็น HTTP Status (200, 400) คืนกลับให้ Client</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <div class="step-circle circle-app">2</div>
+            <div>
+                <strong style="color:#60a5fa;">Application Layer (Service / Use Case)</strong>
+                <p><strong>รับ:</strong> Request DTO จาก Controller<br>
+                <strong>หน้าที่:</strong> ผู้กำกับกระบวนการ (Orchestrator) เรียก Repository ดึง Entity, สั่ง Entity คำนวณ, เรียก Payment Gateway, สั่งบันทึก<br>
+                <strong>ส่ง:</strong> คืนค่า Response DTO กลับไปให้ Controller</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <div class="step-circle circle-dom">3</div>
+            <div>
+                <strong style="color:#34d399;">Domain Layer (Entities & Pure Rules)</strong>
+                <p><strong>รับ:</strong> พารามิเตอร์ดิบผ่าน Method Call จาก Application Service<br>
+                <strong>หน้าที่:</strong> ผู้คุมกฎเกณฑ์ธุรกิจสูงสุด (Business Invariants) เช่น ตัดสต็อก, ห้ามติดลบ (Zero Dependency ห้ามรู้จัก DB หรือ HTTP)<br>
+                <strong>ส่ง:</strong> เปลี่ยนสถานะตัวเอง (State change) หรือคืนค่าผลลัพธ์คำนวณ</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <div class="step-circle circle-infra">4</div>
+            <div>
+                <strong style="color:#fbbf24;">Infrastructure Layer (Database, Repositories, Third-party APIs)</strong>
+                <p><strong>รับ:</strong> คำสั่งจาก Application Service ผ่าน Interface Contract (เช่น <code>IProductRepository</code>)<br>
+                <strong>หน้าที่:</strong> คุยกับโลกภายนอก (SQL DB, Stripe, Email) จัดการเรื่อง I/O จริง<br>
+                <strong>ส่ง:</strong> บันทึก DB หรือยิง API สำเร็จ แล้วแปลงผลลัพธ์คืนให้ Application Service</p>
+            </div>
+        </div>
+    </div>
+
+    <h2>2. แบบฝึกหัดทดสอบการจัดกลุ่มโค้ด (Interactive Code Placement Challenge)</h2>
+    <p>คลิกเลือก Layer ที่ถูกต้องสำหรับโค้ดแต่ละประเภทด้านล่างนี้:</p>
+
+    <div class="interactive-card">
+        <!-- Item 1 -->
+        <div class="classify-item" id="item-1">
+            <div>
+                <span class="code-pill">IProductRepository.cs</span>
+                <span style="color:#94a3b8;font-size:0.85rem;">อินเทอร์เฟซกำหนดสัญญาว่าต้องมี GetByIdAsync() และ SaveAsync()</span>
+            </div>
+            <div>
+                <button class="classify-btn" onclick="classify(1, 'pres')">Presentation</button>
+                <button class="classify-btn" onclick="classify(1, 'app')">Application</button>
+                <button class="classify-btn" onclick="classify(1, 'dom')">Domain</button>
+                <button class="classify-btn" onclick="classify(1, 'infra')">Infrastructure</button>
+            </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="classify-item" id="item-2">
+            <div>
+                <span class="code-pill">StripePaymentGateway.cs</span>
+                <span style="color:#94a3b8;font-size:0.85rem;">โค้ดเรียกใช้งาน Stripe .NET SDK เพื่อตัดบัตรเครดิตจริงผ่านเครือข่าย</span>
+            </div>
+            <div>
+                <button class="classify-btn" onclick="classify(2, 'pres')">Presentation</button>
+                <button class="classify-btn" onclick="classify(2, 'app')">Application</button>
+                <button class="classify-btn" onclick="classify(2, 'dom')">Domain</button>
+                <button class="classify-btn" onclick="classify(2, 'infra')">Infrastructure</button>
+            </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="classify-item" id="item-3">
+            <div>
+                <span class="code-pill">BankAccount.cs</span>
+                <span style="color:#94a3b8;font-size:0.85rem;">คลาสบัญชีที่มีกฎห้ามถอนเกินยอดเงินคงเหลือ และคำนวณดอกเบี้ย</span>
+            </div>
+            <div>
+                <button class="classify-btn" onclick="classify(3, 'pres')">Presentation</button>
+                <button class="classify-btn" onclick="classify(3, 'app')">Application</button>
+                <button class="classify-btn" onclick="classify(3, 'dom')">Domain</button>
+                <button class="classify-btn" onclick="classify(3, 'infra')">Infrastructure</button>
+            </div>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="classify-item" id="item-4">
+            <div>
+                <span class="code-pill">ApiKeyMiddleware.cs</span>
+                <span style="color:#94a3b8;font-size:0.85rem;">ตัวดักจับ HTTP Header 'x-api-key' ก่อนที่จะส่งคำขอเข้าสู่ Controller</span>
+            </div>
+            <div>
+                <button class="classify-btn" onclick="classify(4, 'pres')">Presentation</button>
+                <button class="classify-btn" onclick="classify(4, 'app')">Application</button>
+                <button class="classify-btn" onclick="classify(4, 'dom')">Domain</button>
+                <button class="classify-btn" onclick="classify(4, 'infra')">Infrastructure</button>
+            </div>
+        </div>
+        <div id="classify-feedback" style="margin-top:1rem;display:none;" class="alert"></div>
+    </div>
+
+    <h2>3. แบบทดสอบวัดความเข้าใจระดับเข้มข้น (Rigorous Knowledge Checks)</h2>
+
+    <!-- Quiz 1 -->
+    <div class="quiz-container">
+        <div class="quiz-question">
+            Q1: In Clean Architecture / Layered pattern, where should IOrderRepository (the interface) and OrderRepository (the SQL implementation) reside?
+        </div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQ1(this, 0)">Interface in Application layer and implementation in Infrastructure layer</button>
+            <button class="quiz-btn" onclick="checkQ1(this, 1)">Interface in Infrastructure layer and implementation in Application layer</button>
+            <button class="quiz-btn" onclick="checkQ1(this, 2)">Interface in Presentation layer and implementation in SharedStorage layer</button>
+            <button class="quiz-btn" onclick="checkQ1(this, 3)">Interface in DomainEntity layer and implementation in WebController layer</button>
+        </div>
+        <div id="q1-fb" class="quiz-feedback"></div>
+    </div>
+
+    <!-- Quiz 2 -->
+    <div class="quiz-container">
+        <div class="quiz-question">
+            Q2: What does an Application Service typically receive as input, and what does it return to the Presentation layer?
+        </div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQ2(this, 0)">Receives request DTO objects and returns structured response DTO models</button>
+            <button class="quiz-btn" onclick="checkQ2(this, 1)">Receives raw database entity and returns raw relational database tables</button>
+            <button class="quiz-btn" onclick="checkQ2(this, 2)">Receives direct HTTP requests and returns binary protocol memory chunks</button>
+            <button class="quiz-btn" onclick="checkQ2(this, 3)">Receives inner domain entities and returns raw unmapped database models</button>
+        </div>
+        <div id="q2-fb" class="quiz-feedback"></div>
+    </div>
+
+    <!-- Quiz 3 -->
+    <div class="quiz-container">
+        <div class="quiz-question">
+            Q3: Why must the Domain Entity layer have zero references to the Infrastructure and Persistence layers?
+        </div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQ3(this, 0)">To ensure business logic remains isolated from external technology changes</button>
+            <button class="quiz-btn" onclick="checkQ3(this, 1)">To allow database queries execute directly inside frontend web controllers</button>
+            <button class="quiz-btn" onclick="checkQ3(this, 2)">To connect user presentation layers directly onto physical server hardware</button>
+            <button class="quiz-btn" onclick="checkQ3(this, 3)">To expose internal database schema columns straight toward external client</button>
+        </div>
+        <div id="q3-fb" class="quiz-feedback"></div>
+    </div>
+
+    <div class="lesson-footer">
+        <a href="0017-ch1-architecture-intro-hierarchy.html" class="btn btn-secondary">&larr; Lesson 17: Intro & Hierarchy</a>
+        <a href="../reference/code-placement-and-data-flow-guide.html" class="btn btn-primary">Open Flow Guide &rarr;</a>
+    </div>
+
+    <script>
+        const answers = { 1: 'app', 2: 'infra', 3: 'dom', 4: 'pres' };
+        const userAnswers = {};
+
+        function classify(item, layer) {
+            userAnswers[item] = layer;
+            const row = document.getElementById('item-' + item);
+            const btns = row.querySelectorAll('.classify-btn');
+            btns.forEach(b => b.style.borderColor = 'var(--border-color)');
+            event.target.style.borderColor = 'var(--primary-color)';
+            event.target.style.background = 'rgba(99,102,241,0.2)';
+
+            const fb = document.getElementById('classify-feedback');
+            fb.style.display = 'block';
+
+            if (Object.keys(userAnswers).length === 4) {
+                let correctCount = 0;
+                for (let k in answers) {
+                    if (userAnswers[k] === answers[k]) correctCount++;
+                }
+                if (correctCount === 4) {
+                    fb.className = 'alert alert-success';
+                    fb.innerHTML = '🎉 <strong>ยอดเยี่ยมมาก! ถูกต้องทั้ง 4 ข้อ!</strong><br>• Interface อยู่ใน Application<br>• SDK ติดต่อภายนอกอยู่ใน Infrastructure<br>• Business Rules อยู่ใน Domain<br>• Middleware กรอง HTTP อยู่ใน Presentation';
+                } else {
+                    fb.className = 'alert alert-warning';
+                    fb.innerHTML = 'คุณตอบถูก ' + correctCount + ' จาก 4 ข้อ ลองทบทวนแล้วคลิกเลือกใหม่อีกครั้งได้เลยครับ!';
+                }
+            }
+        }
+
+        function checkQ1(btn, idx) {
+            const c = btn.closest('.quiz-container');
+            c.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('selected', 'correct', 'incorrect'));
+            const fb = document.getElementById('q1-fb');
+            if (idx === 0) {
+                btn.classList.add('correct');
+                fb.className = 'quiz-feedback alert alert-success';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ถูกต้องยอดเยี่ยม!</strong> ตามหลัก Dependency Inversion: สัญญา Interface จะต้องอยู่กับผู้ใช้งาน (Application Layer) ในขณะที่ตัว Implementation เชื่อมต่อ DB จริงจะอยู่ที่ Infrastructure!';
+            } else {
+                btn.classList.add('incorrect');
+                fb.className = 'quiz-feedback alert alert-warning';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ยังไม่ถูกต้อง:</strong> Interface สัญญาณิยามไว้ที่ Application ส่วนตัวลงมือทำ SQL จริงจะอยู่ที่ Infrastructure ครับ';
+            }
+        }
+
+        function checkQ2(btn, idx) {
+            const c = btn.closest('.quiz-container');
+            c.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('selected', 'correct', 'incorrect'));
+            const fb = document.getElementById('q2-fb');
+            if (idx === 0) {
+                btn.classList.add('correct');
+                fb.className = 'quiz-feedback alert alert-success';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ถูกต้องเป๊ะ!</strong> Application Service จะรับ Request DTO เข้ามา และคืนค่า Response DTO กลับไป เพื่อไม่ให้ Entity ของ Domain หลุดออกไปสู่ภายนอก';
+            } else {
+                btn.classList.add('incorrect');
+                fb.className = 'quiz-feedback alert alert-warning';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ยังไม่ถูกต้อง:</strong> สื่อกลางที่เข้าและออกจาก Application Service มักเป็น DTO (Data Transfer Object) ครับ';
+            }
+        }
+
+        function checkQ3(btn, idx) {
+            const c = btn.closest('.quiz-container');
+            c.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('selected', 'correct', 'incorrect'));
+            const fb = document.getElementById('q3-fb');
+            if (idx === 0) {
+                btn.classList.add('correct');
+                fb.className = 'quiz-feedback alert alert-success';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ถูกต้องที่สุด!</strong> Domain เป็นแกนกลางตรรกะธุรกิจ ต้องสะอาดบริสุทธิ์ ไม่ขึ้นกับเทคโนโลยีฐานข้อมูล เพื่อให้เปลี่ยน DB หรือย้ายระบบได้โดยไม่ต้องแก้กฎธุรกิจเลย!';
+            } else {
+                btn.classList.add('incorrect');
+                fb.className = 'quiz-feedback alert alert-warning';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ยังไม่ถูกต้อง:</strong> การที่ Domain ไม่รู้จัก Infrastructure เพื่อปกป้อง Business Rules ให้บริสุทธิ์และไม่ผูกติดกับเทคโนโลยีภายนอกครับ';
+            }
+        }
+    </script>
+</body>
+</html>

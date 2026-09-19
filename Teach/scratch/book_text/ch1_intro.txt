@@ -1,0 +1,90 @@
+--- Page 5 ---
+CHAPTER 1
+Introduction
+It’s all too common for developers to start coding an application
+without a formal architecture in place. This practice usually results
+in ill-defined components, creating what is commonly referred to
+as a big ball of mud . These architectures are generally tightly cou‐
+pled, brittle, difficult to change, and lack a clear vision or direction.
+It’s also very difficult to determine the architectural characteristics
+of applications lacking a well-defined architectural style. Does the
+architecture scale? What are the performance characteristics of the
+application? How easy is it to change the application or add new
+features? How responsive is the architecture?
+Architecture styles help define the basic characteristics and behavior
+of an application. Some architecture styles naturally lend themselves
+toward highly scalable systems, whereas other architecture styles
+naturally lend themselves toward applications that allow develop‐
+ers to respond quickly to change. Knowing the characteristics,
+strengths, and weaknesses of each architecture style is necessary to
+choose the one that meets your specific business needs and goals.
+A lot has happened in software architecture since 2015 when the
+first edition of this report was published. Both microservices and
+event-driven architecture have gained in popularity, and develop‐
+ers and architects have found new techniques, tools, and ways
+of designing and implementing these architecture styles. Also, the
+widespread use of domain-driven design has led to a better under‐
+standing of how architectures are structurally partitioned, and how
+that partitioning can impact the design and implementation of a
+1
+--- Page 6 ---
+system. The second edition of the report addresses both of these
+advances.
+The second edition also includes other significant enhancements,
+along with more information about the intersection of architecture
+and data, and an expanded analysis section at the end of each chap‐
+ter. These new sections provide you with better guidelines for when
+to use (and not to use) each architecture presented in this report.
+Another change you’ll notice in the second edition is the use of
+the term architecture style rather than architecture pattern for the
+architectures described in this report. This distinction helps alleviate
+some of the confusion surrounding the differences between, say,
+event-driven architecture—an architecture style—and something
+like CQRS (Command Query Responsibility Segregation), which is
+an architecture pattern.
+An architecture style , such as the ones presented in this report,
+describe the macro structure of a system. Architecture patterns, on
+the other hand, describe reusable structural building block patterns
+that can be used within each of the architecture styles to solve a par‐
+ticular problem. Take, for example, the well known CQRS pattern,
+which describes the structural separation between read and write
+operations to a database or eventing system (for example, separate
+services and databases for read operations and write operations).
+This architecture pattern could be applied to any of the architecture
+styles described in this report to optimize database queries and
+updates.
+Architecture patterns, in turn, differ from design patterns (such as
+the Builder design pattern) in that an architecture pattern impacts
+the structural aspect of a system, whereas a design pattern impacts
+how the source code  is designed. For example, you can use the
+Builder design pattern as a way to implement the CQRS architecture
+pattern, and then use the CQRS pattern as a building block within
+a microservices architecture. Figure 1-1 shows this hierarchical rela‐
+tionship among the three terms and how they interrelate with each
+other to build software systems.
+2 | Chapter 1: Introduction
+--- Page 7 ---
+Figure 1-1. Architecture styles can be composed of architecture pat‐
+terns, which in turn can be composed of design patterns
+Design patterns and architecture patterns are typically combined to
+form a complete solution. Architecture styles act in the same way—
+they can also be combined when building software solutions to form
+a complete solution. Hybrid architecture styles are common in the
+real world because not every architecture style can solve every busi‐
+ness problem. Common architecture style hybrids include event-
+driven microservices (events between microservices), space-based
+microservices (processing units implemented as microservices), and
+even an event-driven microkernel architecture (events between the
+core system and remote plug-in components). Although forming
+hybrids is a common practice, it is vital to understand individ‐
+ual architecture styles and their corresponding strengths and weak‐
+nesses before combining them.
+The goal of this updated second edition report remains the same as
+the first edition: to help senior developers and architects understand
+some of the more common architecture styles, how they work, when
+to use them, and when not to use them. This will help to not only
+expand your knowledge of architecture, but will also help you make
+the right architecture choice for your systems.
+Introduction | 3
+--- Page 8 ---
+

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Architecture Patterns Reference Guide — Mark Richards</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background-color: var(--surface-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .summary-table th, .summary-table td {
+            padding: 0.85rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+        .summary-table th {
+            background-color: #0b0f19;
+            color: #818cf8;
+            font-weight: 600;
+        }
+        .summary-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .stars {
+            color: #fbbf24;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+        .cost-tag {
+            font-weight: 700;
+            color: #10b981;
+        }
+        .arch-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .arch-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .badge-mono { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-dist { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .badge-hybrid { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin: 1rem 0;
+        }
+        @media (max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+        }
+        .box-pro {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+        }
+        .box-pro h4 { color: #34d399; margin-bottom: 0.5rem; }
+        .box-con {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+        }
+        .box-con h4 { color: #f87171; margin-bottom: 0.5rem; }
+        .diagram-box {
+            background-color: #0b0f19;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin: 1rem 0;
+            font-family: var(--font-mono);
+            color: #cbd5e1;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-controls">
+        <button class="lang-ctrl-btn" onclick="document.body.className='show-th-only'">🇹🇭 ภาษาไทย</button>
+        <button class="lang-ctrl-btn" onclick="document.body.className='show-en-only'">🇬🇧 English</button>
+        <button class="lang-ctrl-btn active" onclick="document.body.className='show-both'">🌐 Bilingual</button>
+    </div>
+
+    <h1>Software Architecture Patterns Reference Guide</h1>
+    <div class="alert alert-info">
+        <strong>หนังสืออ้างอิง:</strong> <em>Software Architecture Patterns (2nd Edition)</em> โดย Mark Richards (O'Reilly Media)
+        <br>สรุปแก่นสาระสำคัญ คู่มือการตัดสินใจเลือกสถาปัตยกรรม และตารางวิเคราะห์เปรียบเทียบ (Trade-off Matrix) อย่างครบถ้วน
+    </div>
+
+    <h2>1. ลำดับชั้นแนวคิดสถาปัตยกรรม (Conceptual Hierarchy)</h2>
+    <div class="card">
+        <p class="lang-th">หลายคนมักสับสนระหว่าง <strong>Architecture Style</strong>, <strong>Architecture Pattern</strong> และ <strong>Design Pattern</strong> ในหนังสือเล่มนี้ Mark Richards ได้จัดลำดับชั้นไว้อย่างชัดเจน:</p>
+        <p class="lang-en">Developers often confuse Architecture Style, Architecture Pattern, and Design Pattern. Mark Richards clarifies the hierarchical relationship:</p>
+        
+        <div class="diagram-box">
+┌────────────────────────────────────────────────────────────────────────┐
+│ 1. Architecture Style (Macro Structure: ภาพรวมระดับระบบ)               │
+│    เช่น Layered, Microservices, Event-Driven, Microkernel, Space-Based │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ ประกอบด้วย (composed of)
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 2. Architecture Pattern (Structural Building Blocks: บล็อกแก้ปัญหาระบบ) │
+│    เช่น CQRS, Saga Pattern, Event Sourcing, API Gateway                │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ นำไปสร้างด้วย (implemented with)
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 3. Design Pattern (Code-Level Design: การออกแบบโค้ดระดับ Class/Object)  │
+│    เช่น Factory, Strategy, Builder, Observer, Decorator                │
+└────────────────────────────────────────────────────────────────────────┘
+        </div>
+        <ul>
+            <li><strong>The Big Ball of Mud Anti-Pattern:</strong> การเริ่มเขียนโค้ดโดยไม่มีสถาปัตยกรรมรองรับ จะทำให้โค้ดพันกันยุ่งเหยิง (Tightly coupled) เปราะบาง (Brittle) แก้จุดหนึ่งพังอีกจุดหนึ่ง และไม่มีทิศทางที่ชัดเจน</li>
+        </ul>
+    </div>
+
+    <h2>2. สองมิติหลักในการจำแนกสถาปัตยกรรม (Classification & Partitioning)</h2>
+    <div class="two-col">
+        <div class="card">
+            <h3>มิติที่ 1: Monolithic vs Distributed</h3>
+            <p><strong>Monolithic (หน่วยติดตั้งเดียว):</strong> ง่าย ต้นทุนต่ำ (Low cost) พัฒนารวดเร็ว แต่ Scale แยกส่วนไม่ได้ และหากจุดใด Memory Leak ทั้งระบบจะล่ม (Single Point of Failure)</p>
+            <p><strong>Distributed (หลายหน่วยติดตั้ง/Services):</strong> ปรับขนาดแยกอิสระ (Elasticity/Scalability), ความทนทานต่อข้อผิดพลาดสูง (Fault Tolerance) แต่ต้องเผชิญกับ <em>8 Fallacies of Distributed Computing</em> (เครือข่ายไม่ได้เสถียร 100%, มี Latency, ต้องจัดการ Eventual Consistency และ Distributed Transactions)</p>
+        </div>
+        <div class="card">
+            <h3>มิติที่ 2: Technical vs Domain Partitioning</h3>
+            <p><strong>Technical Partitioning:</strong> แยกโค้ดตามหน้าที่ทางเทคนิค เช่น UI, Business Logic, Persistence, Database (เช่น Layered, Space-Based) เหมาะเมื่อทีมงานถูกจัดตามทักษะ (ทีม Frontend, ทีม Backend, ทีม DBA)</p>
+            <p><strong>Domain Partitioning:</strong> แยกโค้ดตามขอบเขตธุรกิจ เช่น Customer, Payment, Shipping (เช่น Microservices) เหมาะกับทีม Cross-functional และทำให้เพิ่มฟีเจอร์ใหม่ได้คล่องตัวโดยกระทบจุดเดียว (High Agility)</p>
+        </div>
+    </div>
+
+    <h2>3. เจาะลึก 5 รูปแบบสถาปัตยกรรมหลัก (The 5 Architecture Styles)</h2>
+
+    <!-- Style 1 -->
+    <div class="arch-card">
+        <span class="arch-badge badge-mono">Monolithic</span>
+        <span class="arch-badge" style="background:rgba(59,130,246,0.2);color:#93c5fd;">Technical Partitioned</span>
+        <h3>1. Layered Architecture (สถาปัตยกรรมแบบแบ่งชั้น / n-tier)</h3>
+        <p class="lang-th">สถาปัตยกรรมดั้งเดิมที่ได้รับความนิยมสูงสุด แบ่งระบบออกเป็นชั้นแนวนอนตามบทบาทหน้าที่ มาตรฐานมักมี 4 ชั้น: <strong>Presentation &rarr; Business &rarr; Persistence &rarr; Database</strong></p>
+        <p class="lang-en">The de facto standard architecture style. Components are organized into horizontal technical layers, typically: Presentation, Business, Persistence, and Database.</p>
+        
+        <div class="diagram-box">
+[Presentation Layer]  (UI, View, Controller)
+       │
+       ▼ (Closed Layer: บังคับผ่านเสมอ)
+[ Business Layer ]    (Domain Logic, Calculations, Rules)
+       │
+       ▼ (Closed Layer)
+[Persistence Layer ]  (DAOs, Repositories, ORM, SQL)
+       │
+       ▼
+[  Database Layer  ]  (Tables, Stored Procedures)
+        </div>
+
+        <div class="alert alert-info">
+            <strong>Key Concept — Layers of Isolation & Open/Closed Layers:</strong>
+            <br>• <strong>Closed Layer:</strong> คำขอต้องผ่านชั้นนี้เสมอ ห้ามข้าม เพื่อป้องกันการผูกมัด (Decoupling) เช่น ถ้าเปลี่ยน Database หรือ Presentation โค้ดส่วน Business จะไม่ได้รับผลกระทบ
+            <br>• <strong>Open Layer:</strong> อนุญาตให้คำขอลัดข้ามชั้นนี้ได้ เช่น <em>Shared Services Layer</em> ที่สร้างไว้ให้ Business เรียกใช้ แต่ถ้าไม่มีการคำนวณก็อนุญาตให้ทะลุไปหา Persistence ได้ทันที
+            <br>• <strong>Architecture Sinkhole Anti-Pattern:</strong> สภาวะที่คำขอ 80%+ ไหลผ่านชั้นต่างๆ โดยไม่มี Business Logic ใดๆ (แค่ส่งต่อเฉยๆ) หากพบปัญหานี้ ควรพิจารณาเปิด Layer (Open Layer) หรือปรับสถาปัตยกรรม
+        </div>
+
+        <div class="two-col">
+            <div class="box-pro">
+                <h4>✅ เมื่อไรที่ควรเลือกใช้ (When to Consider)</h4>
+                <ul>
+                    <li>งบประมาณและเวลามีจำกัด (Budget & Time constraints)</li>
+                    <li>แอปพลิเคชันเริ่มต้นที่ยังไม่ซับซ้อน (Good general-purpose starting point)</li>
+                    <li>การเปลี่ยนแปลงส่วนใหญ่จำกัดอยู่ในชั้นทางเทคนิคเฉพาะจุด</li>
+                    <li>โครงสร้างทีมแบ่งตามความเชี่ยวชาญเทคนิค (Conway's Law)</li>
+                </ul>
+            </div>
+            <div class="box-con">
+                <h4>❌ เมื่อไรที่ไม่ควรเลือกใช้ (When NOT to Consider)</h4>
+                <ul>
+                    <li>ต้องการ High Scalability, Fault Tolerance, และ Elasticity สูง</li>
+                    <li>การเปลี่ยนแปลงส่วนใหญ่เป็นแบบข้ามสายงานตามฟีเจอร์ธุรกิจ (Domain changes)</li>
+                    <li>โครงสร้างทีมเป็นทีม Cross-functional ตาม Domain</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Style 2 -->
+    <div class="arch-card">
+        <span class="arch-badge badge-mono">Monolithic (ส่วนใหญ่) หรือ Distributed</span>
+        <span class="arch-badge badge-hybrid">Domain หรือ Technical Partitioned</span>
+        <h3>2. Microkernel Architecture (สถาปัตยกรรมแบบปลั๊กอิน / Plug-in)</h3>
+        <p class="lang-th">ประกอบด้วย 2 ส่วนหลักคือ <strong>Core System</strong> (ระบบแกนกลางที่ทำงานพื้นฐาน) และ <strong>Plug-in Modules</strong> (โมดูลเสริมที่เพิ่มความสามารถหรือกฎเฉพาะทาง) เชื่อมต่อกันผ่าน Plug-in Registry และ Contract Interfaces</p>
+        <p class="lang-en">Consists of a minimal Core System and independent Plug-in Modules that extend functionality without modifying the core.</p>
+
+        <div class="diagram-box">
+                     ┌──────────────────┐
+                     │ Plug-in Registry │
+                     └────────┬─────────┘
+                              │
+┌─────────────────────────────▼───────────────────────────────┐
+│                      Core System                            │
+│  (Minimal Business Workflow / Routing / Common Infrastructure)│
+└──────────────┬──────────────┬──────────────┬────────────────┘
+               │              │              │
+        ┌──────▼──────┐┌──────▼──────┐┌──────▼──────┐
+        │  Plug-in A  ││  Plug-in B  ││  Plug-in C  │
+        │(California) ││   (Texas)   ││  (Florida)  │
+        └─────────────┘└─────────────┘└─────────────┘
+        </div>
+
+        <div class="alert alert-info">
+            <strong>Key Concept — Plug-in Independence & Extensibility:</strong>
+            <br>• ปลั๊กอินต้องเป็นอิสระต่อกัน (Independent) ไม่ควรเรียกหากันเองโดยตรง เพื่อไม่ให้เกิดวงจร Dependency
+            <br>• ตัวอย่างคลาสสิก: Eclipse IDE, VS Code, Web Browsers (Chrome Extensions)
+            <br>• <strong>ตัวอย่างงานธุรกิจจริง:</strong> ระบบเคลมประกันภัย (Insurance Claims Processing) ที่แกนกลางมีขั้นตอนการเคลมมาตรฐาน แต่แต่ละรัฐ/ประเทศมีข้อบังคับต่างกัน จึงแยกข้อบังคับแต่ละรัฐออกเป็นแต่ละ Plug-in!
+        </div>
+
+        <div class="two-col">
+            <div class="box-pro">
+                <h4>✅ เมื่อไรที่ควรเลือกใช้</h4>
+                <ul>
+                    <li>ซอฟต์แวร์ประเภท Product-based หรือ SaaS ที่ต้องมี Release หลายเวอร์ชัน</li>
+                    <li>ระบบที่มีฟีเจอร์เฉพาะตามกลุ่มลูกค้าหรือตามพื้นที่ (Jurisdictions/Tenants)</li>
+                    <li>ต้องการเพิ่ม/ถอดฟีเจอร์ได้อย่างรวดเร็วโดยไม่กระทบระบบแกนกลาง</li>
+                </ul>
+            </div>
+            <div class="box-con">
+                <h4>❌ เมื่อไรที่ไม่ควรเลือกใช้</h4>
+                <ul>
+                    <li>ระบบที่ต้องการ Extreme Scalability หรือ Distributed Data เป็นหลัก</li>
+                    <li>การทำงานร่วมกันระหว่างปลั๊กอินมีความซับซ้อนและผูกพันกันสูง</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Style 3 -->
+    <div class="arch-card">
+        <span class="arch-badge badge-dist">Distributed</span>
+        <span class="arch-badge" style="background:rgba(59,130,246,0.2);color:#93c5fd;">Technical Partitioned</span>
+        <h3>3. Event-Driven Architecture (สถาปัตยกรรมขับเคลื่อนด้วยเหตุการณ์ / EDA)</h3>
+        <p class="lang-th">สถาปัตยกรรมแบบกระจายศูนย์ที่อาศัยการสื่อสารแบบ <strong>Asynchronous</strong> ที่แยกตัวกันอย่างสมบูรณ์ (Highly Decoupled) โดย Services จะคอยส่งสัญญาณเหตุการณ์ (Events) และตอบสนองต่อเหตุการณ์ที่เกิดขึ้น</p>
+        <p class="lang-en">A distributed architecture style relying on asynchronous communication between highly decoupled event processors reacting to events.</p>
+
+        <div class="diagram-box">
+[Initiating Event]  (เช่น "Place Order")
+        │
+        ▼
+[Order Placement Service] ──(Advertises)──► [Event: "Order Placed"] (Topic)
+                                                    │
+                      ┌─────────────────────────────┼─────────────────────────────┐
+                      ▼                             ▼                             ▼
+              [Payment Service]            [Inventory Service]          [Notification Service]
+                      │                             │                             │
+                      ▼                             ▼                             ▼
+            [Event: Payment Applied]     [Event: Inventory Reserved]    [Event: Customer Notified]
+        </div>
+
+        <div class="alert alert-info">
+            <strong>Key Distinction — Event-Driven vs. Message-Driven:</strong>
+            <br>• <strong>Event:</strong> บอกถึงสิ่งที่ "เกิดขึ้นแล้ว" (State change) เช่น <em>"Order Placed"</em> ผู้ส่ง<strong>ไม่รู้และไม่สนใจ</strong>ว่าใครจะมารับฟังบ้าง ผู้ส่งเป็นเจ้าของ Channel และ Contract
+            <br>• <strong>Message:</strong> เป็น "คำสั่ง" (Command) ที่เจาะจงผู้รับ เช่น <em>"Apply Payment"</em> ส่งตรงไปยัง Payment Service ผู้รับเป็นเจ้าของ Queue และ Contract
+            <br>• <strong>Architectural Extensibility:</strong> การให้ Service ประกาศเหตุการณ์เสมอ (แม้ ณ ปัจจุบันจะยังไม่มีใครฟัง) จะเปิดช่องทาง (Hook) ให้บริการใหม่ๆ ในอนาคตเข้ามาเสียบฟังได้ทันทีโดยไม่ต้องแก้โค้ดเก่าเลย!
+        </div>
+
+        <div class="two-col">
+            <div class="box-pro">
+                <h4>✅ เมื่อไรที่ควรเลือกใช้</h4>
+                <ul>
+                    <li>ต้องการ Scalability, Fault Tolerance และ Performance ระดับสูงสุด (5 ดาว)</li>
+                    <li>ระบบที่มี Workflow ซับซ้อนแบบ Dynamic / Non-deterministic</li>
+                    <li>ต้องการ Real-time streaming, การตอบสนองรวดเร็ว และ Loose Coupling</li>
+                </ul>
+            </div>
+            <div class="box-con">
+                <h4>❌ เมื่อไรที่ไม่ควรเลือกใช้</h4>
+                <ul>
+                    <li>ระบบที่ต้องการ Deterministic Workflow สูง (ขั้นตอน 1 &rarr; 2 &rarr; 3 ต้องเป๊ะ)</li>
+                    <li>ต้องการระบบ ACID Transaction แบบเข้มงวด (EDA ใช้ Eventual Consistency)</li>
+                    <li>ทีมมีข้อจำกัดเรื่องทักษะการดีบักและการติดตามข้อผิดพลาดข้ามระบบ (Error handling)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Style 4 -->
+    <div class="arch-card">
+        <span class="arch-badge badge-dist">Distributed</span>
+        <span class="arch-badge" style="background:rgba(168,85,247,0.2);color:#c084fc;">Domain Partitioned</span>
+        <h3>4. Microservices Architecture (สถาปัตยกรรมไมโครเซอร์วิส)</h3>
+        <p class="lang-th">ระบบนิเวศของบริการขนาดเล็กที่แยกการติดตั้งเป็นอิสระต่อกัน (Separately deployed) แต่ละบริการทำงานเฉพาะทางเพียงอย่างเดียวให้ดีที่สุด (Single-purpose unit) และมี <strong>Bounded Context</strong> ของตัวเองทั้งโค้ดและข้อมูล</p>
+        <p class="lang-en">An ecosystem of single-purpose, separately deployed software units. The key defining characteristics are Bounded Context and Distributed Data.</p>
+
+        <div class="diagram-box">
+             [ Client Request / Microfrontends ]
+                           │
+                           ▼
+                 [ API Gateway ]  (Security, Metrics, Routing — NO Business Logic!)
+                           │
+         ┌─────────────────┼─────────────────┐
+         ▼                 ▼                 ▼
+ ┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+ │ Order Service │ │Customer Service│ │Payment Service│  <-- Bounded Contexts
+ └───────┬───────┘ └───────┬───────┘ └───────┬───────┘
+         │                 │                 │
+         ▼                 ▼                 ▼
+   [(Order DB)]      [(Customer DB)]   [(Payment DB)]  <-- Distributed Data
+        </div>
+
+        <div class="alert alert-info">
+            <strong>3 สิ่งที่ทำให้ Microservices แตกต่างจากสถาปัตยกรรมอื่น:</strong>
+            <br>1. <strong>Distributed Data (ข้อมูลกระจายตัว):</strong> เป็นสถาปัตยกรรมเดียวที่บังคับให้แยก Schema/Database ตาม Bounded Context ห้ามแชร์ฐานข้อมูลรวมกันเด็ดขาด (เพราะถ้ามี 200 เซอร์วิสใช้ DB เดียวกัน เมื่อเปลี่ยน Table ทีเดียว จะต้องแก้และ Deploy ทั้ง 200 เซอร์วิสพร้อมกัน!)
+            <br>2. <strong>Operational Automation:</strong> ต้องอาศัย CI/CD, Containerization, Automated Testing และ Monitoring ระดับสูงมาก
+            <br>3. <strong>Organizational Change:</strong> สอดคล้องกับทีมพัฒนาที่เป็น Cross-functional Domain Teams
+        </div>
+
+        <div class="two-col">
+            <div class="box-pro">
+                <h4>✅ เมื่อไรที่ควรเลือกใช้</h4>
+                <ul>
+                    <li>ต้องการ <strong>Agility สูงสุด (5 ดาว)</strong>: ปรับเปลี่ยนและ Deploy ฟีเจอร์ได้เร็วที่สุดโดยไม่กระทบส่วนอื่น</li>
+                    <li>ระบบขนาดใหญ่ที่มีหลายโดเมนธุรกิจอิสระจากกัน</li>
+                    <li>ต้องการ High Scalability และ Fault Tolerance ระดับรายเซอร์วิส</li>
+                </ul>
+            </div>
+            <div class="box-con">
+                <h4>❌ เมื่อไรที่ไม่ควรเลือกใช้</h4>
+                <ul>
+                    <li>ระบบขนาดเล็กหรืองบประมาณต่ำ (Overall Cost สูงสุดระดับ $$$$$)</li>
+                    <li>โครงสร้างพื้นฐานหรือทีมยังไม่พร้อมรับมือความซับซ้อนของระบบกระจายศูนย์</li>
+                    <li>ต้องการ Performance แบบ Low-latency สุดขีด (Network hops ระหว่างบริการจะเพิ่ม latency)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Style 5 -->
+    <div class="arch-card">
+        <span class="arch-badge badge-dist">Distributed</span>
+        <span class="arch-badge" style="background:rgba(59,130,246,0.2);color:#93c5fd;">Technical Partitioned</span>
+        <h3>5. Space-Based Architecture (สถาปัตยกรรมเชิงพื้นที่ข้อมูลในหน่วยความจำ)</h3>
+        <p class="lang-th">ออกแบบมาเพื่อทลาย <strong>"คอขวดของฐานข้อมูล (Database Bottleneck)"</strong> โดยการนำ Database ออกจากกระบวนการ Transactional ปกติ แล้วเปลี่ยนมาเก็บและประมวลผลข้อมูลใน <strong>In-Memory Data Grid</strong> แทน!</p>
+        <p class="lang-en">Designed to address extreme scalability and concurrency by eliminating the central database from transactional processing, using replicated in-memory data grids.</p>
+
+        <div class="diagram-box">
+             [ Requests ] ──► [ Messaging Grid ] (Load Balancer / Session Router)
+                                     │
+         ┌───────────────────────────┴───────────────────────────┐
+         ▼                                                       ▼
+ ┌─────────────────────────┐                             ┌─────────────────────────┐
+ │ Processing Unit 1       │                             │ Processing Unit 2       │
+ │ ┌─────────────────────┐ │                             │ ┌─────────────────────┐ │
+ │ │    Business Logic   │ │                             │ │    Business Logic   │ │
+ │ ├─────────────────────┤ │◄──── Data Replication ────►│ ├─────────────────────┤ │
+ │ │ In-Memory Data Grid │ │                             │ │ In-Memory Data Grid │ │
+ │ └──────────┬──────────┘ │                             │ └──────────┬──────────┘ │
+ └────────────┼────────────┘                             └────────────┼────────────┘
+              │ (Asynchronous Data Pump)                              │
+              └───────────────────────────┬───────────────────────────┘
+                                          ▼
+                                   [ Data Writer ]
+                                          │
+                                          ▼
+                                [ Central Database ]
+        </div>
+
+        <div class="alert alert-info">
+            <strong>Key Concept — Virtualized Middleware 4 ส่วน:</strong>
+            <br>• <strong>Messaging Grid:</strong> จัดการกระจายคำขอไปยัง Processing Unit ที่พร้อมทำงาน
+            <br>• <strong>Data Grid:</strong> ซิงค์ข้อมูลระหว่าง Processing Units ให้ตรงกันในแรม (Hazelcast, Apache Ignite) พร้อม <em>Data Pump</em> ส่งข้อมูลแบบ Asynchronous ลง Database ผ่าน <em>Data Writer</em>
+            <br>• <strong>Processing Grid:</strong> ดูแลการประมวลผลข้าม Processing Unit
+            <br>• <strong>Deployment Manager:</strong> ตรวจสอบโหลด และสั่ง Auto-scale ปิด/เปิด Processing Units แบบไดนามิก (Kubernetes)
+        </div>
+
+        <div class="two-col">
+            <div class="box-pro">
+                <h4>✅ เมื่อไรที่ควรเลือกใช้</h4>
+                <ul>
+                    <li><strong>Extreme Scalability & Concurrency:</strong> ผู้ใช้ระดับแสนหรือล้านคนพร้อมกัน (เช่น เว็บจองตั๋วคอนเสิร์ต, ระบบประมูลออนไลน์, ตลาดหลักทรัพย์)</li>
+                    <li>ต้องการ High Performance และ Elasticity สูงสุด ตอบสนองในระดับ Milliseconds</li>
+                </ul>
+            </div>
+            <div class="box-con">
+                <h4>❌ เมื่อไรที่ไม่ควรเลือกใช้</h4>
+                <ul>
+                    <li>ปริมาณข้อมูล Transactional มหาศาลจนไม่สามารถเก็บในหน่วยความจำ (RAM) ได้</li>
+                    <li>ระบบที่มีงบประมาณจำกัด (ต้นทุนโครงสร้างพื้นฐาน RAM และคลัสเตอร์สูงมาก $$$$$)</li>
+                    <li>ระบบที่มีการทำ Distributed Transaction ซับซ้อนข้ามหลายตาราง</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h2>4. ตารางวิเคราะห์เปรียบเทียบสถาปัตยกรรม (Style Analysis Summary Scorecard)</h2>
+    <p>ถอดรหัสจาก Figure A-1 ในหนังสือ Mark Richards: คะแนน 1 ดาว (●) หมายถึงรองรับได้ต่ำหรือไม่เหมาะสม, 5 ดาว (●●●●●) หมายถึงโดดเด่นและรองรับได้ดีเยี่ยม</p>
+
+    <table class="summary-table">
+        <thead>
+            <tr>
+                <th>คุณลักษณะ (Architecture Characteristic)</th>
+                <th>Layered</th>
+                <th>Microkernel</th>
+                <th>Event-Driven</th>
+                <th>Microservices</th>
+                <th>Space-Based</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>การแบ่งโครงสร้าง (Partitioning)</td>
+                <td>Technical</td>
+                <td>Domain / Tech</td>
+                <td>Technical</td>
+                <td>Domain</td>
+                <td>Technical</td>
+            </tr>
+            <tr>
+                <td>ต้นทุนโดยรวม (Overall Cost)</td>
+                <td><span class="cost-tag">$ (ต่ำ)</span></td>
+                <td><span class="cost-tag">$ (ต่ำ)</span></td>
+                <td><span class="cost-tag">$$$ (ปานกลาง)</span></td>
+                <td><span class="cost-tag">$$$$$ (สูงมาก)</span></td>
+                <td><span class="cost-tag">$$$$$ (สูงมาก)</span></td>
+            </tr>
+            <tr>
+                <td>ความคล่องตัวในการปรับเปลี่ยน (Agility)</td>
+                <td class="stars">★☆☆☆☆</td>
+                <td class="stars">★★★☆☆</td>
+                <td class="stars">★★★☆☆</td>
+                <td class="stars">★★★★★</td>
+                <td class="stars">★★☆☆☆</td>
+            </tr>
+            <tr>
+                <td>ความเรียบง่าย ไม่ซับซ้อน (Simplicity)</td>
+                <td class="stars">★★★★★</td>
+                <td class="stars">★★★★☆</td>
+                <td class="stars">★☆☆☆☆</td>
+                <td class="stars">★☆☆☆☆</td>
+                <td class="stars">★☆☆☆☆</td>
+            </tr>
+            <tr>
+                <td>การขยายขนาดระบบ (Scalability)</td>
+                <td class="stars">★☆☆☆☆</td>
+                <td class="stars">★☆☆☆☆</td>
+                <td class="stars">★★★★★</td>
+                <td class="stars">★★★★★</td>
+                <td class="stars">★★★★★</td>
+            </tr>
+            <tr>
+                <td>ความทนทานต่อข้อผิดพลาด (Fault Tolerance)</td>
+                <td class="stars">★☆☆☆☆</td>
+                <td class="stars">★☆☆☆☆</td>
+                <td class="stars">★★★★★</td>
+                <td class="stars">★★★★★</td>
+                <td class="stars">★★★☆☆</td>
+            </tr>
+            <tr>
+                <td>ประสิทธิภาพความเร็ว (Performance)</td>
+                <td class="stars">★★★☆☆</td>
+                <td class="stars">★★★☆☆</td>
+                <td class="stars">★★★★★</td>
+                <td class="stars">★★☆☆☆</td>
+                <td class="stars">★★★★★</td>
+            </tr>
+            <tr>
+                <td>ความง่ายในการต่อขยายฟังก์ชัน (Extensibility)</td>
+                <td class="stars">★☆☆☆☆</td>
+                <td class="stars">★★★☆☆</td>
+                <td class="stars">★★★★★</td>
+                <td class="stars">★★★★★</td>
+                <td class="stars">★★★☆☆</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>5. แผนผังช่วยตัดสินใจ (Architecture Decision Flowchart)</h2>
+    <div class="card">
+        <div class="diagram-box">
+เริ่มต้น: วิเคราะห์ความต้องการทางธุรกิจและข้อจำกัดของระบบ
+  │
+  ├─► มีงบประมาณ/เวลาน้อย, ทีมขนาดเล็ก, ผู้ใช้ไม่เยอะ?
+  │     └─► <strong>Layered Architecture</strong> (เรียบง่าย ปลอดภัย เริ่มต้นได้ทันที)
+  │
+  ├─► เป็นซอฟต์แวร์แบบ Product/SaaS มีลูกค้าหลายกลุ่มที่ต้องการฟีเจอร์หรือข้อกำหนดเฉพาะต่างกัน?
+  │     └─► <strong>Microkernel Architecture</strong> (แยก Core ออกจาก Plug-ins)
+  │
+  ├─► ระบบต้องการความยืดหยุ่น ปรับเปลี่ยนและส่งมอบฟีเจอร์เร็วมาก (High Agility) มีทีมแยกตาม Domain?
+  │     └─► <strong>Microservices Architecture</strong> (แยก Bounded Context และ Distributed Data)
+  │
+  ├─► มีขั้นตอนการทำงานแบบ Asynchronous กระจายตัว และต้องการขยายขนาดรองรับ Event ปริมาณมหาศาล?
+  │     └─► <strong>Event-Driven Architecture</strong> (Pub/Sub, Event Processors, Loose Coupling)
+  │
+  └─► เกิดปัญหาคอขวดที่ฐานข้อมูล ผู้ใช้แห่เข้ามาพร้อมกันชั่วคราว (เช่น ซื้อตั๋ว/ประมูล) ต้องการ Latency ต่ำสุด?
+        └─► <strong>Space-Based Architecture</strong> (In-memory Data Grid ตัด Database ออกจาก Transaction)
+        </div>
+    </div>
+
+    <div class="lesson-footer">
+        <a href="../lessons/0015-capstone-hr-management.html" class="btn btn-secondary">&larr; Previous Lesson</a>
+        <a href="../lessons/0016-software-architecture-patterns-overview.html" class="btn btn-primary">เข้าสู่บทเรียนแบบทดสอบที่ 16 &rarr;</a>
+    </div>
+
+</body>
+</html>

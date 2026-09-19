@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 16: Software Architecture Patterns Masterclass</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin: 1.5rem 0;
+        }
+        .pattern-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            transition: transform var(--transition-fast), border-color var(--transition-fast);
+        }
+        .pattern-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary-color);
+        }
+        .pattern-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            margin-bottom: 0.5rem;
+        }
+        .badge-mono { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-dist { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .scenario-box {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .scenario-title {
+            color: #38bdf8;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-controls">
+        <button class="lang-ctrl-btn" onclick="document.body.className='show-th-only'">🇹🇭 ภาษาไทย</button>
+        <button class="lang-ctrl-btn" onclick="document.body.className='show-en-only'">🇬🇧 English</button>
+        <button class="lang-ctrl-btn active" onclick="document.body.className='show-both'">🌐 Bilingual</button>
+    </div>
+
+    <h1>Lesson 16: Software Architecture Patterns Masterclass</h1>
+
+    <div class="alert alert-info">
+        <p class="lang-th"><strong>เป้าหมายของบทเรียน:</strong> เข้าใจแก่นแท้ของ 5 สถาปัตยกรรมซอฟต์แวร์หลักจากหนังสือ <em>Software Architecture Patterns (2nd Edition)</em> โดย Mark Richards และเรียนรู้วิธีการเลือกสถาปัตยกรรมที่ตอบโจทย์ธุรกิจจริงอย่างถูกต้อง</p>
+        <p class="lang-en"><strong>Lesson Goal:</strong> Master the 5 fundamental architecture styles from Mark Richards' <em>Software Architecture Patterns (2nd Edition)</em>, evaluate structural trade-offs, and make informed architectural decisions.</p>
+    </div>
+
+    <div class="alert alert-success">
+        📖 <strong>Primary Reading Resource:</strong> สามารถเปิดอ่านคู่มือสรุปฉบับเต็มได้ที่ <a href="../reference/software-architecture-patterns-guide.html" target="_blank"><strong>Architecture Patterns Reference Guide</strong></a>
+    </div>
+
+    <h2>1. The 5 Core Architecture Styles at a Glance</h2>
+    <div class="pattern-grid">
+        <div class="pattern-card">
+            <span class="pattern-badge badge-mono">Monolithic • Technical</span>
+            <h3>Layered (n-tier)</h3>
+            <p>แยกตามบทบาทเชิงเทคนิค (Presentation &rarr; Business &rarr; Persistence &rarr; Database) เรียบง่าย ต้นทุนต่ำ เหมาะสำหรับการเริ่มต้น</p>
+        </div>
+        <div class="pattern-card">
+            <span class="pattern-badge badge-mono">Monolithic / Distributed</span>
+            <h3>Microkernel</h3>
+            <p>แยก Core System ออกจาก Plug-in Modules ต่อขยายฟังก์ชันเฉพาะทางหรือกฎระเบียบแต่ละพื้นที่ได้โดยไม่กระทบโค้ดหลัก</p>
+        </div>
+        <div class="pattern-card">
+            <span class="pattern-badge badge-dist">Distributed • Technical</span>
+            <h3>Event-Driven</h3>
+            <p>ประมวลผลแบบ Asynchronous ผ่าน Topics/Queues แยกตัวเป็นอิสระ (Decoupled) รองรับ Scalability และ Performance สูงสุด</p>
+        </div>
+        <div class="pattern-card">
+            <span class="pattern-badge badge-dist">Distributed • Domain</span>
+            <h3>Microservices</h3>
+            <p>บริการขนาดเล็กแยก Deploy อิสระ ยึดหลัก Bounded Context และ Distributed Data ช่วยให้ส่งมอบและปรับแก้ฟีเจอร์ได้เร็วที่สุด (High Agility)</p>
+        </div>
+        <div class="pattern-card">
+            <span class="pattern-badge badge-dist">Distributed • Technical</span>
+            <h3>Space-Based</h3>
+            <p>ทลายคอขวด Database Bottleneck ด้วย In-Memory Data Grid ตัดฐานข้อมูลออกจาก Transaction ปกติ รองรับโหลดพุ่งกระฉูดได้ทันที</p>
+        </div>
+    </div>
+
+    <h2>2. Interactive Knowledge Checks</h2>
+
+    <!-- Quiz 1 -->
+    <div class="quiz-container">
+        <div class="quiz-question">
+            Q1: An e-commerce flash sale causes massive traffic surges and severe database bottlenecks. Which architectural style resolves this by eliminating the database from active transactions?
+        </div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQ1(this, 0)">Space-based model replicates memory cache</button>
+            <button class="quiz-btn" onclick="checkQ1(this, 1)">Event-driven model publishes async topics</button>
+            <button class="quiz-btn" onclick="checkQ1(this, 2)">Microkernel model loads external plug-ins</button>
+            <button class="quiz-btn" onclick="checkQ1(this, 3)">Layered model isolates relational schemas</button>
+        </div>
+        <div id="q1-feedback" class="quiz-feedback"></div>
+    </div>
+
+    <!-- Quiz 2 -->
+    <div class="quiz-container">
+        <div class="quiz-question">
+            Q2: In Event-Driven Architecture, how does an event differ fundamentally from a message in terms of context and intent?
+        </div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQ2(this, 0)">Messages declare state changes without targets</button>
+            <button class="quiz-btn" onclick="checkQ2(this, 1)">Events broadcast state changes without targets</button>
+            <button class="quiz-btn" onclick="checkQ2(this, 2)">Events execute commands across private systems</button>
+            <button class="quiz-btn" onclick="checkQ2(this, 3)">Messages isolate databases across domain zones</button>
+        </div>
+        <div id="q2-feedback" class="quiz-feedback"></div>
+    </div>
+
+    <!-- Quiz 3 -->
+    <div class="quiz-container">
+        <div class="quiz-question">
+            Q3: In a Layered Architecture, what occurs when 80 percent or more of user requests merely pass through layers without applying any business logic?
+        </div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQ3(this, 0)">Database deadlock anti-pattern destroys active transactional throughput</button>
+            <button class="quiz-btn" onclick="checkQ3(this, 1)">Tightly coupled anti-pattern prevents reliable architectural deployment</button>
+            <button class="quiz-btn" onclick="checkQ3(this, 2)">Architecture sinkhole anti-pattern reduces total processing performance</button>
+            <button class="quiz-btn" onclick="checkQ3(this, 3)">Microkernel pipeline anti-pattern degrades distributed compute clusters</button>
+        </div>
+        <div id="q3-feedback" class="quiz-feedback"></div>
+    </div>
+
+    <h2>3. Real-World Architecture Scenario Matching</h2>
+    <div class="scenario-box">
+        <div class="scenario-title">🏢 Scenario: Global Insurance Claims Processing</div>
+        <p>A nationwide insurance enterprise needs to process auto accident claims across 50 states. Each state has unique legal statutes and repair compensation rules, while the standard claim intake and payment payout workflows remain uniform. What is the optimal architecture style?</p>
+        <p>👉 <strong>Optimal Choice:</strong> <mark>Microkernel Architecture</mark>. The core system encapsulates the standardized claim intake, valuation workflow, and accounting payout, while state-specific statutory requirements are isolated into independent, swappable jurisdiction plug-ins!</p>
+    </div>
+
+    <div class="alert alert-warning">
+        💡 <strong>Teacher Reminder:</strong> หากมีข้อสงสัยเกี่ยวกับความแตกต่างของแต่ละ Pattern หรือต้องการยกตัวอย่างระบบงานของตนเองมาวิเคราะห์ร่วมกัน สามารถพิมพ์ถามต่อในหน้าต่างแชทได้ตลอดเวลาครับ!
+    </div>
+
+    <div class="lesson-footer">
+        <a href="0015-capstone-hr-management.html" class="btn btn-secondary">&larr; Lesson 15: Capstone HR</a>
+        <a href="../reference/software-architecture-patterns-guide.html" class="btn btn-primary">Open Reference Guide &rarr;</a>
+    </div>
+
+    <script>
+        function checkQ1(btn, idx) {
+            const container = btn.closest('.quiz-container');
+            const btns = container.querySelectorAll('.quiz-btn');
+            const fb = document.getElementById('q1-feedback');
+            btns.forEach(b => { b.classList.remove('selected', 'correct', 'incorrect'); });
+            
+            if (idx === 0) {
+                btn.classList.add('correct');
+                fb.className = 'quiz-feedback alert alert-success';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ถูกต้องยอดเยี่ยม!</strong> Space-Based Architecture กำจัดคอขวดของ Database โดยเก็บข้อมูล Transactional ไว้ใน Replicated In-Memory Data Grid และซิงค์ลงฐานข้อมูลแบบ Asynchronous ผ่าน Data Pumps!';
+            } else {
+                btn.classList.add('incorrect');
+                fb.className = 'quiz-feedback alert alert-warning';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ยังไม่ถูกต้อง:</strong> ลองนึกถึงสถาปัตยกรรมที่นำฐานข้อมูลออกจาก Transaction โดยใช้ In-Memory Tuple Space ครับ';
+            }
+        }
+
+        function checkQ2(btn, idx) {
+            const container = btn.closest('.quiz-container');
+            const btns = container.querySelectorAll('.quiz-btn');
+            const fb = document.getElementById('q2-feedback');
+            btns.forEach(b => { b.classList.remove('selected', 'correct', 'incorrect'); });
+            
+            if (idx === 1) {
+                btn.classList.add('correct');
+                fb.className = 'quiz-feedback alert alert-success';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ถูกต้องเป๊ะ!</strong> Event คือการป่าวประกาศการเปลี่ยนแปลงสถานะ (State Change / What happened) โดยผู้ส่งไม่รู้และไม่สนใจว่าใครจะฟังบ้าง ต่างจาก Message ที่เป็นคำสั่งเจาะจงผู้รับ (Command)';
+            } else {
+                btn.classList.add('incorrect');
+                fb.className = 'quiz-feedback alert alert-warning';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ยังไม่ถูกต้อง:</strong> คำตอบที่ถูกคือ Event เป็นการ Broadcast สิ่งที่เกิดขึ้นแล้วโดยไม่ผูกกับผู้รับเจาะจงครับ';
+            }
+        }
+
+        function checkQ3(btn, idx) {
+            const container = btn.closest('.quiz-container');
+            const btns = container.querySelectorAll('.quiz-btn');
+            const fb = document.getElementById('q3-feedback');
+            btns.forEach(b => { b.classList.remove('selected', 'correct', 'incorrect'); });
+            
+            if (idx === 2) {
+                btn.classList.add('correct');
+                fb.className = 'quiz-feedback alert alert-success';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ถูกต้อง!</strong> Architecture Sinkhole Anti-Pattern คือสภาวะที่ Request วิ่งทะลุหลายๆ Layer โดยไม่มี Logic จริงๆ เกิดขึ้น ทำให้สูญเสียประสิทธิภาพ (Overhead) โดยไม่เกิดประโยชน์';
+            } else {
+                btn.classList.add('incorrect');
+                fb.className = 'quiz-feedback alert alert-warning';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ยังไม่ถูกต้อง:</strong> ปรากฏการณ์ส่งผ่านข้อมูลทะลุชั้นโดยไม่มี Business Logic เรียกว่า Architecture Sinkhole Anti-Pattern ครับ';
+            }
+        }
+    </script>
+</body>
+</html>

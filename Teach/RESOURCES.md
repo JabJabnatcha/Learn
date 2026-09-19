@@ -2,6 +2,8 @@
 
 ## Knowledge
 
+- [Book: _Software Architecture Patterns (2nd Edition)_ — Mark Richards (O'Reilly)](file:///c:/Users/Laptop-JAB/Desktop/Learn/Teach/softwarearchitecturepatterns2ndedition.pdf)
+  หนังสือสรุปแก่นสถาปัตยกรรมซอฟต์แวร์ระดับมาสเตอร์พีซ ครอบคลุมการจำแนก Monolithic vs Distributed, การแบ่ง Partitioning (Technical vs Domain) และเจาะลึก 5 Architecture Styles หลัก (Layered, Microkernel, Event-Driven, Microservices, Space-Based) พร้อมการวิเคราะห์ Trade-offs
 - [Website: Refactoring.Guru](https://refactoring.guru)
   เว็บไซต์สอนเรื่อง Refactoring, SOLID Principles และ Design Patterns ที่ดีที่สุด มีตัวอย่างโค้ดทั้งภาษา C++, C#, และ Java พร้อมคำอธิบายและรูปภาพประกอบที่เข้าใจง่ายมาก
 - [Book: _Head First Design Patterns_ — Eric Freeman & Elisabeth Robson](https://www.oreilly.com/library/view/head-first-design/9781492077992/)

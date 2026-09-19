@@ -1,0 +1,248 @@
+--- Page 37 ---
+CHAPTER 5
+Event-Driven Architecture
+The event-driven architecture style has significantly gained in popu‐
+larity and use over recent years, so much so that even the way we
+think about it has changed. This high adoption rate isn’t overly
+surprising given some of the hard problems event-driven archi‐
+tecture solves, such as complex nondeterministic workflows and
+highly reactive and responsive systems. Furthermore, new techni‐
+ques, tools, frameworks, and cloud-based services have made event-
+driven architecture more accessible and feasible than ever before,
+and many teams are turning to event-driven architecture to solve
+their complex business problems.
+Topology
+Event-driven architecture is an architecture style that relies on asyn‐
+chronous processing using highly decoupled event processors that
+trigger events and correspondingly respond to events happening in
+the system. Most event-driven architectures consist of the following
+architectural components: an event processor, an initiative event, a
+processing event, and an event channel. These components and their
+relationships are illustrated in Figure 5-1.
+33
+--- Page 38 ---
+Figure 5-1. The main components of event-driven architecture
+An event processor  (today usually called a service) is the main
+deployment unit in event-driven architecture. It can vary in gran‐
+ularity from a single-purpose function (such as validating an order)
+to a large, complex process (such as executing or settling a finan‐
+cial trade). Event processors can trigger asynchronous events, and
+respond to asynchronous events being triggered. In most cases, an
+event processor does both.
+An initiating event usually comes from outside the main system and
+kicks off some sort of asynchronous workflow or process. Examples
+of initiating events are placing an order, buying some Apple stock,
+bidding on a particular item in an auction, filing an insurance claim
+for an accident, and so on. In most cases, initiating events are
+received by only one service that then starts the chain of events to
+process the initiating event, but this doesn’t have to be the case. For
+example, placing a bid on an item in an online auction (an initiating
+event) may be picked up by a Bid Capture service as well as a Bid
+Tracker service.
+A processing event (today usually referred to as a derived event) is
+generated when the state of some service changes and that service
+advertises to the rest of the system what that state change was. The
+relationship between an initiating event and a processing event is
+one-to-many—a single initiating event typically spawns many differ‐
+ent internal processing events. For example, through the course of
+34 | Chapter 5: Event-Driven Architecture
+--- Page 39 ---
+a workflow, a Place Order initiating event may result in an Order
+Placed processing event, a Payment Applied  processing event, a
+Inventory Updated  processing event, and so on. Notice how an
+initiating event is usually in noun-verb format, whereas a processing
+event is usually in verb-noun format.
+The event channel is the physical messaging artifact (such as a queue
+or topic) that is used to store triggered events and deliver those trig‐
+gered events to a service that responds to those events. In most cases
+initiating events use a point-to-point channel using queues or mes‐
+saging services, whereas processing events generally use publish-and
+subscribe channels using topics or notification services.
+Example Architecture
+To see how all of these components work together in a complete
+event-driven architecture, consider the example illustrated in Fig‐
+ure 5-2 where a customer wants to order a copy of Fundamentals of
+Software Architecture by Mark Richards and Neal Ford (O’Reilly). In
+this case, the initiating event would be Place Order. This initiating
+event is received by the Order Placement service, which then places
+the order for the book. The Order Placement service in turn adver‐
+tises what it did to the rest of the system through a Order Placed
+processing event.
+Notice in this example that when the Order Placement service trig‐
+gers the Order Placed event, it doesn’t know which other services
+(if any) respond to this event. This illustrates the highly decoupled,
+nondeterministic nature of event-driven architecture.
+Continuing with the example, notice in Figure 5-2  that three dif‐
+ferent services respond to the Order Placed  event: the Payment
+service, the Inventory Management service, and the Notification
+service. These services perform their corresponding business func‐
+tions, and in turn advertise what they did to the rest of the system
+through other processing events.
+Example Architecture | 35
+--- Page 40 ---
+Figure 5-2. Processing a book order using event-driven architecture
+One thing in particular to notice about this example is how the Noti
+fication service advertises what it did by generating a Notified
+Customer processing event, but no other service cares about or
+responds to this event. So why then trigger an event that no one
+cares about? The answer is architectural extensibility. By triggering
+an event, the Notification service provides a hook that future
+services can respond to (such as a notification tracking service),
+without having to make any other modifications to the system.
+Thus, a good rule of thumb with event-driven architecture is to
+always have services advertise their state changes (what action they
+took), regardless if other services respond to that event. If no other
+services care about the event, then the event simply disappears from
+the topic (or is saved for future processing, depending on the mes‐
+saging technology used).
+36 | Chapter 5: Event-Driven Architecture
+--- Page 41 ---
+Event-Driven Versus Message-Driven
+Is there a difference between an event-driven system and a message-
+driven system? It turns out there is, and although subtle, it’s an
+important difference to know and understand. Event-driven systems
+process events, whereas message-driven systems process messages.
+The first difference has to do with the context of what you are
+sending to the rest of the system. An event is telling others about
+a state change or something you did. Examples of an event include
+things like “I just placed an order, ” or “I just submitted a bid for an
+item. ” A message, on the other hand, is a command or request to a
+specific service. Examples of a message include things like “apply a
+payment to this order, ” “ship this item to this address, ” or “give me
+the customer’s email address. ” Notice the difference here—with an
+event, the service triggering the event has no idea which services (or
+how many) will respond, whereas a message is usually directed to a
+single known service (for example, Payment).
+Another difference between an event and a message is the owner‐
+ship of the event channel. With events, the sender owns the event
+channel, whereas with messages, the receiver owns the channel. This
+ownership becomes more significant when you consider the contract
+of the event or message. Consider the example in Figure 5-3 where
+the Order Placement service is sending out a Order Placed event
+that is responded to by the Payment service. In this case, the sender
+(Order Placement) owns both the event channel and the contract.
+In other words, contract changes would be initiated by the Order
+Placement service, and the Payment service and all other services
+responding to that event would have to conform and adapt to these
+changes.
+Figure 5-3. With events, the sender owns the event channel and
+contract
+Event-Driven Versus Message-Driven | 37
+--- Page 42 ---
+However, with messages in a message-driven system, it’s exactly the
+opposite—the receiver owns the message channel. As illustrated
+in Figure 5-4 , the Order Placement  service is telling the Payment
+service to apply the payment in the form of a command. In this
+case, the Payment service owns the message channel (queue) as well
+as the message contract. Notice that with message-based processing,
+the Order Placement  service would need to conform to contract
+changes initiated by the Payment service.
+Figure 5-4. With messages, the receiver owns the message channel and
+contract
+The type of event channel artifact is also a distinguishing fac‐
+tor between event-driven systems and message-driven systems.
+Typically, event-driven systems use publish-and-subscribe messag‐
+ing using topics or notification services when triggering events,
+whereas message-driven systems typically use point-to-point mes‐
+saging using queues or messaging services when sending messages.
+That’s not to say event-driven systems can’t use point-to-point mes‐
+saging—in some cases point-to-point messaging is necessary to
+retrieve specific information from another service or to control the
+order or timing of events in a system.
+Considerations and Analysis
+Because of the asynchronous and decoupled nature of event-driven
+architecture, it excels in areas of fault tolerance, scalability, and high
+performance. It also provides for excellent extensibility when adding
+additional features and functionality. However, while these charac‐
+teristics are very attractive, especially for today’s complex systems,
+there are plenty of reasons not to use event-driven architecture. The
+following two sections outline the reasons to consider event-driven
+architecture, and more importantly, when to be cautious about
+using it.
+38 | Chapter 5: Event-Driven Architecture
+--- Page 43 ---
+When to Consider This Style
+Simply put, event-driven architecture is the architecture of choice
+for systems that require high performance, high scalability, and high
+levels of fault tolerance. However, there are other reasons to con‐
+sider this architecture style beyond these architecture characteristic
+superpowers.
+If the nature of your business processing is reacting to things that
+are happening in and around the system (rather than responding to
+a user request), then this is a good architecture style to consider. Lis‐
+ten to your business stakeholders—are they using words like “event, ”
+“triggers, ” and “react to something happening”? If so, then there’s a
+good chance your business problem matches this architecture style.
+Also, ask yourself—am I responding to a user request, or reacting
+to something the user did? These are great questions to qualify
+whether the business problem matches this architecture style.
+Event-driven architecture is also a good choice when you have
+complex, nondeterministic workflows that are difficult to model.
+For decades developers have been building complex decision trees
+trying to outline every possible outcome of a complex workflow,
+only to continually fail at this fool’s errand. Systems such as these are
+sometimes classified as CEP (complex event processing), something
+that is managed natively in event-driven architecture.
+When Not to Consider This Style
+Y ou should not consider this architecture style if most of your
+processing is request based. Request-based processing is the typical
+situation where a user is requesting data from the database (such as
+a customer profile) or doing basic CRUD operations (create, read,
+update, delete) on entities in the system. Furthermore, if most of
+your processing requires synchronous processing where the user
+must wait for processing to be complete for a particular request,
+event-driven architecture is likely not the right architecture style for
+you.
+Because all processing is eventually consistent in event-driven archi‐
+tecture, this is not a good architecture style for business problems
+that require high levels of data consistency. There is little or no
+guarantee of when processing will occur in an event-driven architec‐
+ture, so if you are expecting certain data to be there at a certain
+Considerations and Analysis | 39
+--- Page 44 ---
+time, look elsewhere for an architecture style, like service-based, that
+helps preserve data consistency.
+Another reason to walk away from event-driven architecture and
+consider a different architecture style is when you need control over
+the workflow and timing of events. Both of these are extremely
+difficult to manage when doing asynchronous event processing.
+For example, imagine the nightmare of coordinating the following
+scenario: Event A  and Event B  must complete processing before
+Event C can be triggered, and Event D and Event E must wait for
+Event C to finish, but Event D must start processing before Event
+E. Good luck managing that mess—you’re better off using orchestra‐
+ted service-oriented architecture or orchestrated microservices for
+that type of complex coordination.
+Error handling is another complexity that causes teams to shy away
+from event-driven architecture. Because there is usually no central
+workflow orchestrator or controller in event-driven architecture,
+when errors occur in a service, it’s up to that service to try to
+repair the error. Furthermore, because everything is asynchronous,
+other actions may have occurred in the workflow for that event.
+For example, suppose an Order Placement service triggers an Order
+Placed event for a book that a customer ordered. The Notification
+service, Payment service, and Inventory service all respond to the
+event at the same time. However, suppose the Notification and
+Payment services both respond and complete their processing, but
+the Inventory service throws an error because there are no more
+books left when the event is received. Now what? The customer
+has already been notified and their credit card has been charged,
+but there are no more books left to ship to the customer. Should
+payment be reversed? Should another notification be sent to the
+customer? Should processing just wait until there’s more inventory?
+And which service performs all this error handling logic? Error
+handing is indeed one of the more complex aspects of event-driven
+architecture.
+40 | Chapter 5: Event-Driven Architecture
+--- Page 45 ---
+Architecture Characteristics
+The chart illustrated in Figure 5-5 summarizes the overall capabil‐
+ities (architecture characteristics) of event-driven architecture in
+terms of star ratings. One star means the architecture characteristic
+is not well supported, whereas five stars means it’s well suited for
+that particular architecture characteristic.
+Figure 5-5. Architecture characteristics star ratings for event-driven
+architecture
+Considerations and Analysis | 41
+--- Page 46 ---
+

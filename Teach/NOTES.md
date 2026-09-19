@@ -51,6 +51,10 @@
 - **Lesson 3.4** (Repository Pattern): Created (Lesson 12)
 - **Lesson 4.1** (Frontend Connection): Created (Lesson 13)
 - **Lesson 5.0** (Capstone — HR Employee Management): Created (Lesson 15)
+- **Lesson 6.0** (Software Architecture Patterns Overview): Created (Lesson 16 & Reference Guide based on Mark Richards 2nd Edition)
+- **Lesson 6.1** (Chapter 1 — Intro & Architectural Hierarchy): Created (Lesson 17)
+- **Lesson 6.2** (Code Placement & Data Flow Across Layers): Created & Active (Lesson 18 & Master Guide)
+- **User Core Goal**: Understand and explain precisely where each piece of code lives, what it receives, what it does, and where/how it dispatches data.
 
 
 ## Capstone Session Log (Active Attempt)

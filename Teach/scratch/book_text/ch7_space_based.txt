@@ -1,0 +1,238 @@
+--- Page 59 ---
+CHAPTER 7
+Space-Based Architecture
+Most web-based business applications follow the same general
+request flow: a request from a web browser is received by a web
+server, then an application server, then finally a database server.
+While this type of request flow works great for a small number of
+users, bottlenecks start appearing as the user load increases, first
+at the web server, then at the application server, and finally at the
+database.
+The usual response to bottlenecks based on an increase in user
+load is to scale out the web servers. This is relatively easy and inex‐
+pensive, and sometimes works to address some bottleneck issues.
+However, in most cases of high user load, scaling out the web servers
+just moves the bottleneck down to the application servers. Scaling
+application servers can be more complex and expensive than web
+servers, and usually just moves the bottleneck down to the database,
+which is even more difficult and expensive to scale. Even if you
+can scale the database, what you eventually end up with is a triangle-
+shaped topology shown in Figure 7-1 , with the widest part of the
+triangle being the web servers (easiest to scale) and the smallest part
+being the database (hardest to scale).
+55
+--- Page 60 ---
+Figure 7-1. The database is usually the ultimate bottleneck for highly
+scalable systems
+In any high-volume application with an extremely large concurrent
+user load, the database will usually be the final limiting factor in
+how many transactions you can process concurrently. While various
+caching technologies and database scaling and sharding products
+help to address these issues, the fact remains that scaling out an
+application for extreme loads is a very difficult proposition when it
+comes to the database.
+The space-based architecture style is specifically designed to address
+and solve these sorts of high scalability and concurrency issues. It is
+also a useful architecture style for applications that have variable and
+unpredictable concurrent user volumes (known as elastic systems).
+Solving extreme and variable scalability needs is exactly what space-
+based architecture is all about.
+Topology and Components
+The space-based architecture style addresses the limitations of appli‐
+cation scaling by removing the database from the transactional pro‐
+cessing of the system—hence the name space-based architecture.
+This style gets its name from the computer science term tuple space,
+56 | Chapter 7: Space-Based Architecture
+--- Page 61 ---
+the concept of multiple parallel processors with shared memory.
+High scalability is achieved by removing the database constraint
+and replacing the database with replicated in-memory data grids
+during transactional processing. Application data is kept in memory
+and replicated among all the active processing units, and synchron‐
+ized with a background database asynchronously using data pumps
+(more on that in the following section).
+Processing units can be dynamically started up and shut down as
+user load increases and decreases, thereby addressing variable scala‐
+bility. Because there is no database involved in the transactional pro‐
+cessing of the system, the database bottleneck is therefore removed,
+providing near-infinite scalability within the application. Figure 7-2
+illustrates the topology of the space-based architecture style.
+Figure 7-2. The space-based architecture style
+Services in this architecture style are formally referred to as pro‐
+cessing units . A processing unit (illustrated in Figure 7-3 ) con‐
+tains the business functionality and varies in granularity from
+a single-purpose function to the entire application functional‐
+ity. Each processing unit includes business logic, an in-memory
+data grid containing transactional data, and optionally, web-based
+Topology and Components | 57
+--- Page 62 ---
+components. Processing units may also communicate with each
+other directly or through the processing grid of the virtualized mid‐
+dleware (described in the following section).
+Figure 7-3. The processing unit contains the application functionality
+and an in-memory data grid
+The complexity associated with this architecture style is managed
+through what is called virtualized middleware . This middleware
+manages such things as request and session management, data syn‐
+chronization, communication and orchestration between processing
+units, and the dynamic tearing down and starting up of processing
+units to manage elasticity and user load. The four main architecture
+components contained in the virtualized middleware are the mes‐
+saging grid, the data grid, the processing grid, and the deployment
+manager.
+The messaging grid manages input request and session information.
+When a request comes into the virtualized middleware component,
+the messaging grid component determines which active processing
+units are available to receive the request and forwards the request to
+one of them. The complexity of the messaging grid can range from
+a simple round-robin algorithm to a more complex next-available
+algorithm that keeps track of which request is being processed by
+which processing unit. Typically, the messaging grid is implemented
+through a traditional web server.
+58 | Chapter 7: Space-Based Architecture
+--- Page 63 ---
+The data grid  component is perhaps the most important and
+crucial component in this style. The data grid interacts with the
+data-replication engine in each processing unit to manage the data
+replication between processing units when data updates occur. Since
+the messaging grid can forward a request to any of the processing
+units available, it is essential that each processing unit contains
+exactly the same data in its in-memory data grid as other processing
+units. The data grid is typically implemented through caching prod‐
+ucts such as Hazelcast, Apache Ignite, and Oracle Coherence, which
+manage the synchronization and replication of the data grids. This
+synchronization typically occurs asynchronously behind the scenes
+as updates occur in the in-memory data grids.
+An additional element of the data grid is a data pump that asyn‐
+chronously sends the updates to a database. A data pump can be
+implemented in a number of ways, but is typically managed through
+persistent queues using messaging or streaming. Components called
+data writers  asynchronously listen for these updates, and in turn,
+update the database. Data writers can be implemented in a number
+of ways, varying in granularity from application-level custom data
+writers or data hubs to dedicated data writers for each processing
+unit type.
+In the event of a cold start due to a system crash or a deploy‐
+ment, data readers  are used, leveraging a reverse data pump to
+retrieve data from the database and pump the data to a processing
+unit. However, once at least one processing unit having the same
+in-memory data grid is populated, additional processing units can
+be started and populated without having to retrieve the data from
+the database. Figure 7-4 illustrates the data grid containing the in-
+memory data grids, data pumps, data writers, and data readers.
+The processing grid  component of the virtualized middleware is
+an optional component that manages distributed processing for
+requests that require coordination or orchestration between pro‐
+cessing unit types. Orchestration between multiple processing units
+can be coordinated through the processing grid, or directly between
+processing units in a choreographed fashion.
+Topology and Components | 59
+--- Page 64 ---
+Figure 7-4. The data grid contains the in-memory data grid, data
+pumps, and data writers
+Finally, the deployment manager component manages the dynamic
+startup and shutdown of processing units based on load conditions.
+This component continually monitors response times and user
+loads, starts up new processing units when the load increases, and
+shuts down processing units when the load decreases. It is a critical
+component to achieving variable scalability needs within an applica‐
+tion, and is usually implemented through container orchestration
+products such as Kubernetes.
+Examples
+Space-based architecture is a very complicated and specialized
+architecture style, and is primarily used for high-volume, highly
+elastic systems that require very fast performance.
+One example of the use of space-based architecture is a concert tick‐
+eting system. Imagine what happens when your favorite rock band
+announces an opening show and tickets go on sale. Concurrency
+goes from a few dozen people to tens of thousands of people within
+a matter of seconds, with everyone wanting those same great seats
+60 | Chapter 7: Space-Based Architecture
+--- Page 65 ---
+you want. Continuously reading and writing to a database simply
+isn’t feasible with this kind of elastic system at such a high scale and
+performance.
+Another example of the kind of elastic systems that benefit from
+space-based architecture is online auction and bidding systems. In
+most cases, sellers have no idea how many people will be bidding,
+and bidding always gets fast and furious toward the end of the
+bidding process, significantly increasing the number of concurrent
+requests. Once the bidding ends, requests go back down to a min‐
+imum, and the whole process repeats again as bidding nears the
+end—another good example of an elastic system.
+High-volume social media sites are another good example where
+space-based architecture is a good fit. How do you process hundreds
+of thousands (or even millions) of posts, likes, dislikes, and respon‐
+ses within a span of a few seconds? Clearly the database gets in
+the way of this sort of volume (regardless of elastic behavior), and
+removing the database from the transactional processing, as space-
+based architecture does, and eventually persisting the data is one
+possible solution to this complex problem.
+Considerations and Analysis
+Space-based architecture is a complex and expensive style to imple‐
+ment. As such, it’s not suitable as a general-purpose architecture
+like the others reviewed in this report. Rather, it’s meant for spe‐
+cific situations such as high scalability, high elasticity, and high
+performance.
+A unique feature of space-based architecture is its deployment
+model. The entire architecture can be solely cloud based, solely
+on premises (on prem), or split between the two. This latter deploy‐
+ment model is particularly effective for cloud-based data synchroni‐
+zation where your main transactional processing is in the cloud, but
+your data must remain on prem. In this model, the data writers and
+data readers typically reside on prem alongside the database, and
+asynchronous data pumps send data to the data writers from the
+cloud-based processing units.
+Space-based architecture is considered a technically partitioned
+architecture because domain functionality is spread across numer‐
+ous technical artifacts, including the processing units, in-memory
+Considerations and Analysis | 61
+--- Page 66 ---
+data grids, data pumps, data writers, and data readers. A domain-
+based change (particularly one involving a change to data) usually
+impacts all of these artifacts.
+When to Consider This Style
+This architecture style is a great fit for those situations where you
+have very high concurrent scalability or elasticity requirements. Pro‐
+cessing tens of thousands of concurrent requests (or more) becomes
+a big challenge when a database is involved, and this architecture
+style removes the database from the scalability equation, providing
+for near-infinite scalability.
+Another use case to consider for this architecture style is those
+systems that require very high performance and responsiveness.
+Because this architecture style relies on in-memory caching, data
+update and retrieval are usually measured in nanoseconds, which
+provides the most responsive and high performance architecture
+out of all the architecture styles reviewed in this report.
+When Not to Consider This Style
+Even if you have high scalability and elasticity needs, this archi‐
+tecture may not be something you should consider if you have
+large data volumes for your transactional processing. Because all
+transactional data is stored in memory, the overall size of your
+data becomes a limiting factor for space-based architecture. Imagine
+trying to take a 45-terabyte relational database and trying to fit that
+in memory!
+Due to the technical complexity of this architecture style, it is not a
+good fit if you have tight budget and time constraints. Furthermore,
+achieving very high user loads in a test environment is both expen‐
+sive and time consuming, making it difficult to test the scalability
+aspects of the application. Because of this, overall agility (the ability
+to respond quickly to change) is fairly low in this architecture style.
+Because space-based architecture is always eventually consistent, it
+may take a lot of time before updates made in the in-memory data
+grids reach the database. As such, space-based architecture should
+not be considered for those systems that require high levels of data
+consistency between data sources.
+62 | Chapter 7: Space-Based Architecture
+--- Page 67 ---
+Architecture Characteristics
+The chart illustrated in Figure 7-5  summarizes the overall capa‐
+bilities (architecture characteristics) of space-based architecture in
+terms of star ratings. One star means the architecture characteristic
+is not well supported, whereas five stars means it’s well suited for
+that particular architecture characteristic.
+Figure 7-5. Architecture characteristics star ratings for space-based
+architecture
+Considerations and Analysis | 63
+--- Page 68 ---
+

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 17: Chapter 1 — Introduction & Architectural Hierarchy</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .hierarchy-box {
+            background-color: #0b0f19;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+        .layer-highlight {
+            color: #818cf8;
+            font-weight: 700;
+        }
+        .concept-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-controls">
+        <button class="lang-ctrl-btn" onclick="document.body.className='show-th-only'">🇹🇭 ภาษาไทย</button>
+        <button class="lang-ctrl-btn" onclick="document.body.className='show-en-only'">🇬🇧 English</button>
+        <button class="lang-ctrl-btn active" onclick="document.body.className='show-both'">🌐 Bilingual</button>
+    </div>
+
+    <h1>Lesson 17: Chapter 1 — Introduction & Architectural Hierarchy</h1>
+
+    <div class="alert alert-info">
+        <p class="lang-th"><strong>เป้าหมายของบทที่ 1:</strong> เข้าใจความสำคัญของสถาปัตยกรรมซอฟต์แวร์ หลีกเลี่ยงกับดัก "Big Ball of Mud" และแยกแยะลำดับชั้นระหว่าง <strong>Architecture Style</strong>, <strong>Architecture Pattern</strong> และ <strong>Design Pattern</strong> ได้อย่างแม่นยำ</p>
+        <p class="lang-en"><strong>Chapter 1 Goal:</strong> Understand why software architecture matters, avoid the "Big Ball of Mud" trap, and master the conceptual hierarchy between Architecture Styles, Architecture Patterns, and Design Patterns.</p>
+    </div>
+
+    <h2>1. The Big Ball of Mud Anti-Pattern</h2>
+    <div class="concept-card">
+        <p class="lang-th">Mark Richards ชี้ให้เห็นว่า นักพัฒนามักเริ่มเขียนโค้ดทันทีโดยไม่มีการวางสถาปัตยกรรมอย่างเป็นทางการ ผลลัพธ์คือส่วนประกอบต่าง ๆ เชื่อมโยงกันอย่างไร้ทิศทาง กลายเป็นก้อนสปาเกตตีขนาดใหญ่ที่เรียกว่า <strong>"Big Ball of Mud"</strong></p>
+        <p class="lang-en">It is all too common for developers to jump straight into coding without an architecture in place. This results in tightly coupled, brittle components known as a <strong>Big Ball of Mud</strong>.</p>
+        <ul>
+            <li><strong>เปราะบาง (Brittle):</strong> แก้ไขโค้ดที่จุด A แต่ระบบกลับพังที่จุด Z</li>
+            <li><strong>ขาดทิศทาง (Lack of Vision):</strong> ไม่มีใครตอบได้ชัดเจนว่าระบบจะรองรับ Scalability, Performance หรือ Availability ได้มากแค่ไหน</li>
+        </ul>
+    </div>
+
+    <h2>2. ลำดับชั้น 3 ระดับของสถาปัตยกรรม (The 3-Tier Hierarchy)</h2>
+    <div class="hierarchy-box">
+┌─────────────────────────────────────────────────────────────────────────┐
+│ <span class="layer-highlight">1. Architecture Style (ภาพรวมมหภาคของระบบ - Macro Structure)</span>            │
+│    กำหนดลักษณะภาพรวมและพฤติกรรมของระบบ (System-wide Characteristics)      │
+│    ตัวอย่าง: Layered, Microservices, Event-Driven, Microkernel, Space-Based│
+└────────────────────────────────────┬────────────────────────────────────┘
+                                     │ ประกอบด้วย (composed of)
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│ <span class="layer-highlight">2. Architecture Pattern (บล็อกเชิงโครงสร้างสำหรับแก้ปัญหาเฉพาะด้าน)</span>        │
+│    แพทเทิร์นโครงสร้างระดับระบบที่นำไปใช้ภายใน Style เพื่อแก้โจทย์ทางสถาปัตยกรรม │
+│    ตัวอย่าง: CQRS, Saga Pattern, Event Sourcing, Circuit Breaker        │
+└────────────────────────────────────┬────────────────────────────────────┘
+                                     │ สร้างด้วย (implemented with)
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│ <span class="layer-highlight">3. Design Pattern (การออกแบบโค้ดระดับ Class & Object)</span>                     │
+│    รูปแบบการจัดวางโค้ดและคลาสในระดับ Source Code                        │
+│    ตัวอย่าง: Builder, Factory Method, Strategy, Observer, Adapter       │
+└─────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <div class="alert alert-success">
+        💡 <strong>ตัวอย่างความสัมพันธ์เชื่อมโยง:</strong> คุณสามารถใช้ <strong>Builder Design Pattern</strong> ในการเขียนโค้ดเพื่อสร้างคำสั่งใน <strong>CQRS Architecture Pattern</strong> ซึ่งถูกบรรจุเป็นส่วนหนึ่งของระบบ <strong>Microservices Architecture Style</strong>!
+    </div>
+
+    <h2>3. Hybrid Architecture Styles</h2>
+    <div class="concept-card">
+        <p class="lang-th">ในโลกของการทำงานจริง ไม่มี Architecture Style ใดเพียงสไตล์เดียวที่ตอบโจทย์ธุรกิจได้ครบทั้งหมด การผสมผสานสไตล์เข้าด้วยกัน (Hybrids) จึงเป็นเรื่องปกติ เช่น:</p>
+        <p class="lang-en">In the real world, no single style solves every business problem. Hybrid architectures are common, such as:</p>
+        <ul>
+            <li><strong>Event-driven Microservices:</strong> ใช้ Events ในการสื่อสารระหว่าง Microservices</li>
+            <li><strong>Space-based Microservices:</strong> หน่วยประมวลผลของ Space-based ถูกเขียนเป็น Microservices</li>
+            <li><strong>Event-driven Microkernel:</strong> การส่งสัญญาณแบบ Event ระหว่าง Core System และ Remote Plug-ins</li>
+        </ul>
+    </div>
+
+    <h2>4. Interactive Knowledge Checks</h2>
+
+    <!-- Quiz 1 -->
+    <div class="quiz-container">
+        <div class="quiz-question">
+            Q1: Which of the following statements correctly describes the scope of an Architecture Style?
+        </div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQ1(this, 0)">Architecture style defines overall macro system structure</button>
+            <button class="quiz-btn" onclick="checkQ1(this, 1)">Architecture pattern defines inner class source structure</button>
+            <button class="quiz-btn" onclick="checkQ1(this, 2)">Design pattern organizes global cross service deployments</button>
+            <button class="quiz-btn" onclick="checkQ1(this, 3)">Component topology controls physical network data routers</button>
+        </div>
+        <div id="q1-fb" class="quiz-feedback"></div>
+    </div>
+
+    <!-- Quiz 2 -->
+    <div class="quiz-container">
+        <div class="quiz-question">
+            Q2: Why is CQRS classified as an Architecture Pattern rather than an Architecture Style?
+        </div>
+        <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQ2(this, 0)">CQRS solves specific database segregation problems</button>
+            <button class="quiz-btn" onclick="checkQ2(this, 1)">CQRS defines complete overall system architectures</button>
+            <button class="quiz-btn" onclick="checkQ2(this, 2)">CQRS dictates internal class object instantiations</button>
+            <button class="quiz-btn" onclick="checkQ2(this, 3)">CQRS manages physical distributed network clusters</button>
+        </div>
+        <div id="q2-fb" class="quiz-feedback"></div>
+    </div>
+
+    <div class="alert alert-warning">
+        💬 <strong>Teacher Reminder:</strong> เมื่ออ่านและทำแบบทดสอบจบแล้ว ให้ตอบกลับในแชทเพื่อตรวจสอบความเข้าใจ และเราจะก้าวต่อไปสู่ <strong>บทที่ 2: โครงสร้างและการจำแนกสถาปัตยกรรม (Monolithic vs Distributed & Partitioning)</strong> ทันทีครับ!
+    </div>
+
+    <div class="lesson-footer">
+        <a href="../reference/software-architecture-patterns-guide.html" class="btn btn-secondary">&larr; Reference Guide</a>
+        <button class="btn btn-primary" onclick="alert('พร้อมแล้ว! แจ้งครูในหน้าต่างแชทเพื่อลุยบทที่ 2 ได้เลย')">Next: Chapter 2 &rarr;</button>
+    </div>
+
+    <script>
+        function checkQ1(btn, idx) {
+            const container = btn.closest('.quiz-container');
+            container.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('selected', 'correct', 'incorrect'));
+            const fb = document.getElementById('q1-fb');
+            if (idx === 0) {
+                btn.classList.add('correct');
+                fb.className = 'quiz-feedback alert alert-success';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ถูกต้องยอดเยี่ยม!</strong> Architecture Style ทำหน้าที่กำหนดโครงสร้างมหภาคของทั้งระบบ (Macro Structure) เช่น Microservices หรือ Layered';
+            } else {
+                btn.classList.add('incorrect');
+                fb.className = 'quiz-feedback alert alert-warning';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ยังไม่ถูกต้อง:</strong> ข้อที่ถูกต้องคือ Architecture Style ทำหน้าที่กำหนดโครงสร้างมหภาคระดับระบบครับ';
+            }
+        }
+
+        function checkQ2(btn, idx) {
+            const container = btn.closest('.quiz-container');
+            container.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('selected', 'correct', 'incorrect'));
+            const fb = document.getElementById('q2-fb');
+            if (idx === 0) {
+                btn.classList.add('correct');
+                fb.className = 'quiz-feedback alert alert-success';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ถูกต้องเป๊ะ!</strong> CQRS เป็น Architecture Pattern เพราะมันคือบล็อกเชิงโครงสร้างที่นำมาแก้ปัญหาเฉพาะจุด (แยก Read กับ Write) ภายในสถาปัตยกรรมระดับ Style ต่าง ๆ ได้';
+            } else {
+                btn.classList.add('incorrect');
+                fb.className = 'quiz-feedback alert alert-warning';
+                fb.style.display = 'block';
+                fb.innerHTML = '<strong>ยังไม่ถูกต้อง:</strong> CQRS เป็นแบบแผนเชิงโครงสร้างเฉพาะด้าน (แก้ปัญหาแยก Read/Write) จึงถือเป็น Architecture Pattern ไม่ใช่ Style ระดับระบบ';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+--- Page 19 ---
+CHAPTER 3
+Layered Architecture
+The most common architecture style is the layered architecture,
+otherwise known as the n-tier architecture. This style is the de facto
+standard for most applications because it aligns with traditional IT
+team structures where teams are organized by technical domains
+(such as presentation teams, backend development teams, database
+teams, and so on). Because it is so widely known by most archi‐
+tects, designers, and developers, the layered architecture is a natural
+choice for most business application development efforts. However,
+like all architecture styles, it has its strengths and weaknesses and is
+not always suitable for some systems.
+Description
+Components within the layered architecture style are organized
+into horizontal layers, each performing a specific role within the
+application (such as presentation logic, business logic, persistence
+logic, and so on). Although the number of layers may vary, most
+layered architectures consist of four standard layers: presentation,
+business, persistence, and database (see Figure 3-1). In some cases,
+the business layer and persistence layer are combined into a single
+business layer, particularly when the persistence logic (such as SQL)
+is embedded within the business layer components. Thus, smaller
+applications may have only three layers, whereas larger and more
+complex business applications may contain five or more layers.
+15
+--- Page 20 ---
+Figure 3-1. The layered architecture style is a technically partitioned
+architecture
+Each layer of the layered architecture style has a specific role and
+responsibility within the application. For example, a presentation
+layer is responsible for handling all user interface and browser
+communication logic, whereas a business layer is responsible for
+executing specific business rules associated with the request. Each
+layer in the architecture forms an abstraction around the work
+that needs to be done to satisfy a particular business request. For
+example, the presentation layer doesn’t need to know about how to
+get customer data; it only needs to display that information on a
+screen in a particular format. Similarly, the business layer doesn’t
+need to be concerned about how to format customer data for display
+on a screen or even where the customer data is coming from; it only
+needs to get the data from the persistence layer, perform business
+logic against the data (e.g., calculate values or aggregate data), and
+pass that information up to the presentation layer.
+Layers are usually manifested through a namespace, package struc‐
+ture, or directory structure (depending on the implementation lan‐
+guage used). For example, customer functionality in a business
+layer might be represented as app.business.customer, whereas in
+the presentation layer, customer logic would be represented as app
+.presentation.customer. In this example, the second node of the
+namespace represents the layer, whereas the third node represents
+16 | Chapter 3: Layered Architecture
+--- Page 21 ---
+the domain component. Notice, that the third node of the name‐
+space (customer) is duplicated for all of the layers—this is indicative
+of a technically partitioned architecture, where the domain is spread
+across all layers of the architecture.
+One of the powerful features of the layered architecture style is the
+separation of concerns  among components. Components within a
+specific layer deal only with logic that pertains to that layer. For
+example, components in the presentation layer deal only with pre‐
+sentation logic, whereas components residing in the business layer
+deal only with business logic. This type of component classification
+makes it easy to build effective roles and responsibility models
+into your architecture, and makes it easy to develop, test, govern,
+and maintain applications using this architecture style when well-
+defined component interfaces and contracts are used between layers.
+Key Concepts
+In this architecture style, layers can be either open or closed. Notice
+in Figure 3-2 that each layer in the architecture is marked as being
+closed. A closed layer means that as a request moves from layer to
+layer, it must go through the layer right below it to get to the next
+layer below that one. For example, a request originating from the
+presentation layer must first go through the business layer and then
+to the persistence layer before finally hitting the database layer.
+So why not allow the presentation layer direct access to either the
+persistence layer or database layer? After all, direct database access
+from the presentation layer is much faster than going through a
+bunch of unnecessary layers just to retrieve or save database infor‐
+mation. The answer to this question lies in a key concept known as
+layers of isolation.
+The layers of isolation concept means that changes made in one
+layer of the architecture generally don’t impact or affect components
+in other layers: the change is isolated to the components within that
+layer, and possibly another associated layer (such as a persistence
+layer containing SQL). If you allow the presentation layer direct
+access to the persistence layer, then changes made to SQL within
+the persistence layer would impact both the business layer and the
+presentation layer, thereby producing a very tightly coupled applica‐
+tion with lots of interdependencies between components. This type
+Key Concepts | 17
+--- Page 22 ---
+of architecture then becomes brittle and very hard and expensive to
+change.
+Figure 3-2. With closed layers, the request must pass through that layer
+The layers of isolation concept also means that each layer is inde‐
+pendent of the other layers, thereby having little or no knowledge
+of the inner workings of other layers in the architecture. To under‐
+stand the power and importance of this concept, consider a large
+refactoring effort to convert the presentation framework from the
+angular.js framework to the react.js framework. Assuming that the
+contracts (e.g., model) used between the presentation layer and the
+business layer remain the same, the business layer is not affected by
+the refactoring and remains completely independent of the type of
+user interface framework used by the presentation layer. The same
+is true with the persistence layer: if designed correctly, replacing a
+relational database with a NoSQL database should only impact the
+persistence layer, not the presentation or business layer.
+While closed layers facilitate layers of isolation and therefore help
+isolate change within the architecture, there are times when it makes
+sense for certain layers to be open. For example, suppose you want
+to add a shared services layer to an architecture containing common
+service functionality accessed by components within the business
+layer (e.g., data and string utility classes or auditing and logging
+classes). Creating a services layer is usually a good idea in this case
+18 | Chapter 3: Layered Architecture
+--- Page 23 ---
+because architecturally it restricts access to the shared services to the
+business layer (and not the presentation layer). Without a separate
+layer, there is nothing that architecturally restricts the presentation
+layer from accessing these common services, making it difficult to
+govern this access restriction.
+In the shared services layer example, this layer would likely reside
+below the business layer to indicate that components in this services
+layer are not accessible from the presentation layer. However, this
+presents a problem in that the business layer shouldn’t be required
+to go through the services layer to get to the persistence layer. This
+is an age-old problem with the layered architecture, and is solved by
+creating open layers within the architecture.
+As illustrated in Figure 3-3, the services layer in this case should be
+marked as open, meaning requests are allowed to bypass this layer
+and go directly to the layer below it. In the following example, since
+the services layer is open, the business layer is allowed to bypass it
+and go directly to the persistence layer, which makes perfect sense.
+Figure 3-3. With open layers, the request can bypass the layer below it
+Key Concepts | 19
+--- Page 24 ---
+Leveraging the concept of open and closed layers helps define the
+relationship between architecture layers and request flows, and pro‐
+vides designers and developers with the necessary information to
+understand the various layer access restrictions within the architec‐
+ture. Failure to document or properly communicate which layers in
+the architecture are open and closed (and why) usually results in
+tightly coupled and brittle architectures that are very difficult to test,
+maintain, and deploy.
+Examples
+To illustrate how the layered architecture works, consider a request
+from a business user to retrieve customer information for a particu‐
+lar individual, as illustrated in Figure 3-4 . Notice the arrows show
+the request flowing down to the database to retrieve the customer
+data, and the response flowing back up to the screen to display the
+data.
+Figure 3-4. An example of the layered architecture
+In this example, the customer information consists of both customer
+data and order data (orders placed by the customer). Here, the cus‐
+tomer screen is responsible for accepting the request and displaying
+the customer information. It does not know where the data is, how
+20 | Chapter 3: Layered Architecture
+--- Page 25 ---
+it is retrieved, or how many database tables must be queried to get
+the data.
+Once the customer screen receives a request to get customer infor‐
+mation for a particular individual, it then forwards that request to
+the customer delegate module in the presentation layer. This module
+is responsible for knowing which modules in the business layer can
+process that request, and also how to get to that module and what
+data it needs (the contract). The customer object in the business layer
+is responsible for aggregating all of the information needed by the
+business request (in this case to get customer information).
+Next, the customer object module invokes the customer DAO (data
+access object) module in the persistence layer to get customer data,
+and the order DAO module to get order information. These modules
+in turn execute SQL statements to retrieve the corresponding data
+and pass it back up to the customer object in the business layer.
+Once the customer object receives the data, it aggregates the data
+and passes that information back up to the customer delegate, which
+then passes that data to the customer screen to be presented to the
+user.
+Considerations and Analysis
+The layered architecture is a well-understood and general-purpose
+architecture style, making it a good starting point for most applica‐
+tions, particularly when you are not sure what architecture style
+is best suited for your application. However, there are a couple of
+things to consider from an architecture standpoint before choosing
+this style.
+The first thing to watch out for is what is known as the architec‐
+ture sinkhole anti-pattern . This anti-pattern describes the situation
+where requests flow through multiple layers of the architecture as
+simple pass-through processing with little or no logic performed
+within each layer. For example, assume that the presentation layer
+responds to a request from the user to retrieve customer data. The
+presentation layer passes the request to the business layer, which
+simply passes the request to the persistence layer, which then makes
+a simple SQL call to the database layer to retrieve the customer
+data. The data is then passed all the way back up the stack with no
+additional processing or logic to aggregate, calculate, or transform
+the data.
+Considerations and Analysis | 21
+--- Page 26 ---
+Every layered architecture will have at least some scenarios that fall
+into the architecture sinkhole anti-pattern. The key, however, is to
+analyze the percentage of requests that fall into this category. The
+80-20 rule is usually a good practice to follow to determine whether
+or not you are experiencing the architecture sinkhole anti-pattern.
+It’s typical to have around 20 percent of the requests as simple
+pass-through processing and 80 percent of the requests having some
+business logic associated with them. However, if you find that this
+ratio is reversed and a majority of your requests are simple pass-
+through processing, you might want to consider making some of the
+architecture layers open, keeping in mind that while it will be faster,
+it will be more difficult to control change due to the lack of layer
+isolation.
+The layered architecture is still just as viable today as it was in the
+old days when it was first introduced. While more modern analysis
+and design approaches such as domain-driven design have given
+developers and architects a way to think about a problem from
+a domain perspective rather than a technical one, there are still
+times when technically partitioned architectures (such as the layered
+architecture) are more suitable.
+When to Consider This Style
+The layered architecture is good to consider if the project or initia‐
+tive has significant budget or time constraints. Because the layered
+architecture is generally considered a monolithic architecture style,
+it does not have the complexities of a distributed architecture in
+terms of remote access, contract management, and the complica‐
+tions resulting from the fallacies of distributed computing described
+in the previous chapter. Also, most developers and architects are
+familiar with the layered architecture, making it easier to under‐
+stand and implement.
+Another reason to consider the layered architecture is when a
+majority of your changes are isolated to specific layers within the
+application. For example, changes isolated to only business rules
+that don’t impact the user interface, changes involving only the user
+interface look-and-feel, migration to a new user interface frame‐
+work, and even migration to a new type of database are all isolated
+to a specific layer in the architecture, making it easier to isolate the
+components impacted by the change.
+22 | Chapter 3: Layered Architecture
+--- Page 27 ---
+Because the layered architecture is a technically partitioned archi‐
+tecture, it’s a good fit if the team structure is also technically
+partitioned. In other words, if your overall team structure is organ‐
+ized as teams of presentation (UI) developers, backend developers,
+shared services teams, database teams, and so on, this aligns well
+to the overall partitioning of this architecture style (presentation
+layer, business layer, persistence layer, and so on). This alignment is
+known as Conway’s Law.
+When Not to Consider This Style
+While there are good reasons to consider the layered architecture
+as described in the prior section, unfortunately there are even more
+reasons not to consider the layered architecture.
+The first reason not to consider the layered architecture is if you
+have high operational concerns  for your application—things like
+scalability, elasticity, fault tolerance, and performance. Because lay‐
+ered architectures lend themselves toward a monolithic architecture,
+applications built using this architecture style are generally difficult
+to scale. While the layered architecture can sometimes scale by split‐
+ting the layers into separate physical deployments and/or creating
+separate instances of the application in multiple virtual machines, it
+becomes very expensive and inefficient because 100% of the applica‐
+tion functionality must scale. In addition, the layered architecture is
+not very fault-tolerant—a fatal crash in any part of the application
+brings down the entire application functionality.
+Another reason to avoid the layered architecture is when a major‐
+ity of your changes are at a domain level  rather than a technical
+one. Suppose you are tasked with adding an expiration date to the
+customer’s “My Movie List” within a movie streaming application
+(movies a customer has queued up to watch later). This new feature
+would first require a change to the database schema, then a change
+to the SQL in the persistence layer, then a change to the business
+rules and contracts in the business layer (such as how long before
+expiration, what to do when a movie in your list expires, and so
+on), and finally a change to the presentation layer to display the
+expiration date beside each movie in the list.
+In analyzing this relatively simple change to the “My Movie List”
+functionality, notice how every layer of the architecture is impacted
+and requires change. In large systems with technically partitioned
+Considerations and Analysis | 23
+--- Page 28 ---
+teams, this might even involve the coordination of multiple teams
+(the UI team, backend team, database team, and so on) to make this
+change. This not only impacts overall agility (the ability to respond
+quickly to change), but also impacts the overall time and effort
+involved in making this change.
+Lastly, if your overall team structure is organized by cross-functional
+domain-based teams (single teams that have UI, backend, and
+database expertise focused on a particular domain within the appli‐
+cation), the layered architecture is not a good fit because the tech‐
+nically partitioned architecture structure is not aligned with the
+domain partitioned team structure.
+Architecture Characteristics
+The chart illustrated in Figure 3-5 summarizes the overall capabili‐
+ties (architecture characteristics) of the layered architecture in terms
+of star ratings. One star means the architecture characteristic is not
+well supported, whereas five stars means it’s well suited for that
+particular architecture characteristic.
+Figure 3-5. Architecture characteristics star ratings for the layered
+architecture
+24 | Chapter 3: Layered Architecture

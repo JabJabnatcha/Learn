@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Guide: Code Placement & Data Flow Across Layers</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .flow-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background-color: var(--surface-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .flow-table th, .flow-table td {
+            padding: 0.9rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.92rem;
+            vertical-align: top;
+        }
+        .flow-table th {
+            background-color: #0b0f19;
+            color: #818cf8;
+            font-weight: 600;
+        }
+        .flow-badge {
+            display: inline-block;
+            padding: 0.2rem 0.55rem;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-pres { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-app { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-dom { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-infra { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .flow-diagram {
+            background-color: #0b0f19;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            font-family: var(--font-mono);
+            font-size: 0.86rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+        .question-card {
+            background-color: #131d31;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem 1.25rem;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin-bottom: 1rem;
+        }
+        .question-title {
+            color: #818cf8;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-controls">
+        <a href="software-architecture-patterns-guide.html" class="btn btn-secondary" style="font-size:0.85rem;padding:0.4rem 0.8rem;">&larr; สารบัญสถาปัตยกรรม</a>
+        <a href="../lessons/0018-layer-code-placement-and-flow.html" class="btn btn-primary" style="font-size:0.85rem;padding:0.4rem 0.8rem;">เข้าสู่แบบฝึกหัดบทที่ 18 &rarr;</a>
+    </div>
+
+    <h1>Master Guide: การวางตำแหน่งโค้ดและเส้นทางข้อมูล (Code Placement & Data Flow)</h1>
+    
+    <div class="alert alert-info">
+        <strong>หัวใจของการออกแบบสถาปัตยกรรม:</strong> ไม่ว่าจะเป็น Layered Architecture, Clean Architecture หรือ Hexagonal Architecture คำถามที่วิศวกรซอฟต์แวร์ต้องตอบให้ได้สำหรับโค้ดทุกไฟล์คือ:
+        <br><strong>"ไฟล์นี้ต้องอยู่ที่ Layer ไหน? รับอะไรเข้ามาจากใคร? ทำงานอะไร? และส่งผลลัพธ์ต่อไปที่ไหน อย่างไร?"</strong>
+    </div>
+
+    <h2>1. คาถา 4 ข้อในการวิเคราะห์โค้ดทุกไฟล์ (The 4 Golden Questions)</h2>
+    <div class="question-card">
+        <div class="question-title">1. Where do I live? (ฉันต้องอยู่ที่ Layer ไหน?)</div>
+        <p>ขึ้นอยู่กับว่าโค้ดนั้นขึ้นตรงกับเทคโนโลยีภายนอก (HTTP/DB) หรือเป็นตรรกะธุรกิจล้วน ๆ</p>
+    </div>
+    <div class="question-card">
+        <div class="question-title">2. What comes in? (รับอะไรเข้ามา และรับจากใคร?)</div>
+        <p>เป็น HTTP JSON หรือไม่? เป็น DTO? เป็น Domain Entity? หรือเป็น Parameter ธรรมดา?</p>
+    </div>
+    <div class="question-card">
+        <div class="question-title">3. What is my job? (หน้าที่รับผิดชอบของโค้ดนี้คืออะไร?)</div>
+        <p>ตรวจสอบ HTTP Status? ร้อยเรียง Use Case? บังคับกฎเกณฑ์ธุรกิจ (Business Rules)? หรือส่งคำสั่ง SQL ไปยัง Database?</p>
+    </div>
+    <div class="question-card">
+        <div class="question-title">4. What goes out, to whom, and how? (ส่งผลลัพธ์อะไร ออกไปให้ใคร และอย่างไร?)</div>
+        <p>ส่งคืน DTO? คืนค่า Entity? ยิง SQL? ส่ง HTTP 200/400? หรือกระจาย Event ลงใน Topic?</p>
+    </div>
+
+    <h2>2. ตารางแผนผังตำแหน่งโค้ดแม่บท (Master Code Placement Matrix)</h2>
+    <p>ตารางสรุปสำหรับโค้ดทุกประเภทในโปรเจกต์จริง (อ้างอิงจากโซลูชัน <code>MyAwesomeApi</code> ในโปรเจกต์ของคุณ):</p>
+
+    <table class="flow-table">
+        <thead>
+            <tr>
+                <th>ชนิดของโค้ด (Artifact)</th>
+                <th>Layer ที่สังกัด</th>
+                <th>รับอะไร? จากใคร? (Input)</th>
+                <th>ทำงานอะไรข้างใน? (Responsibility)</th>
+                <th>ส่งอะไร? ให้ใคร? อย่างไร? (Output)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Controller / Endpoint</strong><br><code>LessonEndpoints.cs</code></td>
+                <td><span class="flow-badge badge-pres">Presentation</span></td>
+                <td>รับ HTTP Request (JSON Body, Query Params, Headers) จาก Client / Browser</td>
+                <td>ตรวจสอบ Authentication, ตรวจรูปแบบข้อมูลพื้นฐาน (Validation), ถอดรหัส JSON เป็น DTO</td>
+                <td>เรียก Application Service แล้วแปลงผลลัพธ์เป็น <strong>HTTP Response (200 OK / 400 Bad Request)</strong> พร้อม JSON กลับไปหา Client</td>
+            </tr>
+            <tr>
+                <td><strong>Request / Response DTO</strong><br><code>CheckoutRequestDto</code></td>
+                <td><span class="flow-badge badge-app">Application</span> / <span class="flow-badge badge-pres">Presentation</span></td>
+                <td>รับค่าข้อมูลแบน ๆ (Primitive types เช่น string, int, decimal) จาก JSON ขาเข้า</td>
+                <td>เป็นเพียงกระเป๋าใส่ข้อมูล (Data Carrier) <strong>ไม่มี Logic ธุรกิจใด ๆ</strong></td>
+                <td>ถูกส่งข้ามพรมแดนจาก Presentation เข้าสู่ Application Service เพื่อไม่ให้ Domain รั่วไหล</td>
+            </tr>
+            <tr>
+                <td><strong>Use Case / Service</strong><br><code>CheckoutService.cs</code></td>
+                <td><span class="flow-badge badge-app">Application</span></td>
+                <td>รับ <strong>Request DTO</strong> มาจาก Presentation (Controller)</td>
+                <td><strong>ร้อยเรียงกระบวนการทำงาน (Orchestrator):</strong> สั่ง Repository ดึง Entity, เรียก Method ของ Entity เพื่อคิดเงิน, เรียก Payment Gateway, สั่ง Save</td>
+                <td>ส่ง <strong>Response DTO</strong> กลับไปให้ Controller และสั่ง Interface ต่าง ๆ ในการทำงาน</td>
+            </tr>
+            <tr>
+                <td><strong>Domain Entity</strong><br><code>Product.cs</code>, <code>BankAccount.cs</code></td>
+                <td><span class="flow-badge badge-dom">Domain</span></td>
+                <td>รับคำสั่งและข้อมูลผ่าน Method Call จาก Application Service (เช่น <code>product.DeductStock(qty)</code>)</td>
+                <td><strong>ผู้คุมกฎทางธุรกิจสูงสุด (Business Invariants):</strong> คำนวณยอดเงิน, ป้องกันสต็อกติดลบ, จัดการสถานะ <strong>(Zero Dependency ห้ามรู้จัก DB หรือ HTTP!)</strong></td>
+                <td>อัปเดต State ภายในตัวเอง หรือคืนค่าผลลัพธ์คำนวณ หรือ Throw Business Exception</td>
+            </tr>
+            <tr>
+                <td><strong>Repository Interface</strong><br><code>IProductRepository.cs</code></td>
+                <td><span class="flow-badge badge-app">Application</span> (หรือ Domain)</td>
+                <td>กำหนดลายเซ็นเมธอดที่ Use Case ต้องการใช้ (เช่น <code>Task&lt;Product&gt; GetByIdAsync(int id)</code>)</td>
+                <td>เป็นเพียง <strong>"สัญญาข้อตกลง (Contract)"</strong> ไม่มีโค้ดทำงานจริง ทำหน้าที่เป็นตัวตัดขาด Dependency (Inversion of Control)</td>
+                <td>ให้ Infrastructure เป็นคนหยิบไปสวมโค้ดทำงานจริง (Implement)</td>
+            </tr>
+            <tr>
+                <td><strong>Repository Implementation</strong><br><code>InMemoryProductRepository.cs</code></td>
+                <td><span class="flow-badge badge-infra">Infrastructure</span></td>
+                <td>รับคำสั่งจาก Application Service ผ่าน Interface และรับ Domain Entity มาบันทึก</td>
+                <td>ใช้ EF Core, Dapper หรือ SQL ดิบ เพื่อแปลงข้อมูลระหว่าง Table ในฐานข้อมูล กับ Domain Entity</td>
+                <td>ส่งคำสั่ง I/O ไปคุยกับ Database จริง แล้วแปลงข้อมูลที่ได้กลับมาเป็น Domain Entity ส่งคืนให้ Service</td>
+            </tr>
+            <tr>
+                <td><strong>External Gateway Adapter</strong><br><code>StripeGateway.cs</code></td>
+                <td><span class="flow-badge badge-infra">Infrastructure</span></td>
+                <td>รับข้อมูลจำนวนเงินและบัตรเครดิต ผ่านสัญญา <code>IPaymentGateway</code> ที่ Application ส่งมา</td>
+                <td>ติดต่อ Third-Party SDK / ยิง HTTP API ภายนอก เช่น Stripe, PayPal, Twilio</td>
+                <td>ส่งผลลัพธ์สำเร็จ/ล้มเหลว (PaymentResult) กลับคืนให้ Application Service</td>
+            </tr>
+            <tr>
+                <td><strong>Middleware / Filter</strong><br><code>ApiKeyMiddleware.cs</code></td>
+                <td><span class="flow-badge badge-pres">Presentation</span></td>
+                <td>ดักจับ HTTP Request Context ก่อนที่จะถึง Controller</td>
+                <td>ตรวจสอบ Header เช่น <code>X-Api-Key</code>, ดักจับ Exception กลางระบบ, บันทึก Log</td>
+                <td>หากผ่าน ส่งต่อไปยัง Middleware ตัวถัดไป (<code>next(context)</code>) หากไม่ผ่าน คืน HTTP 401 Unauthorized ทันที</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>3. แผนผังเส้นทางข้อมูลจริงตั้งแต่ต้นจนจบ (End-to-End Walkthrough: Checkout Flow)</h2>
+    <p>ดูภาพการเดินทางของคำสั่ง <strong>"สั่งซื้อสินค้า (Checkout)"</strong> จากเบราว์เซอร์จนถึงฐานข้อมูล และเดินทางกลับ:</p>
+
+    <div class="flow-diagram">
+[ Browser / Client ]
+       │ 
+       │ 1. ยิง HTTP POST /api/checkout { "productId": 10, "qty": 2 }
+       ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ <span class="badge-pres">[Presentation Layer]</span> (MyAwesomeApi)                                              │
+│ • ApiKeyMiddleware: ตรวจ Header x-api-key                                              │
+│ • LessonEndpoints: แปลง JSON เป็น CheckoutRequestDto                                   │
+│ • ฉีด ICheckoutService เข้ามาทาง Dependency Injection                                  │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │ 2. เรียก ProcessCheckout(requestDto)
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ <span class="badge-app">[Application Layer]</span> (MyAwesomeApi.Application)                                       │
+│ • CheckoutService: รับ DTO มาตรวจสอบขั้นต้น                                            │
+│                                                                                        │
+│   ├─ 3. เรียก IProductRepository.GetByIdAsync(10) ────► [Infrastructure: ดึงจาก DB]    │
+│   │                                                     │ คืนค่า Product Entity        │
+│   │                                                     ▼                              │
+│   ├─ 4. สั่ง Product Entity ทำงาน ────────────────────► <span class="badge-dom">[Domain Layer: Product.cs]</span>  │
+│   │     product.DeductStock(2)                           คำนวณและตัดสต็อกในตัว         │
+│   │                                                                                    │
+│   ├─ 5. เรียก IPaymentGateway.ChargeAsync(...) ───────► [Infrastructure: StripeGateway]│
+│   │                                                      ยิง HTTP ตัดเงินบัตรจริง       │
+│   │                                                                                    │
+│   └─ 6. เรียก IProductRepository.UpdateAsync(product) ─► [Infrastructure: บันทึก DB]   │
+│                                                                                        │
+│ • สร้าง CheckoutResponseDto { Success = true, OrderId = 999 }                          │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │ 7. คืนค่า ResponseDto
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ <span class="badge-pres">[Presentation Layer]</span>                                                               │
+│ • LessonEndpoints: รับ ResponseDto มาห่อเป็น Results.Ok(responseDto)                   │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │ 8. คืนค่า HTTP 200 OK { "success": true }
+                                           ▼
+[ Browser / Client ได้รับข้อความยืนยันคำสั่งซื้อสำเร็จ! ]
+    </div>
+
+    <h2>4. กฎเหล็ก 3 ข้อที่ห้ามละเมิดเด็ดขาด (Architectural Invariants)</h2>
+    <ul>
+        <li><strong>กฎข้อที่ 1 (The Dependency Rule):</strong> การอ้างอิงต้องชี้เข้าหาจุดศูนย์กลางเสมอ <em>Domain ห้าม Reference หาใครเลย</em> และ <em>Application ห้าม Reference หา Infrastructure</em> เด็ดขาด</li>
+        <li><strong>กฎข้อที่ 2 (Don't leak Entities to Presentation):</strong> อย่าส่ง Domain Entity กลับไปให้ Client ตรง ๆ เพราะจะทำให้โครงสร้างภายในของระบบรั่วไหล และเกิด Over-posting Vulnerability ให้ใช้ <strong>DTO</strong> กั้นเสมอ</li>
+        <li><strong>กฎข้อที่ 3 (Infrastructure is a Detail):</strong> Database, ORM, และ Third-party API เป็นเพียง "รายละเอียดภายนอก" วันใดที่ต้องการเปลี่ยนจาก InMemory เป็น PostgreSQL หรือ SQL Server เราจะแก้แค่ในโฟลเดอร์ <code>Infrastructure</code> โดยที่ <code>Domain</code> และ <code>Application</code> จะไม่สะเทือนเลยแม้แต่บรรทัดเดียว!</li>
+    </ul>
+
+</body>
+</html>

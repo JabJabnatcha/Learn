@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1: Full Thai Translation — Software Architecture Patterns</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .translation-block {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .orig-text {
+            color: #94a3b8;
+            font-style: italic;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid #6366f1;
+            padding-left: 1rem;
+        }
+        .thai-text {
+            color: #f8fafc;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        .page-tag {
+            display: inline-block;
+            background: #0b0f19;
+            color: #38bdf8;
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-controls">
+        <a href="software-architecture-patterns-guide.html" class="btn btn-secondary" style="font-size:0.85rem;padding:0.4rem 0.8rem;">&larr; กลับหน้าสารบัญคู่มือ</a>
+    </div>
+
+    <h1>บทที่ 1: บทนำ (Introduction) — แปลไทยฉบับเต็มครบทุกประโยค</h1>
+    <p><strong>หนังสือ:</strong> <em>Software Architecture Patterns (2nd Edition)</em> โดย Mark Richards (O'Reilly Media)</p>
+
+    <!-- Paragraph 1 -->
+    <div class="translation-block">
+        <span class="page-tag">Page 5 — ย่อหน้าที่ 1</span>
+        <div class="orig-text">
+            It’s all too common for developers to start coding an application without a formal architecture in place. This practice usually results in ill-defined components, creating what is commonly referred to as a big ball of mud. These architectures are generally tightly coupled, brittle, difficult to change, and lack a clear vision or direction. It’s also very difficult to determine the architectural characteristics of applications lacking a well-defined architectural style. Does the architecture scale? What are the performance characteristics of the application? How easy is it to change the application or add new features? How responsive is the architecture?
+        </div>
+        <div class="thai-text">
+            มันเป็นเรื่องที่พบได้บ่อยจนเกินไปที่นักพัฒนาจะเริ่มต้นลงมือเขียนโค้ดแอปพลิเคชันโดยที่ยังไม่มีการวางสถาปัตยกรรมที่เป็นทางการรองรับไว้ การกระทำเช่นนี้มักส่งผลให้เกิดคอมโพเนนต์ที่นิยามขอบเขตหน้าที่ไม่ชัดเจน และก่อให้เกิดสิ่งที่เรียกกันทั่วไปว่า <strong>"กองโคลนก้อนใหญ่" (a big ball of mud)</strong> สถาปัตยกรรมลักษณะนี้โดยทั่วไปจะมีการผูกมัดกันอย่างแน่นหนา (tightly coupled), เปราะบาง (brittle), ยากต่อการเปลี่ยนแปลง และขาดวิสัยทัศน์หรือทิศทางที่ชัดเจน นอกจากนี้ ยังเป็นการยากอย่างยิ่งที่จะระบุคุณลักษณะทางสถาปัตยกรรม (architectural characteristics) ของแอปพลิเคชันที่ขาดรูปแบบสถาปัตยกรรม (architectural style) ที่ชัดเจน ตัวอย่างเช่น สถาปัตยกรรมนี้รองรับการขยายตัว (scale) หรือไม่? คุณลักษณะด้านประสิทธิภาพ (performance) ของแอปพลิเคชันเป็นอย่างไร? การแก้ไขแอปพลิเคชันหรือการเพิ่มฟีเจอร์ใหม่ทำได้ง่ายเพียงใด? และสถาปัตยกรรมนี้มีความสามารถในการตอบสนอง (responsive) รวดเร็วแค่ไหน?
+        </div>
+    </div>
+
+    <!-- Paragraph 2 -->
+    <div class="translation-block">
+        <span class="page-tag">Page 5 — ย่อหน้าที่ 2</span>
+        <div class="orig-text">
+            Architecture styles help define the basic characteristics and behavior of an application. Some architecture styles naturally lend themselves toward highly scalable systems, whereas other architecture styles naturally lend themselves toward applications that allow developers to respond quickly to change. Knowing the characteristics, strengths, and weaknesses of each architecture style is necessary to choose the one that meets your specific business needs and goals.
+        </div>
+        <div class="thai-text">
+            รูปแบบสถาปัตยกรรม (Architecture styles) ช่วยกำหนดคุณลักษณะและพฤติกรรมพื้นฐานของแอปพลิเคชัน รูปแบบสถาปัตยกรรมบางรูปแบบจะส่งเสริมระบบที่ต้องการการขยายขนาดสูง (highly scalable systems) โดยธรรมชาติ ในขณะที่รูปแบบสถาปัตยกรรมอื่น ๆ จะส่งเสริมแอปพลิเคชันที่ช่วยให้นักพัฒนาสามารถตอบสนองต่อการเปลี่ยนแปลงได้อย่างรวดเร็ว การรู้ถึงคุณลักษณะ, จุดแข็ง และจุดอ่อนของรูปแบบสถาปัตยกรรมแต่ละแบบ จึงเป็นสิ่งจำเป็นอย่างยิ่งในการเลือกรูปแบบที่ตรงกับความต้องการและเป้าหมายทางธุรกิจที่เฉพาะเจาะจงของคุณ
+        </div>
+    </div>
+
+    <!-- Paragraph 3 -->
+    <div class="translation-block">
+        <span class="page-tag">Page 5-6 — ย่อหน้าที่ 3</span>
+        <div class="orig-text">
+            A lot has happened in software architecture since 2015 when the first edition of this report was published. Both microservices and event-driven architecture have gained in popularity, and developers and architects have found new techniques, tools, and ways of designing and implementing these architecture styles. Also, the widespread use of domain-driven design has led to a better understanding of how architectures are structurally partitioned, and how that partitioning can impact the design and implementation of a system. The second edition of the report addresses both of these advances.
+        </div>
+        <div class="thai-text">
+            มีหลายสิ่งหลายอย่างเกิดขึ้นในวงการสถาปัตยกรรมซอฟต์แวร์นับตั้งแต่ปี 2015 ซึ่งเป็นปีที่รายงานฉบับแรกถูกตีพิมพ์ ทั้งสถาปัตยกรรมไมโครเซอร์วิส (microservices) และสถาปัตยกรรมขับเคลื่อนด้วยเหตุการณ์ (event-driven architecture) ต่างได้รับความนิยมเพิ่มขึ้นอย่างมาก นักพัฒนาและสถาปนิกต่างได้ค้นพบเทคนิค, เครื่องมือ และแนวทางใหม่ ๆ ในการออกแบบและติดตั้งใช้งานรูปแบบสถาปัตยกรรมเหล่านี้ นอกจากนี้ การนำ Domain-Driven Design มาใช้อย่างแพร่หลาย ยังนำไปสู่ความเข้าใจที่ดียิ่งขึ้นเกี่ยวกับวิธีที่สถาปัตยกรรมถูกจัดแบ่งเชิงโครงสร้าง (structurally partitioned) และความเข้าใจว่าการจัดแบ่งโครงสร้างนั้นส่งผลกระทบต่อการออกแบบและการพัฒนาระบบอย่างไร รายงานฉบับพิมพ์ครั้งที่สองนี้จึงได้กล่าวถึงความก้าวหน้าทั้งสองประการนี้
+        </div>
+    </div>
+
+    <!-- Paragraph 4 -->
+    <div class="translation-block">
+        <span class="page-tag">Page 6 — ย่อหน้าที่ 4</span>
+        <div class="orig-text">
+            The second edition also includes other significant enhancements, along with more information about the intersection of architecture and data, and an expanded analysis section at the end of each chapter. These new sections provide you with better guidelines for when to use (and not to use) each architecture presented in this report.
+        </div>
+        <div class="thai-text">
+            ฉบับพิมพ์ครั้งที่สองนี้ยังรวมถึงการปรับปรุงที่สำคัญอื่น ๆ พร้อมด้วยข้อมูลเพิ่มเติมเกี่ยวกับจุดตัดที่เชื่อมโยงกันระหว่างสถาปัตยกรรมและข้อมูล (architecture and data) รวมถึงส่วนการวิเคราะห์ที่ขยายความอย่างละเอียดในตอนท้ายของแต่ละบท เนื้อหาส่วนใหม่เหล่านี้จะช่วยมอบแนวทางที่ดียิ่งขึ้นแก่คุณว่า "เมื่อใดที่ควรใช้" (และ "เมื่อใดที่ไม่ควรใช้") สถาปัตยกรรมแต่ละรูปแบบที่นำเสนอในรายงานฉบับนี้
+        </div>
+    </div>
+
+    <!-- Paragraph 5 -->
+    <div class="translation-block">
+        <span class="page-tag">Page 6 — ย่อหน้าที่ 5</span>
+        <div class="orig-text">
+            Another change you’ll notice in the second edition is the use of the term architecture style rather than architecture pattern for the architectures described in this report. This distinction helps alleviate some of the confusion surrounding the differences between, say, event-driven architecture—an architecture style—and something like CQRS (Command Query Responsibility Segregation), which is an architecture pattern.
+        </div>
+        <div class="thai-text">
+            การเปลี่ยนแปลงอีกประการหนึ่งที่คุณจะสังเกตเห็นในฉบับพิมพ์ครั้งที่สองนี้ คือการเปลี่ยนมาใช้คำว่า <strong>"Architecture Style" (รูปแบบสถาปัตยกรรม)</strong> แทนที่จะใช้คำว่า <strong>"Architecture Pattern" (แพทเทิร์นสถาปัตยกรรม)</strong> สำหรับเรียกสถาปัตยกรรมต่าง ๆ ที่อธิบายไว้ในรายงานนี้ การแยกแยะความแตกต่างนี้จะช่วยลดความสับสนเกี่ยวกับความแตกต่างระหว่าง เช่น สถาปัตยกรรมขับเคลื่อนด้วยเหตุการณ์ (event-driven architecture) ซึ่งจัดเป็น Architecture Style กับสิ่งอย่างเช่น CQRS (Command Query Responsibility Segregation) ซึ่งจัดเป็น Architecture Pattern
+        </div>
+    </div>
+
+    <!-- Paragraph 6 -->
+    <div class="translation-block">
+        <span class="page-tag">Page 6 — ย่อหน้าที่ 6</span>
+        <div class="orig-text">
+            An architecture style, such as the ones presented in this report, describe the macro structure of a system. Architecture patterns, on the other hand, describe reusable structural building block patterns that can be used within each of the architecture styles to solve a particular problem. Take, for example, the well known CQRS pattern, which describes the structural separation between read and write operations to a database or eventing system (for example, separate services and databases for read operations and write operations). This architecture pattern could be applied to any of the architecture styles described in this report to optimize database queries and updates.
+        </div>
+        <div class="thai-text">
+            <strong>Architecture Style</strong> เช่นเดียวกับรูปแบบที่นำเสนอในรายงานนี้ ใช้อธิบาย <strong>"โครงสร้างมหภาค" (macro structure) ของระบบ</strong> ในทางกลับกัน <strong>Architecture Pattern</strong> ใช้อธิบาย <strong>"บล็อกเชิงโครงสร้างที่นำกลับมาใช้ซ้ำได้" (reusable structural building block patterns)</strong> ซึ่งสามารถนำไปใช้ภายใน Architecture Style แต่ละแบบเพื่อแก้ปัญหาเฉพาะด้าน ยกตัวอย่างเช่น รูปแบบ CQRS ที่เป็นที่รู้จักกันดี ซึ่งอธิบายถึงการแยกเชิงโครงสร้างระหว่างการทำงานฝั่งอ่าน (read) และฝั่งเขียน (write) ข้อมูลไปยังฐานข้อมูลหรือระบบส่งอีเวนต์ (ตัวอย่างเช่น แยกเซอร์วิสและฐานข้อมูลต่างหากสำหรับการอ่าน และอีกชุดหนึ่งสำหรับการเขียน) แพทเทิร์นสถาปัตยกรรมนี้สามารถนำไปประยุกต์ใช้กับ Architecture Style ใดก็ได้ที่อธิบายในรายงานนี้ เพื่อเพิ่มประสิทธิภาพในการคิวรีและการอัปเดตฐานข้อมูล
+        </div>
+    </div>
+
+    <!-- Paragraph 7 -->
+    <div class="translation-block">
+        <span class="page-tag">Page 6 — ย่อหน้าที่ 7</span>
+        <div class="orig-text">
+            Architecture patterns, in turn, differ from design patterns (such as the Builder design pattern) in that an architecture pattern impacts the structural aspect of a system, whereas a design pattern impacts how the source code is designed. For example, you can use the Builder design pattern as a way to implement the CQRS architecture pattern, and then use the CQRS pattern as a building block within a microservices architecture. Figure 1-1 shows this hierarchical relationship among the three terms and how they interrelate with each other to build software systems.
+        </div>
+        <div class="thai-text">
+            ในทางเดียวกัน Architecture Pattern ก็แตกต่างจาก <strong>Design Pattern</strong> (เช่น Builder design pattern) ตรงที่ <strong>Architecture Pattern จะส่งผลต่อแง่มุมเชิงโครงสร้างของระบบ</strong> ในขณะที่ <strong>Design Pattern จะส่งผลต่อวิธีการออกแบบซอร์สโค้ด (source code)</strong> ตัวอย่างเช่น คุณสามารถใช้ Builder design pattern เป็นวิธีการเขียนโค้ดเพื่อสร้าง (implement) CQRS architecture pattern และจากนั้นก็นำ CQRS pattern นั้นไปใช้เป็นบล็อกโครงสร้างย่อยภายในสถาปัตยกรรมแบบ Microservices ได้ รูปที่ 1-1 แสดงให้เห็นถึงความสัมพันธ์เชิงลำดับชั้นระหว่างคำทั้งสามคำนี้ และแสดงว่าคำเหล่านี้มีความเกี่ยวโยงกันอย่างไรในการสร้างระบบซอฟต์แวร์
+        </div>
+    </div>
+
+    <!-- Figure 1-1 -->
+    <div class="translation-block">
+        <span class="page-tag">Page 7 — รูปที่ 1-1 (Figure 1-1)</span>
+        <div class="orig-text">
+            Figure 1-1. Architecture styles can be composed of architecture patterns, which in turn can be composed of design patterns
+        </div>
+        <div class="thai-text">
+            <strong>รูปที่ 1-1:</strong> รูปแบบสถาปัตยกรรม (Architecture styles) สามารถประกอบขึ้นจากแพทเทิร์นสถาปัตยกรรม (architecture patterns) ซึ่งในทางกลับกันก็สามารถประกอบขึ้นจากการออกแบบด้วยดีไซน์แพทเทิร์น (design patterns)
+        </div>
+    </div>
+
+    <!-- Paragraph 8 -->
+    <div class="translation-block">
+        <span class="page-tag">Page 7 — ย่อหน้าที่ 8</span>
+        <div class="orig-text">
+            Design patterns and architecture patterns are typically combined to form a complete solution. Architecture styles act in the same way—they can also be combined when building software solutions to form a complete solution. Hybrid architecture styles are common in the real world because not every architecture style can solve every business problem. Common architecture style hybrids include event-driven microservices (events between microservices), space-based microservices (processing units implemented as microservices), and even an event-driven microkernel architecture (events between the core system and remote plug-in components). Although forming hybrids is a common practice, it is vital to understand individual architecture styles and their corresponding strengths and weaknesses before combining them.
+        </div>
+        <div class="thai-text">
+            โดยทั่วไปแล้ว Design patterns และ architecture patterns มักจะถูกนำมาผสมผสานร่วมกันเพื่อสร้างเป็นโซลูชันที่สมบูรณ์ รูปแบบสถาปัตยกรรม (Architecture styles) ก็มีพฤติกรรมในลักษณะเดียวกัน คือสามารถนำมาผสมผสานกันในการสร้างโซลูชันซอฟต์แวร์เพื่อให้เกิดโซลูชันที่สมบูรณ์ได้ <strong>รูปแบบสถาปัตยกรรมแบบผสมผสาน (Hybrid architecture styles)</strong> เป็นสิ่งที่พบเห็นได้ทั่วไปในโลกความเป็นจริง เพราะไม่มีรูปแบบสถาปัตยกรรมใดเพียงรูปแบบเดียวที่จะสามารถแก้ปัญหาทางธุรกิจได้ครบทุกปัญหา สถาปัตยกรรมแบบผสมผสานที่พบได้ทั่วไป ได้แก่ <em>Event-driven microservices</em> (การใช้เหตุการณ์สื่อสารระหว่างไมโครเซอร์วิส), <em>Space-based microservices</em> (หน่วยประมวลผลถูกสร้างขึ้นในรูปแบบของไมโครเซอร์วิส) และแม้กระทั่ง <em>Event-driven microkernel architecture</em> (การส่งเหตุการณ์ระหว่างระบบแกนกลางกับคอมโพเนนต์ปลั๊กอินระยะไกล) แม้ว่าการสร้างสถาปัตยกรรมแบบผสมผสานจะเป็นแนวปฏิบัติที่พบได้ทั่วไป แต่การทำความเข้าใจรูปแบบสถาปัตยกรรมเดี่ยวแต่ละตัว ตลอดจนจุดแข็งและจุดอ่อนที่สอดคล้องกันของแต่ละสไตล์อย่างถ่องแท้ก่อนที่จะนำมารวมกันนั้น ถือเป็นสิ่งที่มีความสำคัญอย่างยิ่งยวด
+        </div>
+    </div>
+
+    <!-- Paragraph 9 -->
+    <div class="translation-block">
+        <span class="page-tag">Page 7 — ย่อหน้าที่ 9</span>
+        <div class="orig-text">
+            The goal of this updated second edition report remains the same as the first edition: to help senior developers and architects understand some of the more common architecture styles, how they work, when to use them, and when not to use them. This will help to not only expand your knowledge of architecture, but will also help you make the right architecture choice for your systems.
+        </div>
+        <div class="thai-text">
+            เป้าหมายของรายงานฉบับพิมพ์ครั้งที่สองที่ได้รับการปรับปรุงใหม่นี้ ยังคงเหมือนกับฉบับแรก นั่นคือ: <strong>เพื่อช่วยให้นักพัฒนาอาวุโส (senior developers) และสถาปนิกซอฟต์แวร์ (architects) ได้เข้าใจรูปแบบสถาปัตยกรรมทั่วไปที่นิยมใช้กันมากขึ้น, เข้าใจว่าพวกมันทำงานอย่างไร, เมื่อใดที่ควรใช้ และเมื่อใดที่ไม่ควรใช้</strong> สิ่งนี้ไม่เพียงแต่จะช่วยขยายพูนพูนความรู้ด้านสถาปัตยกรรมของคุณเท่านั้น แต่ยังช่วยให้คุณสามารถตัดสินใจเลือกสถาปัตยกรรมที่ถูกต้องเหมาะสมสำหรับระบบของคุณได้อีกด้วย
+        </div>
+    </div>
+
+</body>
+</html>

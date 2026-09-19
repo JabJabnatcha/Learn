@@ -1,0 +1,331 @@
+--- Page 47 ---
+CHAPTER 6
+Microservices Architecture
+Perhaps the biggest change in architecture since 2012 is the intro‐
+duction of microservices. This trend-setting architecture style took
+the world by storm, similar to what service-oriented architecture
+(SOA) did back in 2006. Over the years we’ve learned a lot about
+this revolutionary (and evolutionary) architecture style and how it
+addresses many of the complex problems we face in developing soft‐
+ware solutions. New tools, techniques, frameworks, and platforms
+have come about over the years that make microservices easier to
+design, implement, and manage. That said, microservices is perhaps
+one of the most complicated architecture styles to get right.
+Basic Topology
+The microservices architecture style is an ecosystem made up of
+single-purpose, separately deployed services that are accessed typ‐
+ically through an API gateway. Client requests originating from
+either a user interface (usually a microfrontend) or an external
+request invoke well-defined endpoints in an API gateway, which
+then forwards the user request to separately deployed services. Each
+service in turn accesses its own data, or makes requests to other
+services to access data the service doesn’t own. The basic topology
+for the microservices architecture style is illustrated in Figure 6-1.
+43
+--- Page 48 ---
+Figure 6-1. The basic topology of the microservices architecture style
+Notice that although Figure 6-1 shows each service associated with
+a separate database, this does not have to be the case (and usually
+isn’t). Rather, each service owns its own collection of tables, usually
+in the form of a schema that can be housed in a single highly avail‐
+able database or a single database devoted to a particular domain.
+The key concept to understand here is that only the service owning
+the tables can access and update that data. If other services need
+access to that data, they must ask the owning microservice for that
+information rather than accessing the tables directly. The reason‐
+ing behind this data ownership approach is described in detail in
+“Bounded Context” on page 45.
+The primary job of the API gateway in microservices is to hide
+the location and implementation of the corresponding services that
+correspond to the API gateway endpoints. However, the API gate‐
+way can also perform cross-cutting infrastructure-related functions,
+such as security, metrics gathering, request-ID generation, and so
+on. Notice that unlike the enterprise service bus (ESB) in service-
+oriented architecture, the API gateway in microservices does not
+contain any business logic, nor does it perform any orchestration or
+44 | Chapter 6: Microservices Architecture
+--- Page 49 ---
+mediation. This is critical within microservices in order to preserve
+what is known as a bounded context (detailed further in a moment).
+What Is a Microservice?
+A microservice is defined as a single-purpose, separately deployed
+unit of software that does one thing really, really well. In fact, this
+is where the term “microservices” gets its name—not from the phys‐
+ical size of the service (such as the number of classes), but rather
+from what it does. Because microservices are meant to represent
+single-purpose functions, they are generally fine-grained. However,
+this doesn’t always have to be the case. Suppose a developer creates
+a service consisting of 312 class files. Would you still consider that
+service to be a microservice? In this example, the service actually
+does only one thing really well—send emails to customers. Each of
+the 300+ different emails that could be sent to a customer is repre‐
+sented as a separate class file, hence the large number of classes.
+However, because it does one thing really well (send an email to
+a customer), this would in fact be consisted a microservice. This
+example illustrates the point that its not about the size of the service,
+but rather what the service does.
+Because microservices tend to be single-purpose functions, it’s not
+uncommon to have hundreds to even thousands of separately
+deployed microservices in any given ecosystem or application con‐
+text. The sheer number of separate services is what makes microser‐
+vices so unique. Microservices can be deployed as containerized
+services (such as Docker) or as serverless functions.
+Bounded Context
+As mentioned earlier, each service typically owns its own data,
+meaning that the tables belonging to a particular service are only
+accessed by that service. For example, a Wishlist service might own
+its corresponding wishlist tables. If other services need wish list
+data, those services would have to ask the Wishlist service for that
+information rather than accessing the wishlist tables directly.
+This concept is known as a bounded context, a term coined by Eric
+Evans in his book Domain-Driven Design (Addison-Wesley). Within
+the scope of microservices, this means that all of the source code
+representing some domain or subdomain (such as a wish list for a
+What Is a Microservice? | 45
+--- Page 50 ---
+customer), along with the corresponding data structures and data,
+are all encapsulated as one unit, as illustrated in Figure 6-2.
+Figure 6-2. A bounded context includes the source code and corre‐
+sponding data for a given domain or subdomain
+This concept is critical for microservices. As a matter of fact,
+microservices as an architecture style wouldn’t exist without the
+notion of a bounded context. To illustrate this point, imagine 250
+microservices all accessing the same set of tables in a monolithic
+database. Suppose you make a structural change (such as dropping
+a column or table) that 120 of those services access. This change
+would require the coordination of modifying, testing, and deploying
+120 separate services at the same time, along with the database
+change. This is a scenario that is simply not feasible.
+Within microservices, the bounded context not only facilitates
+architectural agility (the ability to respond quickly to change), but
+also manages change control within a microservices ecosystem.
+With the bounded context, only the service that owns the data
+needs to change when structural data changes happen. As shown in
+Figure 6-3 , other services requiring access to data within another
+bounded context must ask for the data through a separate contract.
+This contract is usually a different representation than that of the
+physical database structure of the data, thereby usually not requiring
+a change to other services or the contracts.
+46 | Chapter 6: Microservices Architecture
+--- Page 51 ---
+Figure 6-3. The bounded context usually isolates changes to just the
+service owning the data
+Unique Features
+Microservices stands apart from all other architecture styles. The
+three things that make the microservices architecture style so
+unique are distributed data, operational automation, and organiza‐
+tional change.
+Microservices is the only architecture style that requires data to be
+broken up and distributed across separate services. The reason for
+this need is the sheer number of services usually found within a
+typical microservices architecture. Without aligning services with
+their corresponding data within a strict bounded context, it simply
+wouldn’t be feasible to make structural changes to the underlying
+application data. Because other architecture styles don’t specify the
+fine-grained, single-purpose nature of a service as microservices
+does, those other architecture styles can usually get by with a single
+monolithic database.
+Although the practice of associating a service with its corresponding
+data in a bounded context is one of the main goals of microservices,
+rarely in the real world of business applications does this completely
+happen. While a majority of services may be able to own their
+own data, in many cases it’s sometimes necessary to share data
+between two or more services. Use cases for sharing data between a
+handful of services (two to six) range from table coupling, foreign
+key constraints, triggers between tables, and materialized views, to
+Unique Features | 47
+--- Page 52 ---
+performance optimizations for data access, to shared ownership of
+tables between services. When data is shared between services, the
+bounded context is extended to include all of the shared tables as
+well as all of the services that access that data.
+Operational automation is another unique feature that separates
+microservices from all other architecture styles, again due to the
+sheer number of microservices in a typical ecosystem. It is not
+humanly possible to manage the parallel testing, deployment, and
+monitoring of several hundred to several thousand separately
+deployed units of software. For this reason, containerization is usu‐
+ally required, along with service orchestration and management
+platforms such as Kubernetes. This also leads to the requirement
+of DevOps for microservices (rather than something that’s “nice
+to have”). Because of the large number of services, it’s not feasible
+to “hand off ” services to separate testing teams and release engi‐
+neers. Rather, teams own services and the corresponding testing and
+release of those services.
+This leads to the third thing that distinguishes microservices from
+all other architecture styles—organizational change. Microservices
+is the only architecture style that requires development teams to
+be organized into domain areas of cross-functional teams with spe‐
+cialization (a single development team consisting of user interface,
+backend, and database developers). This in turn requires the iden‐
+tification of service owners (usually architects) within a particular
+domain. Testers and release engineers, as well as DBAs (database
+administrators), are also usually aligned with specific domain areas
+so that they are part of the same virtual team as the developers.
+In this manner, these “virtual teams” test and release their own
+services.
+Examples and Use Cases
+Applications that are well suited for the microservices architecture
+style include those that consist of separate and distinct functions
+within a business workflow. A classic example of this is a standard
+retail-based order entry system. Placing an order, applying a pay‐
+ment, notifying a customer, managing inventory, fulfilling the order,
+shipping the order, tracking the order, sending out surveys, and data
+analytics are all separate and distinct functions that work well as
+separately deployed microservices.
+48 | Chapter 6: Microservices Architecture
+--- Page 53 ---
+Another interesting use case for microservices is that of business
+intelligence and analytics reporting. Each report, query, data feed,
+or data analytics can be developed as a separate microservice, all
+accessing data within a data lake or data warehouse. Although with
+the reporting use case there isn’t a strict bounded context with the
+data, this still works as microservices because the underlying schema
+structure of a data lake or data warehouse rarely encounters break‐
+ing changes. Rather, older schemas are deprecated and new ones are
+created to replace them, helping manage the change control issues
+usually found with typical microservices architectures operating on
+transactional data.
+Considerations and Analysis
+While microservices is very popular and powerful, it is also perhaps
+the hardest architecture style to get right. Service granularity (the
+size of a service) is one of the first hard parts of microservices most
+teams encounter. Single responsibility principle is unfortunately
+highly subjective, making it difficult to gain consensus on the granu‐
+larity of a service. For example, is a notification service that sends
+out emails and SMS texts single purpose, or is notifying a customer
+via email single purpose? Other factors, such as code volatility, fault
+tolerance, scalability and throughput, and access control, are more
+objective ways of justifying service granularity.
+Another hard part of the microservices architecture style is how
+services should communicate with each other. Should they use asyn‐
+chronous communication or synchronous communication? Should
+you use orchestration for your workflows between services using an
+orchestration service to act as a mediator, or choreography where
+services directly talk to one another? Each of these communication
+choices has numerous trade-offs, making it even more difficult to
+answer these questions.
+Data is yet another hard part of microservices. If a Wishlist ser‐
+vice needs product information from the Product Catalog service,
+should it ask for the data through inter-service communication via
+REST, cache the data it needs using an in-memory data grid, expand
+the wishlist table schema to include the necessary product data
+it needs, or simply share the product catalog data? Again, these
+choices all have trade-offs, making it difficult to choose the most
+appropriate option.
+Considerations and Analysis | 49
+--- Page 54 ---
+There are many more hard parts about microservices, including
+distributed transaction management, contracts, code reuse techni‐
+ques, migration patterns, and so on. Fortunately, all of these hard
+parts and their corresponding trade-offs are addressed in detail in
+the book Software Architecture: The Hard Parts  by Neal Ford et al.
+(O’Reilly).
+When to Consider This Style
+One of the first considerations in choosing microservices is to take
+a detailed look at your application functionality. Is it feasible to
+break apart your application functionality into dozens or hundreds
+of separate and distinct pieces of functionality that are independent
+from each other? If so, then this is a good architecture to consider as
+this is exactly the shape of microservices.
+Applications that require high levels of agility (the ability to respond
+quickly to change) are well suited for the microservices architec‐
+ture style. From a maintainability standpoint, the bounded context
+ensures that subdomain functionality and its corresponding data are
+bound together, making it easy to locate and make coding changes.
+Testing is easier because the testing scope is usually reduced to a
+single-purpose service, and as such it’s easier to achieve full regres‐
+sion testing. Deployment risk is significantly reduced because what
+is usually deployed is only a single service. In most cases this can be
+done through a hot deploy in the middle of the day as opposed to
+big-bang deployments over a weekend.
+Microservices is also a good architecture style to consider if you
+have high fault tolerance and high scalability needs. Scalability and
+fault tolerance are both at the function level in microservices, and
+because mean time to start (MTTS) and mean time to recovery
+(MTTR) are so low (usually measured in hundreds of milliseconds),
+microservices is also good for elastic systems.
+Y ou should also consider microservices if you have plans for lots
+of extensibility in your existing architecture. Adding functionality
+in microservices is sometimes simply a matter of creating a service,
+wrapping it in a container, creating an API endpoint, and deploying
+that service. I like to call this technique “drop-in” functionality. In
+other words, if you need to add additional features or functionality
+to your system, just create a service and drop it into your ecosystem.
+50 | Chapter 6: Microservices Architecture
+--- Page 55 ---
+Sounds easy, right? Well, in theory it is, but there are lots of reasons
+not to use microservices, which are outlined in the next section.
+When Not to Consider This Style
+While microservices has lots of benefits and superpowers, there are
+definitely reasons to avoid this architecture style and consider others
+instead. The first of these considerations is the nature of your work‐
+flows. Microservices is all about single-purpose, separately deployed
+pieces of software that collectively make up an application. However,
+if you find that all of that separately deployed functionality needs
+to be tied together with complex workflows and lots of inter-service
+communication or orchestration, then this is not an architecture
+you should consider.
+Perhaps one of the biggest factors for not considering microservices
+relates to data. If your data is tightly coupled and monolithic in
+nature (meaning it’s not feasible to break apart your data into several
+dozen to several hundred separate schemas or databases), then run
+away in the opposite direction of microservices. By tightly coupled,
+I mean the data is so interrelated with the functionality that while
+you can break apart the functionality of an application into multiple
+deployment units, those separate deployment units all need access
+to the same data. Furthermore, data can be highly coupled in the
+form of foreign key constraints, triggers, views, and even stored
+procedures (yes, believe it or not, they still exist in the real world).
+If your data is too tightly coupled together, consider something like
+service-based architecture instead of microservices.
+Despite what some articles and blogs say, microservices is perhaps
+the most complex architecture style that exists today. Consequently,
+it is also very expensive. Licensing fees for platforms, products,
+frameworks, and databases all rise exponentially based on the large
+number of services in a typical microservices ecosystem. Therefore,
+if you have tight cost and time constraints, avoid this architecture
+style and select a hybrid such as service-based architecture.
+Interestingly enough, most microservices architectures do not
+lend themselves well to high-performance or highly responsive
+systems. While this may sound surprising, it’s because in reality,
+microservices do in fact tend to communicate with each other to
+access data and perform additional business functions. Because the
+Considerations and Analysis | 51
+--- Page 56 ---
+communication between services is remote, three types of latency
+occur: network latency, security latency, and data latency.
+Network latency is the amount of time it takes packets of informa‐
+tion to reach the target service over the network. Depending on
+the type of remote access protocol you are using and the physical
+distance between services, this can range anywhere from 30 ms to
+300 ms or more.
+Security latency is the amount of time it takes to authenticate or
+authorize the request to the remote endpoint. Depending on the
+level of security and access control on the remote service endpoint,
+this latency can range anywhere from a few milliseconds to 300 ms
+or more.
+Data latency impacts the performance aspects of microservices the
+most. Data latency is the amount of time it takes for other services
+to query data on your behalf that you don’t own. For example, sup‐
+pose the Wishlist service needs to access the product descriptions,
+and communicates with the Product Catalog service to request the
+data. The Product Catalog  service, upon receiving the request,
+must make an additional database call to retrieve the product
+descriptions. This is something that doesn’t happen when data is
+shared in monolithic databases, where a single database call using an
+inner or outer join is the only thing required to access multiple types
+of data.
+Architecture Characteristics
+The chart illustrated in Figure 6-4 summarizes the overall capabil‐
+ities (architecture characteristics) of microservices architecture in
+terms of star ratings. One star means the architecture characteristic
+is not well supported, whereas five stars means it’s well suited for
+that particular architecture characteristic.
+52 | Chapter 6: Microservices Architecture
+--- Page 57 ---
+Figure 6-4. Architecture characteristics star ratings for microservices
+architecture
+Considerations and Analysis | 53
+--- Page 58 ---
+

@@ -1,0 +1,55 @@
+--- Page 69 ---
+APPENDIX A
+Style Analysis Summary
+Figure A-1 summarizes the architecture characteristics scoring for
+each of the architecture styles described in this report. One dot
+means that the architecture characteristic is not well supported by
+the architecture style, whereas five dots means it’s well supported by
+that style.
+This summary will help you determine which style might be best for
+your situation. For example, if your primary architectural concern
+is scalability, you can look across this chart and see that the event-
+driven style, microservices style, and space-based style are probably
+good architecture style choices. Similarly, if you choose the layered
+architecture style for your application, you can refer to the chart
+to see that deployment, performance, and scalability might be risk
+areas in your architecture.
+While this chart and report will help guide you in choosing the right
+style, there is much more to consider when choosing an architecture
+style. Y ou must analyze all aspects of your environment, including
+infrastructure support, developer skill set, project budget, project
+deadlines, and application size, to name a few. Choosing the right
+architecture style is critical, because once an architecture is in place,
+it is very hard (and expensive) to change.
+65
+--- Page 70 ---
+Figure A-1. Architecture styles rating summary
+66 | Appendix A: Style Analysis Summary
+--- Page 71 ---
+About the Author
+Mark Richards  is an experienced, hands-on software architect
+involved in the architecture, design, and implementation of
+microservices architectures, service-oriented architectures, and dis‐
+tributed systems in a variety of technologies. He has been in the
+software industry since 1983 and has significant experience and
+expertise in application, integration, and enterprise architecture.
+Mark is the founder of DeveloperToArchitect.com, a free website
+devoted to helping developers in the journey to becoming a software
+architect.
+In addition to hands-on consulting and training, Mark has auth‐
+ored numerous technical books and videos, including the two lat‐
+est books he coauthored, Fundamentals of Software Architecture
+(O’Reilly) and Software Architecture: The Hard Parts  (O’Reilly).
+Mark has spoken at hundreds of conferences and user groups
+around the world on a variety of enterprise-related technical topics.
+When he is not working, Mark can usually be found hiking in the
+White Mountains or along the Appalachian Trail.
+--- Page 72 ---
+Learn from experts.  
+Become one yourself.
+Books | Live online courses   
+Instant Answers | Virtual events 
+Videos | Interactive learning
+Get started at oreilly.com. 
+©2022 O’Reilly Media, Inc. O’Reilly is a registered trademark of O’Reilly Media, Inc. | 175
+
